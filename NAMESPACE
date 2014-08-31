@@ -1,0 +1,8 @@
+import(httr, XML, stringr)
+
+export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML, importGTF, importGFF3, importPedMap, subDose, subPhased, subGprobs)
+
+S3method(print,fa)
+S3method(summary,fa)
+S3method(print,pedMap)
+S3method(summary,pedMap)

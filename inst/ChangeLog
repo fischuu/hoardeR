@@ -1,0 +1,27 @@
+LOG of the CHANGES in the package Test
+
+Version 0.2:
+* Added the nrow option for the 'importGTF' function
+* Added the 'importPedMap' function
+* Added the 'print.pedMap' function
+* Added the 'summary.pedMap' function
+* Added the functions 'subGprobs', 'subPhased' and 'subDose'
+
+Version 0.1:
+* Added the data example.fa
+* importFA returns now an object of class 'fa' instead of 'character'
+* Added the function 'print.fa'
+* Added the function 'summary.fa'
+
+Version 0.0-2:
+* Included the function 'getEnsgInfo'
+* Included the function 'getGeneSeq'
+* Updated the manual pages
+* Improved the input checks in the 'blastSeq' function
+* Included the function 'print.blastRes'
+* Included the function 'summary.blastRes'
+* Included the function 'importGFF3'
+* Added hoardeR to a Git-hub repository
+
+Version 0.0-1:
+* First build with basic functionality
