@@ -27,6 +27,8 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
   curRunning <- 0
   ready <- 0
   active <- NULL
+  times <- c()
+  timeAvg <- c("00:00:00")
 # This is very optimistic, maybe I should take also a time break, in case one result doesn't get ready
   while(ready < totalSeq){
     if((curRunning < n_blast) & (sendThis <= totalSeq)){
@@ -44,7 +46,9 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
            ready <- ready + 1
            curRunning <- curRunning - 1
            active <- active[-which(active==i)]
-        # Write here then the XML file to the folder, still missing, filename is seqname[i].xml 
+           times <- c(times,res$time)
+           timeAvg <- timeStat(times)
+        # Write here then the XML file to the folder
            if(writeXML){
              file.create(paste(xmlFolder,names(seq)[i],".xml",sep=""))
              fileConn <- file(paste(xmlFolder,names(seq)[i],".xml",sep=""))
@@ -61,6 +65,8 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
       cat("Missing:",totalSeq-ready,"\n")
       cat("Running:",active,"\n")
       cat("Finished:",ready,"\n")
+      cat("Avg. Blast Time:",timeAvg,"\n")
+      cat("Total running time: ------ \n")
       cat("---------------------------------------------------------------\n")
     }
   }

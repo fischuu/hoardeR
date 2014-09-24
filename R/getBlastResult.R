@@ -21,5 +21,5 @@ getBlastResult <- function(RID){
   } else {
     ready <- TRUE
   }
-  res <- list(blastRes=blastRes, ready=ready)
+  res <- list(blastRes=blastRes, ready=ready, time=timeElapsed)
 }
