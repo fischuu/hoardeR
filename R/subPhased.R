@@ -13,7 +13,9 @@ subPhased <- function(file=NULL, vmmk = NULL, out=NULL, chunkSize=100000, verbos
     master <- read.table(vmmk, stringsAsFactors=FALSE)
     if(verbose) cat("I read the master key file",date(),"\n")
   # Determine the number of repetitions
-    nrows <- countLines(file) - 1
+  # nrows <- countLines(file) - 1
+  nrows <- system(paste("wc -l",file), intern=TRUE)
+  nrows <- as.numeric(strsplit(nrows, " ")[[1]][1])
     nchunks <- ceiling(nrows / chunkSize)
 
   # Now process chunk by chunk
