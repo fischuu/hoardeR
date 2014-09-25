@@ -1,7 +1,7 @@
 # this script takes the Beagle output with the 1 2 Allele coding, imports the Variant Master Key and substitutes then the 
 # Alles with the corrsepsonding nucleotide.
 
-subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, wkFolder=curWD, removeInsertions=TRUE){
+subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, wkFolder=curWD, removeInsertions=TRUE, verbose = TRUE){
 
   # Basic input checks
     if(is.null(file)) stop("No *.gprobs file given.")
@@ -14,7 +14,10 @@ subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, wkFolder
     master <- read.table(vmmk, stringsAsFactors=FALSE)
     cat("I read the master key file",date(),"\n")
   # Determine the number of repetitions
-    nrows <- countLines(file) - 1
+    # nrows <- countLines(file) - 1
+    nrows <- system(paste("wc -l",file), intern=TRUE)
+    nrows <- as.numeric(strsplit(nrows, " ")[[1]][1])
+    if(verbose) cat("Number of rows:", nrows,"\n")
     nchunks <- ceiling(nrows / chunkSize)
 
   # Now process chunk by chunk
