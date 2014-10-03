@@ -1,4 +1,5 @@
 getBlastResult <- function(RID){
+    timeElapsed <- -1
     tries <- 0
     newError <- TRUE
     while(newError & tries < 6){
@@ -14,12 +15,13 @@ getBlastResult <- function(RID){
               )
     }
   ready <- FALSE
-# Case that blast run is not ready yet:
-    timeElapsed <- strsplit(strsplit(blastRes[grepl("Time since submission",blastRes)],"<td>")[[1]][3],"</td>")[[1]][1]
   if(blastRes[length(blastRes)]=="</html>"){
+    # Case that blast run is not ready yet:
+    timeElapsed <- strsplit(strsplit(blastRes[grepl("Time since submission",blastRes)],"<td>")[[1]][3],"</td>")[[1]][1]
     cat("Run",RID,":",timeElapsed,"\n")
   } else {
     ready <- TRUE
   }
   res <- list(blastRes=blastRes, ready=ready, time=timeElapsed)
+  res
 }

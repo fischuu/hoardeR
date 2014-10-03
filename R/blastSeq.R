@@ -3,6 +3,8 @@
 
 blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, keepInMemory=TRUE, database="chromosome", verbose=TRUE){
 
+  startTime <- Sys.time()
+  
 # Polite system sleeps as requested from NCBI  
   if(delay_req<3) stop("Sending more requests than once every 3 seconds is considered to be rude from NCBI!")  
   if(delay_rid<60) stop("Polling RID results more often than once per minute is considered to be rude from NCBI!")  
@@ -21,6 +23,9 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
   
 # Store here the blast RIDs
   RID <- rep(0,totalSeq)
+# Store here the timings
+  timings <- rep("-1",totalSeq)
+
 # Store here the results
   res <- list()
   sendThis <- 1
@@ -46,8 +51,8 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
            ready <- ready + 1
            curRunning <- curRunning - 1
            active <- active[-which(active==i)]
-           times <- c(times,res$time)
-           timeAvg <- timeStat(times)
+         #  times <- c(times,res$time)
+        #   timeAvg <- timeStat(times)
         # Write here then the XML file to the folder
            if(writeXML){
              file.create(paste(xmlFolder,names(seq)[i],".xml",sep=""))
@@ -58,6 +63,8 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
            if(!keepInMemory){
              res[[i]] <- NULL
            }
+        } else {
+          timings[i] < res$time
         }
       }
     }
@@ -66,7 +73,7 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
       cat("Running:",active,"\n")
       cat("Finished:",ready,"\n")
       cat("Avg. Blast Time:",timeAvg,"\n")
-      cat("Total running time: ------ \n")
+      cat("Total running time:",secToTime(as.numeric(Sys.time() - startTime, units="secs")),"\n")
       cat("---------------------------------------------------------------\n")
     }
   }
