@@ -11,7 +11,7 @@
 \usage{
   blastSeq(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, 
            xmlFolder=NULL, keepInMemory=TRUE, database="chromosome",
-           verbose=TRUE)
+           verbose=TRUE, createLog=TRUE)
 }
 
 \arguments{
@@ -21,9 +21,11 @@
   \item{delay_rid}{Seconds between the single result requests.}
   \item{email}{User email, required information from NCBI (\code{String}).}
   \item{xmlFolder}{Path to the result folder.}
+  \item{logFolder}{Path to the log folder.}
   \item{keepInMemory}{Logical, shall the results be kept in the memory.}
   \item{database}{The NCBI database to use.}
   \item{verbose}{Shall the program give extensive feedback.}
+  \item{createLog}{Create log files, needed for continuing a crashed program.}
 }
 
 \details{
@@ -38,6 +40,10 @@
 
  In case the option \code{keepInMemory} is set to TRUE the Blast results will be kept in memory, otherwise they will
  be just written to the HDD. Especially if many sequences are used to Blast it is recommended to drop the result from the memory.
+ 
+ If log files should be written (\code{createLog=TRUE}) a log path should be given in \code{logPath}. However, if a xmlPath is given and the
+ option \code{createLog=TRUE} is set, then the log folder will be automatically created in the parental folder of the \code{xmlFolder} and is
+ called \code{hoardeRlogs}
 }
 
 \value{

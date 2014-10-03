@@ -15,7 +15,7 @@ secToTime <- function(x){
   x <- x-hours*3600
   minutes <- x%/%60
   x <- x-minutes*60  
-  seconds <- x
+  seconds <- floor(x)
   hours <- as.character(hours)
   minutes <- as.character(minutes)
   seconds <- as.character(seconds)

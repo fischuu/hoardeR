@@ -1,5 +1,5 @@
 getBlastResult <- function(RID){
-    timeElapsed <- -1
+    timeElapsed <- 0
     tries <- 0
     newError <- TRUE
     while(newError & tries < 6){
@@ -22,6 +22,6 @@ getBlastResult <- function(RID){
   } else {
     ready <- TRUE
   }
-  res <- list(blastRes=blastRes, ready=ready, time=timeElapsed)
+  res <- list(blastRes=blastRes, ready=ready, time=timeElapsed, RID=RID)
   res
 }
