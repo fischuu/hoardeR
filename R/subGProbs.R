@@ -1,7 +1,7 @@
 # this script takes the Beagle output with the 1 2 Allele coding, imports the Variant Master Key and substitutes then the 
 # Alles with the corrsepsonding nucleotide.
 
-subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, wkFolder=curWD, removeInsertions=TRUE, verbose = TRUE){
+subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeInsertions=TRUE, verbose = TRUE){
 
   # Basic input checks
     if(is.null(file)) stop("No *.gprobs file given.")
@@ -34,7 +34,7 @@ subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, wkFolder
       }
       cat("I read the phased chunk",chunkRun,"/",nchunks,":",date(),"\n")
     # Check if the order is correct, therwise stop the script!
-      if(sum(phased$marker==master$V1[((chunkRun-1)*chunkSize+1):((chunkRun-1)*chunkSize+readRows)])!=nrow(phased)) stop("The order doesn't match in run",Chr)
+      if(sum(phased$marker==master$V1[((chunkRun-1)*chunkSize+1):((chunkRun-1)*chunkSize+readRows)])!=nrow(phased)) stop("The order doesn't match in run",chunkRun)
     # substitute the columns
       phased$alleleA <- master$V3[((chunkRun-1)*chunkSize+1):((chunkRun-1)*chunkSize+readRows)]
       phased$alleleB <- master$V4[((chunkRun-1)*chunkSize+1):((chunkRun-1)*chunkSize+readRows)]

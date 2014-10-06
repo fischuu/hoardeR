@@ -10,8 +10,8 @@
 }
 \usage{
   blastSeq(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, 
-           xmlFolder=NULL, keepInMemory=TRUE, database="chromosome",
-           verbose=TRUE, createLog=TRUE)
+           xmlFolder=NULL,logFolder=NULL, keepInMemory=TRUE,
+           database="chromosome", verbose=TRUE, createLog=TRUE)
 }
 
 \arguments{

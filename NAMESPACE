@@ -1,4 +1,4 @@
-import(httr, XML, stringr)
+import(httr, XML, stringr, MASS, R.utils)
 
 export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML, importGTF, importGFF3, importPedMap, subDose, subPhased, subGprobs)
 
