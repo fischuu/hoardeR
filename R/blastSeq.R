@@ -3,6 +3,7 @@
 
 blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=TRUE, database="chromosome", verbose=TRUE, createLog=TRUE){
 
+
   startTime <- Sys.time()
   
 # Polite system sleeps as requested from NCBI  
@@ -17,6 +18,8 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
 # Check about the xml folder settings
   writeXML <- FALSE
   if(!is.null(xmlFolder)){
+  # check if the path is provided properly
+    
     writeXML <- TRUE
     dir.create(xmlFolder, showWarnings = FALSE)
   }

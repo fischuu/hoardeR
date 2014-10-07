@@ -1,6 +1,7 @@
 LOG of the CHANGES in the package Test
 
 Version 0.2:
+* Added the log option to blastSeq. This way a crashed blast run and continue where it crashed.
 * Added the nrow option for the 'importGTF' function
 * Added the 'importPedMap' function
 * Added the 'print.pedMap' function

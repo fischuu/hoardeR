@@ -1,5 +1,3 @@
-test <- c("00:07:44","00:07:12","01:07:42")
-
 timeToSec <- function(x){
   temp <- strsplit(x,":")
   hours <- as.numeric(temp[[1]][1])
