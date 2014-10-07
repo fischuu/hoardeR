@@ -29,7 +29,7 @@
 }
 
 \author{
-  Daniel Fischer
+  Daniel Fischer, Anu Sironen
 
   Maintainer: Daniel Fischer <daniel.fischer@mtt.fi>
 }
