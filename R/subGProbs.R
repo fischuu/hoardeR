@@ -15,8 +15,8 @@ subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeIn
     cat("I read the master key file",date(),"\n")
   # Determine the number of repetitions
     # nrows <- countLines(file) - 1
-    nrows <- system(paste("wc -l",file), intern=TRUE) - 1
-    nrows <- as.numeric(strsplit(nrows, " ")[[1]][1])
+    nrows <- system(paste("wc -l",file), intern=TRUE) 
+    nrows <- as.numeric(strsplit(nrows, " ")[[1]][1]) - 1
     if(verbose) cat("Number of rows:", nrows,"\n")
     nchunks <- ceiling(nrows / chunkSize)
 
