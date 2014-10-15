@@ -32,7 +32,7 @@ subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeIn
         phased <- read.table(file, header=FALSE, stringsAsFactors=FALSE, skip=skipThis+1, nrows=readRows)
         colnames(phased) <- phasedCN
       }
-      cat("I read the phased chunk",chunkRun,"/",nchunks,":",date(),"\n")
+      cat("I read the GProbs chunk",chunkRun,"/",nchunks,":",date(),"\n")
     # Check if the order is correct, therwise stop the script!
       if(sum(phased$marker==master$V1[((chunkRun-1)*chunkSize+1):((chunkRun-1)*chunkSize+readRows)])!=nrow(phased)) stop("The order doesn't match in run",chunkRun)
     # substitute the columns
