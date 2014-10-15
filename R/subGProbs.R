@@ -1,7 +1,7 @@
 # this script takes the Beagle output with the 1 2 Allele coding, imports the Variant Master Key and substitutes then the 
 # Alles with the corrsepsonding nucleotide.
 
-subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeInsertions=TRUE, verbose = TRUE){
+subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeInsertions=TRUE, verbose = TRUE, writeOut=TRUE){
 
   # Basic input checks
     if(is.null(file)) stop("No *.gprobs file given.")
@@ -15,7 +15,7 @@ subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeIn
     cat("I read the master key file",date(),"\n")
   # Determine the number of repetitions
     # nrows <- countLines(file) - 1
-    nrows <- system(paste("wc -l",file), intern=TRUE)
+    nrows <- system(paste("wc -l",file), intern=TRUE) - 1
     nrows <- as.numeric(strsplit(nrows, " ")[[1]][1])
     if(verbose) cat("Number of rows:", nrows,"\n")
     nchunks <- ceiling(nrows / chunkSize)
@@ -41,13 +41,16 @@ subGprobs <- function(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeIn
       
     # Remove the Insertions
       if(removeInsertions) phased <- phased[which(master$V7[((chunkRun-1)*chunkSize+1):((chunkRun-1)*chunkSize+readRows)]=="S"),]
-  #    cat("Removed I entries",date(),"\n")
+
     # write out the new Dose file
+    if(writeOut){
       if(chunkRun==1){
         write.table(phased,out, col.names=TRUE, row.names=FALSE, quote=FALSE)
       } else {
         write.table(phased,out, col.names=FALSE, row.names=FALSE, quote=FALSE, append=TRUE)
-      }   
+      } 
     }
+    
+    }  
 }
 
