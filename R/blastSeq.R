@@ -44,7 +44,7 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
   seqInfo <- data.frame(seqNames=names(seq),
                         seqRID=rep("0",length(seq)),
                         seqFinished=rep(FALSE,length(seq)),
-                        seqRuntime=rep("0",length(seq)),
+                        seqRuntime=rep("00:00:00",length(seq)),
                         stringsAsFactors=FALSE)
 
 # Read/Write the RID/sequence info table
