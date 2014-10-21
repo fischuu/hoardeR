@@ -1,6 +1,6 @@
 import(httr, XML, stringr, MASS, R.utils)
 
-export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML, importGTF, importGFF3, importPedMap, subDose, subPhased, subGprobs)
+export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML, importGTF, importGFF3, importPedMap, importBlastTab, subDose, subPhased, subGprobs)
 
 S3method(print,fa)
 S3method(summary,fa)
