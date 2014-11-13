@@ -10,7 +10,7 @@
 }
 \usage{
   subGprobs(file=NULL, vmmk=NULL, out=NULL, chunkSize=100000, removeInsertions=TRUE,
-             verbose = TRUE)
+             verbose = TRUE, writeOut=TRUE)
 }
 
 \arguments{
@@ -20,6 +20,7 @@
   \item{chunkSize}{For large Beagle files, the chunk size.}
   \item{removeInsertions}{All Indels will be removed.}
   \item{verbose}{The function gives feedback.}
+  \item{writeOut}{Logical, write the output back to the HDD.}
 }
 
 \details{
