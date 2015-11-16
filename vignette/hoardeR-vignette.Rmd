@@ -1,0 +1,8 @@
+---
+title: "hoardeR Vignette"
+author: "Daniel Fischer, Anu Sironen"
+date: "November 16, 2015"
+output: pdf_document
+---
+
+
