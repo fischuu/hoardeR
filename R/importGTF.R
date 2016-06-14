@@ -7,7 +7,7 @@ importGTF <- function(gtf, skip=0, nrow=-1){
   
 # Now get the part before the space (=first) and after (=second)
   first <- sapply(V9, function(x)unlist(regmatches( x , gregexpr( "[_a-zA-Z]+ " , x ) )))
-  second <- sapply(V9, function(x)unlist(regmatches( x , gregexpr( " [_a-zA-Z0-9=.]+" , x ) )))
+  second <- sapply(V9, function(x)unlist(regmatches( x , gregexpr( "[_a-zA-Z0-9=.]+" , x ) )))
     
 # Column names
   tags <- unique( unlist(first) )
@@ -16,7 +16,7 @@ importGTF <- function(gtf, skip=0, nrow=-1){
   temp <- mapply( cbind , second , first )
   
 # Match to appropriate columns and coerce to data.frame
-  out <- data.frame( do.call( rbind , lapply( temp , function(x) x[ match( tags , x[,2] ) ]  ) ) )
+  out <- data.frame( do.call( rbind , lapply( temp , function(x) x[ match( tags , x[,2] ) ]  ) ) , stringsAsFactors=FALSE)
   names(out) <- tags
   out <- cbind(cuffLoaded[,-9],out)
   out
