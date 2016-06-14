@@ -8,6 +8,7 @@ Version 0.2:
 * Added the 'print.pedMap' function
 * Added the 'summary.pedMap' function
 * Added the functions 'subGprobs', 'subPhased' and 'subDose'
+* The 'summary.fa' function is now more informative
 
 Version 0.1:
 * Added the data example.fa
