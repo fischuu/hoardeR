@@ -25,7 +25,7 @@ targetScan <- function(mirna=NULL, species="Human", release="7.1", maxOut=NULL){
  
 # Retrieve the content 
   tsAddress <- paste("http://www.targetscan.org/cgi-bin/targetscan/vert_71/targetscan.cgi?species=",species,"&mirg=",mirna,sep="")
-  tsOut <- scan(temp, what = "", sep = "\n", quiet = TRUE)
+  tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
 
 # Find the rows of interest (Assume it to be in the first 100 rows, if this isn't the case extent the search area)
   startRow <- substr(tsOut[1:100],0,14)=="<th>total</th>"
@@ -46,5 +46,3 @@ targetScan <- function(mirna=NULL, species="Human", release="7.1", maxOut=NULL){
   }
   res
 }
-
-res <- targetScan(mirna="miR-9-5p", species="Cow", maxOut=5)
