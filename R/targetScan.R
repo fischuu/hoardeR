@@ -16,7 +16,22 @@ extractTSinfo <- function(x){
   res
 }
 
-targetScan <- function(mirna=NULL, species="Human", release="7.1", maxOut=NULL){
+targetScan <- function(mirna=NULL, species=NULL, release="7.1", maxOut=NULL){
+
+ if(is.null(species)){
+  # Guessing species from mirna
+    if(substr(mirna,1,3)=="hsa") species <- "Human"
+    if(substr(mirna,1,3)=="mmu") species <- "Mouse"
+    if(substr(mirna,1,3)=="rno") species <- "Rat"
+    if(substr(mirna,1,3)=="ptr") species <- "Chimpanzee"
+    if(substr(mirna,1,3)=="mml") species <- "Rhesus"
+    if(substr(mirna,1,3)=="bta") species <- "Cow"
+    if(substr(mirna,1,3)=="cfa") species <- "Dog"
+    if(substr(mirna,1,3)=="mdo") species <- "Opossum"
+    if(substr(mirna,1,3)=="gga") species <- "Chicken"
+    if(substr(mirna,1,3)=="xtr") species <- "Frog"
+  }
+  
 # Input checks
   if(is.null(mirna)) stop("No mirne name given. Use e.g. 'miR-9-5p'.")
   species <- paste(toupper(substr(species, 1, 1)), tolower(substr(species, 2, nchar(species))), sep="")
@@ -37,6 +52,8 @@ targetScan <- function(mirna=NULL, species="Human", release="7.1", maxOut=NULL){
     }
     warning("Multiple matches multiple families in the targetScan database for ",mirna,":\n",paste(newMirnas,collapse="; "),"\nOnly the first one is used!")
     mirna <- newMirnas[1]  
+    tsAddress <- paste("http://www.targetscan.org/cgi-bin/targetscan/vert_71/targetscan.cgi?species=",species,"&mirg=",mirna,sep="")
+    tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
   }
   
 # Find the rows of interest (Assume it to be in the first 100 rows, if this isn't the case extent the search area)
