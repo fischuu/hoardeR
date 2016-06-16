@@ -42,36 +42,47 @@ targetScan <- function(mirna=NULL, species=NULL, release="7.1", maxOut=NULL){
   tsAddress <- paste("http://www.targetscan.org/cgi-bin/targetscan/vert_71/targetscan.cgi?species=",species,"&mirg=",mirna,sep="")
   tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
 
-# Check first, if the targetScen result is unique
-  if(sum(grepl("matches multiple families in our miRNA database",tsOut[1:min(100,length(tsOut))]))>0){
-    multFams <- tsOut[grepl("mir_vnc",tsOut)]
-    newMirnas <- character(length(multFams))
-    for(i in 1:length(multFams)){
-      temp <- strsplit(multFams[i], "mir_vnc=")[[1]][2]
-      newMirnas[i] <- strsplit(temp,'\">')[[1]][1]
-    }
-    warning("Multiple matches multiple families in the targetScan database for ",mirna,":\n",paste(newMirnas,collapse="; "),"\nOnly the first one is used!")
-    mirna <- newMirnas[1]  
-    tsAddress <- paste("http://www.targetscan.org/cgi-bin/targetscan/vert_71/targetscan.cgi?species=",species,"&mirg=",mirna,sep="")
-    tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
-  }
-  
-# Find the rows of interest (Assume it to be in the first 100 rows, if this isn't the case extent the search area)
-  startRow <- grepl("<th>total</th>",tsOut[1:min(100,length(tsOut))])
-  if(sum(startRow)!=1)  startRow <- grepl("<th>total</th>",tsOut)
-  if(sum(startRow)!=1) stop("ERROR: No table provided by targetScan.org!")
-  startRow <- which(startRow==1)
-  ifelse(is.null(maxOut), maxOut <- length(tsOut)-1, maxOut <- startRow + maxOut - 1)
-  
-  
-# Now extract the information and put them into a dataframe
-
-# The first row is a bit different, as it is contained in the header row, all others are then standardized
-  temp1 <- strsplit(tsOut[startRow],"<td>")
-  firstEntry <- paste(temp1[[1]][2],"<td>",temp1[[1]][3],sep="")
-  res <- extractTSinfo(firstEntry)
-  for(i in (startRow+1):maxOut){
-    res <- rbind(res,extractTSinfo(tsOut[i]))
+# Check first if the miRNA is in the targetScan database  
+  if(sum(grepl("is not in our miRNA database",tsOut[1:min(100,length(tsOut))]))>0){
+       warning(mirna," is not in the targetScan database!\n")
+       res <- data.frame(Ortholog=NULL,
+                         geneName=NULL,
+                         consSites=NULL,
+                         poorlySites=NULL)
+       res
+    
+  }else {
+      # Check first, if the targetScen result is unique
+        if(sum(grepl("matches multiple families in our miRNA database",tsOut[1:min(100,length(tsOut))]))>0){
+          multFams <- tsOut[grepl("mir_vnc",tsOut)]
+          newMirnas <- character(length(multFams))
+          for(i in 1:length(multFams)){
+            temp <- strsplit(multFams[i], "mir_vnc=")[[1]][2]
+            newMirnas[i] <- strsplit(temp,'\">')[[1]][1]
+          }
+          warning("Multiple matches multiple families in the targetScan database for ",mirna,":\n",paste(newMirnas,collapse="; "),"\nOnly the first one is used!")
+          mirna <- newMirnas[1]  
+          tsAddress <- paste("http://www.targetscan.org/cgi-bin/targetscan/vert_71/targetscan.cgi?species=",species,"&mirg=",mirna,sep="")
+          tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
+        }
+      
+      # Find the rows of interest (Assume it to be in the first 100 rows, if this isn't the case extent the search area)
+        startRow <- grepl("<th>total</th>",tsOut[1:min(100,length(tsOut))])
+        if(sum(startRow)!=1)  startRow <- grepl("<th>total</th>",tsOut)
+        if(sum(startRow)!=1) stop("ERROR: No table provided by targetScan.org!")
+        startRow <- which(startRow==1)
+        ifelse(is.null(maxOut), maxOut <- length(tsOut)-1, maxOut <- startRow + maxOut - 1)
+        
+        
+      # Now extract the information and put them into a dataframe
+      
+      # The first row is a bit different, as it is contained in the header row, all others are then standardized
+        temp1 <- strsplit(tsOut[startRow],"<td>")
+        firstEntry <- paste(temp1[[1]][2],"<td>",temp1[[1]][3],sep="")
+        res <- extractTSinfo(firstEntry)
+        for(i in (startRow+1):maxOut){
+          res <- rbind(res,extractTSinfo(tsOut[i]))
+        }
   }
   res
 }
