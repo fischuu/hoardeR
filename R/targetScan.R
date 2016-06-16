@@ -27,9 +27,21 @@ targetScan <- function(mirna=NULL, species="Human", release="7.1", maxOut=NULL){
   tsAddress <- paste("http://www.targetscan.org/cgi-bin/targetscan/vert_71/targetscan.cgi?species=",species,"&mirg=",mirna,sep="")
   tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
 
+# Check first, if the targetScen result is unique
+  if(sum(grepl("matches multiple families in our miRNA database",tsOut[1:min(100,length(tsOut))]))>0){
+    multFams <- tsOut[grepl("mir_vnc",tsOut)]
+    newMirnas <- character(length(multFams))
+    for(i in 1:length(multFams)){
+      temp <- strsplit(multFams[i], "mir_vnc=")[[1]][2]
+      newMirnas[i] <- strsplit(temp,'\">')[[1]][1]
+    }
+    warning("Multiple matches multiple families in the targetScan database for ",mirna,":\n",paste(newMirnas,collapse="; "),"\nOnly the first one is used!")
+    mirna <- newMirnas[1]  
+  }
+  
 # Find the rows of interest (Assume it to be in the first 100 rows, if this isn't the case extent the search area)
-  startRow <- substr(tsOut[1:min(100,length(tsOut))],0,14)=="<th>total</th>"
-  if(sum(startRow)!=1)  startRow <- substr(tsOut,0,14)=="<th>total</th>"
+  startRow <- grepl("<th>total</th>",tsOut[1:min(100,length(tsOut))])
+  if(sum(startRow)!=1)  startRow <- grepl("<th>total</th>",tsOut)
   if(sum(startRow)!=1) stop("ERROR: No table provided by targetScan.org!")
   startRow <- which(startRow==1)
   ifelse(is.null(maxOut), maxOut <- length(tsOut)-1, maxOut <- startRow + maxOut - 1)
