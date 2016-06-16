@@ -7,6 +7,7 @@ Version 0.2:
 * Added the 'importPedMap' function
 * Added the 'print.pedMap' function
 * Added the 'summary.pedMap' function
+* Added the 'targetScan' function
 * Added the functions 'subGprobs', 'subPhased' and 'subDose'
 * The 'summary.fa' function is now more informative
 
