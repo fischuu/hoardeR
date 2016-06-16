@@ -28,11 +28,11 @@ targetScan <- function(mirna=NULL, species="Human", release="7.1", maxOut=NULL){
   tsOut <- scan(tsAddress, what = "", sep = "\n", quiet = TRUE)
 
 # Find the rows of interest (Assume it to be in the first 100 rows, if this isn't the case extent the search area)
-  startRow <- substr(tsOut[1:100],0,14)=="<th>total</th>"
+  startRow <- substr(tsOut[1:min(100,length(tsOut))],0,14)=="<th>total</th>"
   if(sum(startRow)!=1)  startRow <- substr(tsOut,0,14)=="<th>total</th>"
   if(sum(startRow)!=1) stop("ERROR: No table provided by targetScan.org!")
   startRow <- which(startRow==1)
-  ifelse(is.null(maxOut), maxOut <- length(tsOut-1), maxOut <- startRow + maxOut - 1)
+  ifelse(is.null(maxOut), maxOut <- length(tsOut)-1, maxOut <- startRow + maxOut - 1)
   
   
 # Now extract the information and put them into a dataframe
