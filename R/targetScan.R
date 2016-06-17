@@ -54,11 +54,11 @@ targetScan <- function(mirna=NULL, species=NULL, release="7.1", maxOut=NULL){
   }else {
       # Check first, if the targetScen result is unique
         if(sum(grepl("matches multiple families in our miRNA database",tsOut[1:min(100,length(tsOut))]))>0){
-          multFams <- tsOut[grepl("mir_vnc",tsOut)]
+          multFams <- tsOut[grepl("=miR",tsOut)]
           newMirnas <- character(length(multFams))
           for(i in 1:length(multFams)){
-            temp <- strsplit(multFams[i], "mir_vnc=")[[1]][2]
-            newMirnas[i] <- strsplit(temp,'\">')[[1]][1]
+            temp <- strsplit(multFams[i], "</A")[[1]][1]
+            newMirnas[i] <- strsplit(temp,'\">')[[1]][2]
           }
           warning("Multiple matches multiple families in the targetScan database for ",mirna,":\n",paste(newMirnas,collapse="; "),"\nOnly the first one is used!")
           mirna <- newMirnas[1]  
