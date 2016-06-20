@@ -9,6 +9,8 @@ Version 0.2:
 * Added the 'summary.pedMap' function
 * Added the 'targetScan' function
 * Added the functions 'subGprobs', 'subPhased' and 'subDose'
+* Bugfixed the blastSeq function
+* Bugfixed the importXML function
 * The 'summary.fa' function is now more informative
 
 Version 0.1:

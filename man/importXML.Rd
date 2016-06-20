@@ -2,19 +2,19 @@
 \alias{importXML}
 
 \title{
-  Import a XML File
+  Import a XML File produced by the blastSeq function
 }
 
 \description{
   This function imports a xml file produced from \code{blastSeq}.
 }
 \usage{
-  importXML(seqNames, folder, which=c(1,2), idTH = 0.8, verbose=TRUE)
+  importXML(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRUE)
 }
 
 \arguments{
+  \item{folder}{Folder , where the xml files are stored.}
   \item{seqNames}{Sequence names.}
-  \item{folder}{Fodler , where the xml files are stored.}
   \item{which}{Which of the provided sequence names should be imported.}
   \item{idTH}{Identity threshold, see details.}
   \item{verbose}{Logical, function give status messages.}
@@ -24,6 +24,9 @@
   This function imports a xml files produced from the \code{blastSeq} function.
   The \code{idTh} options sets the limit, what the minimum id threshold is until a hit will be
   taken into the result data frame.
+  
+  If \code{seqNames} is \code{NULL} (default) and code{which} is \code{NULL} (default) all sequences are imported. The list can be limited, either by
+  specifying the sequence name (the file name of it), or its position in the order list of names, using \code{which}.
 }
 \value{
   A data frame containing the results.

@@ -1,10 +1,11 @@
-import(httr, XML, stringr, MASS, R.utils)
+import(httr, XML, stringr, MASS, R.utils, Luke, data.table)
 
 export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
        importGTF, importGFF3, importPedMap, importBlastTab, subDose, subPhased,
-       subGprobs, targetScan)
+       subGprobs, targetScan, tableSpecies, species, getAnnotation)
 
 S3method(print,fa)
 S3method(summary,fa)
 S3method(print,pedMap)
 S3method(summary,pedMap)
+

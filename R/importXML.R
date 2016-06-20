@@ -1,16 +1,17 @@
 
-importXML <- function(seqNames, folder, which=c(1,2), idTH = 0.8, verbose=TRUE){
+importXML <- function(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRUE){
   # Get the filenames and statistics about how many XML files we have
-  fileList <- list.files(folder)
-  seqNamesFolder <- unlist(strsplit(fileList,".xml"))
-  foundNames <- sum(is.element(seqNames,seqNamesFolder))
-  foundNames2 <- sum(is.element(seqNamesFolder,seqNames))
-  if(verbose==TRUE){
-    cat("Given amount of sequences:", length(seqNames),"\n")
-    cat("XML files in folder:", length(seqNamesFolder),"\n")
-    cat("Folder Files in requested list:", foundNames,"(",foundNames/length(seqNamesFolder)*100,"%)\n")  
-    cat("Requested list in folder:", foundNames2,"(",foundNames2/length(seqNames)*100,"%)\n")  
-  }
+    fileList <- list.files(folder)
+    seqNamesFolder <- unlist(strsplit(fileList,".xml"))
+    if(is.null(seqNames)) seqNames <- unlist(strsplit(fileList,".xml"))
+    foundNames <- sum(is.element(seqNames,seqNamesFolder))
+    foundNames2 <- sum(is.element(seqNamesFolder,seqNames))
+    if(verbose==TRUE){
+      cat("Given amount of sequences:", length(seqNames),"\n")
+      cat("XML files in folder:", length(seqNamesFolder),"\n")
+      cat("Folder Files in requested list:", foundNames,"(",foundNames/length(seqNamesFolder)*100,"%)\n")  
+      cat("Requested list in folder:", foundNames2,"(",foundNames2/length(seqNames)*100,"%)\n")  
+    }
   # Adjust the importable files to the available ones
   # ADJUST THE CODE HERE THAT EVERYTHING GOES SMOOTH AND THE WARNING IS OBSOLENT!!!!
   if(sum(is.element(seqNamesFolder,seqNames))!=length(seqNamesFolder)) warning("Please check the which settings, due to missing files the wrong
@@ -81,5 +82,6 @@ importXML <- function(seqNames, folder, which=c(1,2), idTH = 0.8, verbose=TRUE){
     if(verbose) if(runningIndex%%10==0) cat(runningIndex,"XML files processed.\n")
   }
   names(result) <- seqNamesFolder[which]
+  class(result) <- "xml"
   result
 }
