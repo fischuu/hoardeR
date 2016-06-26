@@ -9,6 +9,6 @@ Author: Daniel Fischer [aut, cre],
         Anu Sironen [aut]
 Maintainer: Daniel Fischer <daniel.fischer@luke.fi>
 Depends: R (>= 3.0.2)
-Imports: httr (>= 0.2), XML (>= 3.98-1.1), stringr (>= 0.6.2), MASS (>= 7.3-31), R.utils (>= 1.32.4), Luke, data.table
+Imports: httr (>= 0.2), XML (>= 3.98-1.1), stringr (>= 0.6.2), MASS (>= 7.3-31), R.utils (>= 1.32.4), Luke, data.table, seqinr, Biostrings
 Description: Information retrieval from NCBI databases, with main focus on Blast.
 License: GPL (>= 2)
