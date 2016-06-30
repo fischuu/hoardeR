@@ -3,13 +3,15 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
                     annotFile=NULL, hitSpecies=NULL, hitSpeciesVersion=NULL, origSpecies=NULL,
                     origSpeciesVersion=NULL, fastaFolder=NULL, release=84,
                     origAnnot=NULL, hitAnnot=NULL, nTick=5, which=NULL, figureFolder=NULL,
-                    figurePrefix=NULL){
+                    figurePrefix=NULL, indexOffset=0){
   
 # Store the original values
   windowOrig <- window
   hitsOrig <- hits
   origAnnotOrig <- origAnnot
   hitAnnotOrig <- hitAnnot
+  flankingLeft <- flanking
+  flankingRight <- flanking
   if(!is.null(which)) hits <- hits[which,]
   for(hitRun in 1:nrow(hits)){
   # Restore for each run the original values
@@ -22,7 +24,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
       tempGeneName <- strsplit(strsplit(hits[hitRun]$V9,"gene=")[[1]][[2]],";")[[1]][[1]]
     }
 
-    if(!is.null(figureFolder)) png(file=paste(figureFolder,figurePrefix,hitRun,"-",tempGeneName,".png",sep=""), width=2000, height=1400)
+    if(!is.null(figureFolder)) png(file=paste(figureFolder,figurePrefix,hitRun+indexOffset,"-",tempGeneName,".png",sep=""), width=2000, height=1400)
     if(verbose) cat("Start to create figure for",tempGeneName,"(",date(),")\n")
   # Import the fasta files
   # ADD HERE STILL THE OPTION FOR AN OWN FASTA FILE!!!
@@ -76,31 +78,53 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
     
     
     # Getting the flanking coordinates
+    # Check first, that the flanking isn't getting to the negative side or leaves the chromosome area.
+      if(is.null(window)) window <- origEnd-origStart
+      if(verbose) cat("Using window size:", window,"\n")
       ORIGcoord <- c(origStart,origEnd)
       HITcoord <- c(hitStart,hitEnd)
       ORIGneg <- FALSE
       HITneg <- FALSE    
       if(ORIGcoord[1]>ORIGcoord[2]){
         ORIGneg <- TRUE
-        origStartFlank <- origStart + 1000 * flanking
-        origEndFlank <- origEnd - 1000 * flanking
+        if(origStart + 1000 * flanking > length(seqOrig[[1]])){
+          flankingLeft <- floor(origStart/window)
+        } else if(origEnd - 1000 * flanking <= 1){
+          flankingRight <- floor(origEnd/window)
+        }
+        origStartFlank <- origStart + 1000 * flankingLeft
+        origEndFlank <- origEnd - 1000 * flankingRight
       } else {
-        origStartFlank <- origStart - 1000 * flanking
-        origEndFlank <- origEnd + 1000 * flanking
+        if(origStart - 1000 * flanking <=0){
+          flankingLeft <- floor(origStart/window)
+        } else if(origEnd + 1000 * flanking > length(seqOrig[[1]])){
+          flankingRight <- floor(origEnd/window)
+        }
+        origStartFlank <- origStart - 1000 * flankingLeft
+        origEndFlank <- origEnd + 1000 * flankingRight
       }
       if(HITcoord[1]>HITcoord[2]){
         HITneg <- TRUE
-        hitStartFlank <- hitStart + 1000 * flanking
-        hitEndFlank <- hitEnd - 1000 * flanking  
+        if(hitStart + 1000 * flanking > length(seqHit[[1]])){
+          flankingLeft <- floor(hitStart/window)
+        } else if(hitEnd - 1000 * flanking <= 1){
+          flankingRight <- floor(hitEnd/window)
+        }
+        hitStartFlank <- hitStart + 1000 * flankingLeft
+        hitEndFlank <- hitEnd - 1000 * flankingRight  
       } else{
-        hitStartFlank <- hitStart - 1000 * flanking
-        hitEndFlank <- hitEnd + 1000 * flanking        
+        if(hitStart - 1000 * flanking <=0){
+          flankingLeft <- floor(hitStart/window)
+        } else if(hitEnd + 1000 * flanking > length(seqHit[[1]])){
+          flankingRight <- floor(hitEnd/window)
+        }
+        hitStartFlank <- hitStart - 1000 * flankingLeft
+        hitEndFlank <- hitEnd + 1000 * flankingRight        
       }
     
       
     # Get the sequence coordiantes
-      if(is.null(window)) window <- origEnd-origStart
-      if(verbose) cat("Using window size:", window,"\n")
+
       origLeft <- seq(origStart,origStartFlank,-window)
       origRight <- seq(origEnd,origEndFlank,window)
       if(verbose) cat("Slots (width/window) in area:", length(origLeft) + length(origRight) + 1,"\n")
@@ -129,21 +153,20 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
         ORIGwinSeqRight <- c()
         HITwinSeqRight <- c()
         if(verbose) cat("Get the left sequences\n")
-        if(verbose) pb   <- txtProgressBar(1, length(scoresLeft), style=3, width=60)
+
         for(i in 1:length(scoresLeft)){
-          ORIGwinSeqLeft[i] <- paste(seqOrig[[1]][origLeft[length(origLeft)+1-i]:origLeft[length(origLeft)-i]],collapse="")
-          HITwinSeqLeft[i] <- paste(seqHit[[1]][hitLeft[length(hitLeft)+1-i]:hitLeft[length(hitLeft)-i]] ,collapse="")
+          if(length(origLeft>1)) ORIGwinSeqLeft[i] <- paste(seqOrig[[1]][origLeft[length(origLeft)+1-i]:origLeft[length(origLeft)-i]],collapse="")
+          if(length(hitLeft>1)) HITwinSeqLeft[i] <- paste(seqHit[[1]][hitLeft[length(hitLeft)+1-i]:hitLeft[length(hitLeft)-i]] ,collapse="")
           if(HITneg) HITwinSeqLeft[i] <- paste(rev(comp(strsplit(HITwinSeqLeft[i],"")[[1]])),collapse="")
-          if(verbose) setTxtProgressBar(pb, i)
         }
-        if(verbose) cat("\nGet the right sequences\n")
-        if(verbose) pb   <- txtProgressBar(1, length(scoresRight), style=3, width=60)
+  
+        if(verbose) cat("Get the right sequences\n")
         for(i in 1:length(scoresRight)){
-          ORIGwinSeqRight[i] <- paste(seqOrig[[1]][origRight[i]:origRight[1+i]], collapse="")  
-          HITwinSeqRight[i] <- paste(seqHit[[1]][hitRight[i]:hitRight[i+1]],collapse="")
+          if(length(origRight>1)) ORIGwinSeqRight[i] <- paste(seqOrig[[1]][origRight[i]:origRight[1+i]], collapse="")  
+          if(length(hitRight>1)) HITwinSeqRight[i] <- paste(seqHit[[1]][hitRight[i]:hitRight[i+1]],collapse="")
           if(HITneg) HITwinSeqRight[i] <- paste(rev(comp(strsplit(HITwinSeqRight[i],"")[[1]])),collapse="")
-          if(verbose) setTxtProgressBar(pb, i)
-        } 
+        }
+        
         origSequence <- paste(seqOrig[[1]][origStart:origEnd],collapse="")
         hitSequence <- paste(seqHit[[1]][hitStart:hitEnd],collapse="")
         
@@ -156,7 +179,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
         mat <- nucleotideSubstitutionMatrix(match = 1, 
                                             mismatch = -1,
                                             baseOnly = FALSE)
-        if(verbose) cat("\nCalculate the scores of",nrow(scoreMatrix),"times",nrow(scoreMatrix),"=",nrow(scoreMatrix)^2,"combinations \n")
+        if(verbose) cat("Calculate the scores of",nrow(scoreMatrix),"times",nrow(scoreMatrix),"=",nrow(scoreMatrix)^2,"combinations \n")
         if(verbose) pb   <- txtProgressBar(1, nrow(scoreMatrix), style=3, width=60)
       for(origIndRun in 1:nrow(scoreMatrix)){
         bestHIT <- 0

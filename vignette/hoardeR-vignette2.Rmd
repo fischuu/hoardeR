@@ -1,0 +1,29 @@
+---
+title: "Vignette - The use of hoardeR"
+author: "Daniel Fischer"
+date: "June 28, 2016"
+output: pdf_document
+---
+
+# Installation
+
+The installation of hoardeR is straight forward, it is located on Cran and can be installed with the 
+command
+
+```{r eval=FALSE}
+install.packages("hoardeR")
+```
+
+There are no special requirements for the installation, however there are a few package dependencies that have to be met.
+Normally, these dependencies should be installed automatically, if not, missing Cran packages can be installed as above, with
+
+```{r eval=FALSE}
+install.packages("packageName")
+```
+
+and missing Bioconductor packages (e.g. the package _Biostrings_) with 
+
+```{r eval=FALSE}
+source("https://bioconductor.org/biocLite.R")
+biocLite("Biostrings")
+```
