@@ -3,25 +3,47 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
                     annotFile=NULL, hitSpecies=NULL, hitSpeciesVersion=NULL, origSpecies=NULL,
                     origSpeciesVersion=NULL, fastaFolder=NULL, release=84,
                     origAnnot=NULL, hitAnnot=NULL, nTick=5, which=NULL, figureFolder=NULL,
-                    figurePrefix=NULL, indexOffset=0){
+                    figurePrefix=NULL, indexOffset=0, bamFolder=NULL, bamFiles=NULL, groupIndex=NULL, groupColor=NULL,
+                    countWindow=NULL){
   
 # Store the original values
   windowOrig <- window
   hitsOrig <- hits
   origAnnotOrig <- origAnnot
   hitAnnotOrig <- hitAnnot
-  flankingLeft <- flanking
-  flankingRight <- flanking
+  
+  flankingLeft.orig <- flanking
+  flankingRight.orig <- flanking
+  flankingLeft.hit <- flanking
+  flankingRight.hit <- flanking
+  
+  if(!is.null(bamFolder)){
+    if(is.null(bamFiles)){
+      fls <- list.files(bamFolder, recursive=TRUE, pattern="\\.bam$", full=TRUE)
+    } else {
+      fls <- paste(bamFolder, bamFiles, sep="")
+    }
+  }
+  
+  if(coverage){
+    if(is.null(groupIndex)) groupIndex <- rep(1,length(fls))
+    if(is.null(groupColor)) groupColor <- 1:max(groupIndex)
+  }
+  
   if(!is.null(which)) hits <- hits[which,]
   for(hitRun in 1:nrow(hits)){
   # Restore for each run the original values
     window <- windowOrig
     origAnnot <- origAnnotOrig
     hitAnnot <- hitAnnotOrig
-    tempGeneName <-gsub(' \"', '', strsplit(strsplit(hits[hitRun]$V9,"gene_name")[[1]][2],'\";')[[1]][1])
-    # If the previous version hasn't found a gene name, try another way
-    if(is.na(tempGeneName)){
+    if(grepl("gene_name", hits[hitRun]$V9)){
+      tempGeneName <-gsub(' \"', '', strsplit(strsplit(hits[hitRun]$V9,"gene_name")[[1]][2],'\";')[[1]][1])
+    } else if(grepl("gene=", hits[hitRun]$V9)){
       tempGeneName <- strsplit(strsplit(hits[hitRun]$V9,"gene=")[[1]][[2]],";")[[1]][[1]]
+    } else if(grepl("gene_id", hits[hitRun]$V9)){
+      tempGeneName <- gsub(' \"', '', strsplit(strsplit(hits[hitRun]$V9,"gene_id")[[1]][2],'\";')[[1]][1])
+    } else {
+      stop("Cannot resolve the hit organism gene name from the annotation file.")
     }
 
     if(!is.null(figureFolder)) png(file=paste(figureFolder,figurePrefix,hitRun+indexOffset,"-",tempGeneName,".png",sep=""), width=2000, height=1400)
@@ -87,39 +109,50 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
       HITneg <- FALSE    
       if(ORIGcoord[1]>ORIGcoord[2]){
         ORIGneg <- TRUE
-        if(origStart + 1000 * flanking > length(seqOrig[[1]])){
-          flankingLeft <- floor(origStart/window)
+        if(origStart + 1000 * flanking > length(seqOrig[[1]])){    # The original start flankinf site is outside the chromosome boarder
+          flankingLeft.orig <- floor(origStart/window)             # Adjust the flanking factor
         } else if(origEnd - 1000 * flanking <= 1){
-          flankingRight <- floor(origEnd/window)
+          flankingRight.orig <- floor(origEnd/window)
         }
-        origStartFlank <- origStart + 1000 * flankingLeft
-        origEndFlank <- origEnd - 1000 * flankingRight
+        origStartFlank <- origStart + 1000 * flankingLeft.orig
+        origEndFlank <- origEnd - 1000 * flankingRight.orig
+        origStartFlank.forPlotting <- origStart + 1000 * flanking
+        origEndFlank.forPlotting <- origEnd - 1000 * flanking
       } else {
-        if(origStart - 1000 * flanking <=0){
-          flankingLeft <- floor(origStart/window)
+        if(origStart - 1000 * flanking <=0){                       # The original sequence start is outside the chromsome border (with flanking)
+          flankingLeft.orig <- floor(origStart/window)
         } else if(origEnd + 1000 * flanking > length(seqOrig[[1]])){
-          flankingRight <- floor(origEnd/window)
+          flankingRight.orig <- floor(origEnd/window)
         }
-        origStartFlank <- origStart - 1000 * flankingLeft
-        origEndFlank <- origEnd + 1000 * flankingRight
+        origStartFlank <- origStart - 1000 * flankingLeft.orig
+        origEndFlank <- origEnd + 1000 * flankingRight.orig
+        origStartFlank.forPlotting <- origStart - 1000 * flanking
+        origEndFlank.forPlotting <- origEnd + 1000 * flanking
+        
       }
       if(HITcoord[1]>HITcoord[2]){
         HITneg <- TRUE
         if(hitStart + 1000 * flanking > length(seqHit[[1]])){
-          flankingLeft <- floor(hitStart/window)
+          flankingLeft.hit <- floor(hitStart/window)
         } else if(hitEnd - 1000 * flanking <= 1){
-          flankingRight <- floor(hitEnd/window)
+          flankingRight.hit <- floor(hitEnd/window)
         }
-        hitStartFlank <- hitStart + 1000 * flankingLeft
-        hitEndFlank <- hitEnd - 1000 * flankingRight  
+        hitStartFlank <- hitStart + 1000 * flankingLeft.hit
+        hitEndFlank <- hitEnd - 1000 * flankingRight.hit  
+        hitStartFlank.forPlotting <- hitStart + 1000 * flanking
+        hitEndFlank.forPlotting <- hitEnd - 1000 * flanking
+        
       } else{
         if(hitStart - 1000 * flanking <=0){
-          flankingLeft <- floor(hitStart/window)
+          flankingLeft.hit <- floor(hitStart/window)
         } else if(hitEnd + 1000 * flanking > length(seqHit[[1]])){
-          flankingRight <- floor(hitEnd/window)
+          flankingRight.hit <- floor(hitEnd/window)
         }
-        hitStartFlank <- hitStart - 1000 * flankingLeft
-        hitEndFlank <- hitEnd + 1000 * flankingRight        
+        hitStartFlank <- hitStart - 1000 * flankingLeft.hit
+        hitEndFlank <- hitEnd + 1000 * flankingRight.hit        
+        hitStartFlank.forPlotting <- hitStart - 1000 * flanking
+        hitEndFlank.forPlottinig <- hitEnd + 1000 * flanking
+        
       }
     
       
@@ -127,9 +160,13 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
 
       origLeft <- seq(origStart,origStartFlank,-window)
       origRight <- seq(origEnd,origEndFlank,window)
+      origLeft.forPlotting <- seq(origStart,origStartFlank.forPlotting,-window)
+      origRight.forPlotting <- seq(origEnd,origEndFlank.forPlotting,window)
+      
       if(verbose) cat("Slots (width/window) in area:", length(origLeft) + length(origRight) + 1,"\n")
       
     # Get the plotting coordinates
+      xRange.forPlotting <- range(c(origLeft.forPlotting,origRight.forPlotting))
       xRange <- range(c(origLeft,origRight))
       yRange <- c(-1.25,1.25)
       if(annot) yRange <- yRange + c(-0.5,0.5)
@@ -152,21 +189,28 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
         HITwinSeqLeft <- c()
         ORIGwinSeqRight <- c()
         HITwinSeqRight <- c()
-        if(verbose) cat("Get the left sequences\n")
 
-        for(i in 1:length(scoresLeft)){
-          if(length(origLeft>1)) ORIGwinSeqLeft[i] <- paste(seqOrig[[1]][origLeft[length(origLeft)+1-i]:origLeft[length(origLeft)-i]],collapse="")
-          if(length(hitLeft>1)) HITwinSeqLeft[i] <- paste(seqHit[[1]][hitLeft[length(hitLeft)+1-i]:hitLeft[length(hitLeft)-i]] ,collapse="")
-          if(HITneg) HITwinSeqLeft[i] <- paste(rev(comp(strsplit(HITwinSeqLeft[i],"")[[1]])),collapse="")
+        if(length(scoresLeft)>1){
+          if(verbose) cat("Get the left sequences\n")
+          for(i in 1:length(scoresLeft)){
+            if(length(origLeft>1)) ORIGwinSeqLeft[i] <- paste(seqOrig[[1]][origLeft[length(origLeft)+1-i]:origLeft[length(origLeft)-i]],collapse="")
+            if(length(hitLeft>1)) HITwinSeqLeft[i] <- paste(seqHit[[1]][hitLeft[length(hitLeft)+1-i]:hitLeft[length(hitLeft)-i]] ,collapse="")
+            if(HITneg) HITwinSeqLeft[i] <- paste(rev(comp(strsplit(HITwinSeqLeft[i],"")[[1]])),collapse="")
+          }
+        } else {
+          if(verbose) cat("No left sequences, original sequence is on chromosome border\n")
         }
   
-        if(verbose) cat("Get the right sequences\n")
-        for(i in 1:length(scoresRight)){
-          if(length(origRight>1)) ORIGwinSeqRight[i] <- paste(seqOrig[[1]][origRight[i]:origRight[1+i]], collapse="")  
-          if(length(hitRight>1)) HITwinSeqRight[i] <- paste(seqHit[[1]][hitRight[i]:hitRight[i+1]],collapse="")
-          if(HITneg) HITwinSeqRight[i] <- paste(rev(comp(strsplit(HITwinSeqRight[i],"")[[1]])),collapse="")
+        if(length(scoresRight)>1){
+           if(verbose) cat("Get the right sequences\n")
+           for(i in 1:length(scoresRight)){
+             if(length(origRight>1)) ORIGwinSeqRight[i] <- paste(seqOrig[[1]][origRight[i]:origRight[1+i]], collapse="")  
+             if(length(hitRight>1)) HITwinSeqRight[i] <- paste(seqHit[[1]][hitRight[i]:hitRight[i+1]],collapse="")
+             if(HITneg) HITwinSeqRight[i] <- paste(rev(comp(strsplit(HITwinSeqRight[i],"")[[1]])),collapse="")
+           }
+        } else {
+          if(verbose) cat("No right sequences, original sequence is on chromosome border\n")
         }
-        
         origSequence <- paste(seqOrig[[1]][origStart:origEnd],collapse="")
         hitSequence <- paste(seqHit[[1]][hitStart:hitEnd],collapse="")
         
@@ -203,6 +247,10 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
         scoreMatrix[origIndRun,4] <- scoreMatrix[origIndRun,3] + best@subject@range@width
         scoreMatrix[origIndRun,6] <- bestHit
         if(verbose) setTxtProgressBar(pb, origIndRun)
+        
+        # Adjust the scoreMatrix, in case we have negative coordinates
+        
+        
       }
   ## CHECK HERE STILL WITH THE SCORING; WHY ARE THOSE WEIGHTS THERE!?!?!?
       scoresHit <- pairwiseAlignment(toupper(origSequence), 
@@ -249,7 +297,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
     }
     
     
-    plot(-100,-100, ylim=yRange, xlim=c(xRange), xaxt="n", yaxt="n", ylab="", xlab="Chromosomal positions of original and target organism")
+    plot(-100,-100, ylim=yRange, xlim=c(xRange.forPlotting), xaxt="n", yaxt="n", ylab="", xlab="Chromosomal positions of original and target organism")
     
     
     redGreenFun <- colorRampPalette(c("red", "green"))
@@ -314,14 +362,19 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
     
     
     lines(c(xRange[1],xRange[2]),c(1,1))
-    origTicks <- seq(xRange[1], xRange[2],length.out = nTick)
-    for(tick in 1:nTick){
+    if(xRange[1]>=xRange.forPlotting[1]){
+      origTicks <- seq(xRange[1], xRange[2],length.out = nTick)      
+    } else {
+      origTicks <- seq(xRange[1], xRange[2],length.out = nTick/2+1)
+    }
+
+    for(tick in 1:length(origTicks)){
       lines(c(origTicks[tick],origTicks[tick]),c(1,1.05))
     }
     origTicksNice <- prettyNum(as.character(round(origTicks,0)), big.mark=",")
     text(origTicks,1.1,paste(origChr,origTicksNice,sep=":"))
     
-    lines(c(xRange[1],xRange[2]),c(-1,-1))
+    lines(c(xRange.forPlotting[1],xRange.forPlotting[2]),c(-1,-1))
     hitTicks <- seq(hitStartFlank, hitEndFlank,length.out = nTick)
     for(tick in 1:nTick){
       lines(c(origTicks[tick],origTicks[tick]),c(-1,-1.05))
@@ -411,32 +464,48 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
         }
       }
     } # if(annot)
-    
+
     if(coverage){
-      features <- GRanges( seqnames = rep(SSChr,length(SSLeft)+length(SSRight)),
-                           ranges = IRanges(seq(xRange[1], xRange[2], window),
-                                            width=window)
-      )
-      olap <- summarizeOverlaps(features, bfl)
-      counts12 <- apply(assays(olap)$counts[,1:2],1,mean)
-      counts34 <- apply(assays(olap)$counts[,3:4],1,mean)
-      maxCounts <- max(c(counts12,counts34))
-      counts12 <- counts12/maxCounts
-      counts34 <- counts34/maxCounts
-      counts12 <- counts12 + 2
-      counts34 <- counts34 + 2
+
+      if(is.null(countWindow)) countWindow <- window
+      if(verbose) cat("\nWe use",length(fls),"bamfiles to calculate the average coverage.\n")
+      tmpStart <- seq(xRange[1],xRange[2],countWindow)
+      tmpStart <- tmpStart[-length(tmpStart)]
+      features <- GRanges( seqnames = origChr,
+                           ranges = IRanges(tmpStart,
+                                            width=countWindow))
+
+      counts <- matrix(0, ncol=length(tmpStart), nrow=length(fls))
+      for(bamRun in 1:length(fls)){
+        counts[bamRun,] <- bamCount(fls[bamRun], features, verbose=FALSE)        
+      }
+
+      countsGroups <- list()
+      for(groupRun in 1:max(groupIndex)){
+        countsGroups[[groupRun]] <- counts[groupIndex==groupRun,]
+      }
       
+      groupMeans <- matrix(0, ncol=length(tmpStart), nrow=max(groupIndex))
+      for(groupRun in 1:max(groupIndex)){
+        groupMeans[groupRun,] <- apply(countsGroups[[groupRun]],2,mean)
+      }
+      
+      maxCounts <- max(groupMeans)
+      groupMeans <- groupMeans/maxCounts
+      groupMeans <- groupMeans + 2
+
       centers <- as.matrix(features@ranges)
-      centers <- centers[,1] - centers[,2]/2 
+      centers <- centers[,1] + centers[,2]/2 
       
       if(is.numeric(smoothPara)){
-        lo12 <- loess(counts12~centers, span=smoothPara)
-        lo34 <- loess(counts34~centers, span=smoothPara)
-        lines(centers,predict(lo12), col='red', lwd=2)
-        lines(centers,predict(lo34), col='blue', lwd=2)
+        for(groupRun in 1:max(groupIndex)){
+          tmpCurve <- loess(groupMeans[groupRun,]~centers, span=smoothPara)
+          lines(centers,predict(tmpCurve), col=groupColor[groupRun], lwd=2)
+        }
       } else {
-        lines(centers,counts12, col='red', lwd=2)
-        lines(centers,counts34, col='blue', lwd=2)    
+        for(groupRun in 1:max(groupIndex)){
+          lines(centers,groupMeans[groupRun,], col=groupColor[groupRun], lwd=2)
+        }
       }
       
       lines(xRange,c(2,2))
