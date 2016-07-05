@@ -3,7 +3,7 @@ import(httr, XML, stringr, MASS, R.utils, data.table, seqinr, Biostrings, Rsamto
 export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
        importGTF, importGFF3, importPedMap, importBlastTab, intersectXMLAnnot,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
-       plotHit)
+       plotHit, getFastaFromBed)
 
 S3method(print,fa)
 S3method(summary,fa)

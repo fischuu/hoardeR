@@ -1,8 +1,13 @@
 ---
-title: "Vignette - The use of hoardeR"
-author: "Daniel Fischer"
-date: "June 28, 2016"
-output: pdf_document
+title: "Vignette: hoardeR"
+subtitle: "Guided Cross-Species Identification of Novel Gene Candidates"
+author: "Daniel Fischer and Anu Sironen"
+date: "July 7, 2016"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
 ---
 
 
@@ -15,29 +20,31 @@ command
 install.packages("hoardeR")
 ```
 
-There are no special requirements for the installation, however there are a few package dependencies that have to be met.
-Normally, these dependencies should be installed automatically, if not, missing Cran packages can be installed as above, with
+There are no special system requirements for the installation. However there are a few package dependencies that have to be met.
+Normally, these dependencies are installed automatically, too. If not, missing Cran packages be installed prior to the installation
+as above, with
 
 ```{r eval=FALSE}
 install.packages("packageName")
 ```
 
-and missing Bioconductor packages (e.g. the package _Biostrings_) with 
+Missing Bioconductor packages (e.g. the package _Biostrings_) with 
 
 ```{r eval=FALSE}
 source("https://bioconductor.org/biocLite.R")
 biocLite("Biostrings")
 ```
 
-The latest developer version of hoardeR is located on GitHub, here
+The latest developer version, of hoardeR is located on GitHub, here
 
 https://github.com/fischuu/hoardeR
 
-and the adress on Cran is
+and the address on Cran with the latest stable release version is
 
 https://cran.r-project.org/web/packages/hoardeR/
 
-Packages from GitHub can be installed directly in R, using the _devtools_ package
+Packages from GitHub can be installed directly in R, using the _devtools_ package. To install hoardeR from GitHub,
+the following commands are required
 
 ```{r eval=FALSE}
 install.packages("devtools")
@@ -45,10 +52,16 @@ library("devtools")
 install_github("fischuu/hoardeR")
 ```
 
+Once the package is installed, it can be loaded into the namespace 
+
+```{r, warning=FALSE}
+library(hoardeR)
+```
+
 # Using hoardeR for identifying cross-species orthologs of novel candidate genes
 
 ## Typical workflow prior the use of hoardeR
-The common way to use hoardeR is to search cross-species orthologs of unannotated regions in a present organism. For that, typically, an RNA-seq
+The common application of hoardeR is to search cross-species orthologs of unannotated, but active regions in a present organism. For that, typically an RNA-seq
 experiment has been conducted, the reads have been mapped to a reference genome and gene expressions have been estimated using some annotation.
 
 Further, reads from non-annotated regions have been analysed and a set of novel gene candidate regions has been identified. This can be done either
@@ -77,7 +90,6 @@ The first rows of a typical gtf file would like this:
 
 The first lines of a bed file containing the same information would look like this:
 
-\tiny
 
 ```{bash eval=FALSE}
 1       242203      242862      XLOC_000002.1
@@ -92,4 +104,114 @@ The first lines of a bed file containing the same information would look like th
 1       9347375     9347527     XLOC_000047.1
 ```
 
+For the identification of cross-species orthologs, the exon structure is not the primary interest. Rather, the whole genomic region that hosts a novel candidate gene is
+used here. Typically, not all novel gene candidates are considered and the lists are filtered according to some criteria, e.g. that a certain amount of genes is located
+within these regions, or a certain amount of samples have to have reads in that region.
+
+The final set of regions of interest is then available in bed format, e.g. like this
+
+```{bash eval=FALSE}
+1       242203      256717      XLOC_000002
+1       341982      343630      XLOC_000003
+1       3312599     3447142     XLOC_000024
+1       9347375     9347527     XLOC_000047
+```
+
+
+
+For these loci, the nucleotide sequences have to be extracted. There are two way to do that. The first option is to do it outside of R using bedtools. For that, the
+bed file has to be saved to the HDD first. Assuming the _data.frame_ that contains the bed information is called _novelBed_ and we defined a system path to the project,
+called _projFolder_. The command to export the _data.frame_ then is
+
+```{bash eval=FALSE}
+  projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
+  write.table(novelBed, file.path(projFolder,"novel.bed"), row.names=FALSE, 
+              col.names=FALSE, sep="\t", quote=FALSE)
+```
+
+In the console this bed file can then be used to extract the fasta files, using the bedtools tool like this
+
+```{bash eval=FALSE}
+bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
+```
+
+Here, the _<input FASTA>_ is a fasta file that contains the genome information of the species under investigation. If the resulting _novel.fa_ file is empty or
+some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). This approach is especially then adviceable, when the species of interest is rare or the fasta file is not available from ensembl in the latest version.
+
+However, if the species and also the genome assembly version is available at ensembl,  the fasta information can be obtained straight with the hoardeR function
+_getFastaFromBed_. The hoardeR package is able to download the most common species genomes and annotations, a list of available combinations can be found in the
+_species_ dataset, that comes with hoardeR
+
+```{bash eval=FALSE}
+bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
+```
+
+\tiny
+```{r text.width=200}
+head(species)
+```
 \normalsize
+
+Of particular interest are here the columns _Scientific.name_ and _Ensembl.assembly_. If your species of interest matches your used assembly, you can use the automatic
+hoardeR function _getFastaFromBed_ to obtain your fasta object like this. Here, we assume that our species of interest is cow/bos taurus and the fasta files should be
+downloaded to the folder _/home/daniel/fasta/_
+
+```{r eval=FALSE}
+getFastaFromBed(novelBed, species="Bos taurus", fastaFolder="/home/daniel/fasta/")
+```
+
+It is also possible to obtain the genomic information with this command from assemblies that are not provided from Ensembl, or that have a newer/older version number.
+For that, the full syntax is
+
+```{r eval=FALSE}
+getFastaFromBed(novelBed, species="Bos taurus", release = "84", fastaFolder=NULL, version=NULL)
+```
+
+Here, the Ensembl release version and also the assmebly version can be specified. However, if no release number is given (i.e. _release=NULL_), the function assumes
+to find a non-ensembl fasta file in the folder _fastaFolder_. These fasta files need then to be of the format, e.g. for the cow assembly version UMD3.1
+
+```{r eval=FALSE}
+Bos_taurus.UMD3.1.dna.chromosome.1.fa.gz
+Bos_taurus.UMD3.1.dna.chromosome.2.fa.gz
+Bos_taurus.UMD3.1.dna.chromosome.3.fa.gz
+...
+```
+
+That means, first the scientific name, with underscores, then a dot, then the assembly identifier followed by another dot, then _dna.chromosome._ and the chromosome
+identifier, and then the file ending _fa.gz_. That means, the fasta files have to be gzipped.
+
+As a working example, on Ensembl is only the sheep genome assembly 'Oar\_v3.1', if one needs to work with the 'Oar\_v4.0', one would download the chromosome wise files
+and then store them in some folder on the HDD as 
+
+```{r eval=FALSE}
+Ovis_aries.Oar_v4.0.dna.chromosome.1.fa.gz
+Ovis_aries.Oar_v4.0.dna.chromosome.2.fa.gz
+Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
+...
+```
+
+To obtain then the corresponding fasta objects, the command is
+
+```{r eval=FALSE}
+getFastaFromBed(novelBed, species="Ovis aries", release = NULL, fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
+```
+
+assuming again that the fasta files are located in _/home/daniel/fasta/_
+
+```{r eval=FALSE}
+bed <- data.frame(Chr=c(1,10,12),
+                  Start=c(24985574,69326152,36272084),
+                  End=c(25059288,69326476,36272933),
+                  Gene=c("LOC1", "LOC2", "LOC3"))
+novelFA <- getFastaFromBed(bed, species="Bos taurus", release = "84", fastaFolder="/home/ejo138/temp")
+```
+
+The option to extract the fasta sequences via bedtools is, however, much faster and is the preferred way. The internal function is especially useful for small bed files 
+or fast testing purposes.
+
+  blastSeq(novelFA, 
+           email="daniel.fischer@luke.fi",
+           xmlFolder=file.path(projFolder,"hoardeROut/"),
+           logFolder=file.path(projFolder,"hoardeRLog/"),
+           keepInMemory=FALSE
+           )
