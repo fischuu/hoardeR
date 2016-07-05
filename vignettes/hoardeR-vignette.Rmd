@@ -215,3 +215,4 @@ or fast testing purposes.
            logFolder=file.path(projFolder,"hoardeRLog/"),
            keepInMemory=FALSE
            )
+           
