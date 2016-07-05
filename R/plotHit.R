@@ -12,11 +12,6 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
   origAnnotOrig <- origAnnot
   hitAnnotOrig <- hitAnnot
   
-  flankingLeft.orig <- flanking
-  flankingRight.orig <- flanking
-  flankingLeft.hit <- flanking
-  flankingRight.hit <- flanking
-  
   if(!is.null(bamFolder)){
     if(is.null(bamFiles)){
       fls <- list.files(bamFolder, recursive=TRUE, pattern="\\.bam$", full=TRUE)
@@ -36,6 +31,11 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
     window <- windowOrig
     origAnnot <- origAnnotOrig
     hitAnnot <- hitAnnotOrig
+    flankingLeft.orig <- flanking
+    flankingRight.orig <- flanking
+    flankingLeft.hit <- flanking
+    flankingRight.hit <- flanking
+    
     if(grepl("gene_name", hits[hitRun]$V9)){
       tempGeneName <-gsub(' \"', '', strsplit(strsplit(hits[hitRun]$V9,"gene_name")[[1]][2],'\";')[[1]][1])
     } else if(grepl("gene=", hits[hitRun]$V9)){
@@ -429,11 +429,22 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
   #      }
         for(i in 1:nrow(hitAnnot)){
           lines(c(hitAnnot$V4[i]+ xRange[1] - hitRange[1], hitAnnot$V5[i] + xRange[1]-hitRange[1]), c(-1.5,-1.5), lwd=5)
-          tempGeneName <-gsub(' \"', '', strsplit(strsplit(hitAnnot$V9[i],"gene_name")[[1]][2],'\";')[[1]][1])
+        #  tempGeneName <-gsub(' \"', '', strsplit(strsplit(hitAnnot$V9[i],"gene_name")[[1]][2],'\";')[[1]][1])
         # If the previous version hasn't found a gene name, try another way
-          if(is.na(tempGeneName)){
+        #  if(is.na(tempGeneName)){
+        #    tempGeneName <- strsplit(strsplit(hitAnnot$V9[i],"gene=")[[1]][[2]],";")[[1]][[1]]
+        #  }
+          
+          if(grepl("gene_name", hitAnnot$V9[i])){
+            tempGeneName <-gsub(' \"', '', strsplit(strsplit(hitAnnot$V9[i],"gene_name")[[1]][2],'\";')[[1]][1])
+          } else if(grepl("gene=", hitAnnot$V9[i])){
             tempGeneName <- strsplit(strsplit(hitAnnot$V9[i],"gene=")[[1]][[2]],";")[[1]][[1]]
+          } else if(grepl("gene_id", hitAnnot$V9[i])){
+            tempGeneName <- gsub(' \"', '', strsplit(strsplit(hitAnnot$V9[i],"gene_id")[[1]][2],'\";')[[1]][1])
+          } else {
+            stop("Cannot resolve the hit organism gene name from the annotation file.")
           }
+
           text(mean(c(hitAnnot$V4[i]+ xRange[1] - hitRange[1], hitAnnot$V5[i] + xRange[1]-hitRange[1])), -1.6, tempGeneName) 
           
     #      temp <- as.character(HITexon$gene_id)
@@ -487,7 +498,11 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE, l
       
       groupMeans <- matrix(0, ncol=length(tmpStart), nrow=max(groupIndex))
       for(groupRun in 1:max(groupIndex)){
-        groupMeans[groupRun,] <- apply(countsGroups[[groupRun]],2,mean)
+        if(is.null(nrow(countsGroups[[groupRun]]))){
+          groupMeans[groupRun,] <- countsGroups[[groupRun]]
+        } else {
+          groupMeans[groupRun,] <- apply(countsGroups[[groupRun]],2,mean)
+        }
       }
       
       maxCounts <- max(groupMeans)
