@@ -30,7 +30,7 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
     seqSpecies <- read.fasta(.file,seqtype="DNA")
     novelFA[bedRun] <- paste(seqSpecies[[1]][bed$Start[bedRun]:bed$End[bedRun]],collapse="")
   }
-  names(novelFA) <- bed[,4]
+  names(novelFA) <- paste(">",bed[,1],":",bed[,2],"-",bed[,3],sep="")
   if(!is.null(export)){
     cat("Sorry, the export function is not yet implemented, please store the output of this function manually.")
   }

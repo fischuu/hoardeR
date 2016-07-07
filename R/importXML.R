@@ -26,7 +26,7 @@ importXML <- function(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRU
   runningIndex <- 1
   for(i in which){
     # Read in the XML file line by line
-    res <- readLines(paste(folder,fileList[i],sep=""))
+    res <- readLines(file.path(folder,fileList[i]))
     # Extract the necessary information
     queryLength <- res[grepl("<BlastOutput_query-len>",res)]
     queryLength <- as.numeric(strsplit(strsplit(queryLength,"-len>")[[1]][2],"</Blast")[[1]][1])

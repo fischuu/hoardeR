@@ -2,6 +2,7 @@ intersectXMLAnnot <- function(tabSpecies, annot, level="gene", flanking=NULL){
   start <- min(c(tabSpecies$hitStart,tabSpecies$hitEnd))
   end <-  max(c(tabSpecies$hitStart,tabSpecies$hitEnd))
   if(!is.null(flanking)){
+    flanking <- 1000 * flanking
     if(length(flanking)==1) flanking <- c(flanking, flanking)
     start <- start - flanking[1]
     end <- end + flanking[2]

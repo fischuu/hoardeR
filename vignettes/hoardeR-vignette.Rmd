@@ -17,7 +17,7 @@ The installation of hoardeR is straight forward, it is located on Cran and can b
 command
 
 ```{r eval=FALSE}
-install.packages("hoardeR")
+> install.packages("hoardeR")
 ```
 
 There are no special system requirements for the installation. However there are a few package dependencies that have to be met.
@@ -25,14 +25,14 @@ Normally, these dependencies are installed automatically, too. If not, missing C
 as above, with
 
 ```{r eval=FALSE}
-install.packages("packageName")
+> install.packages("packageName")
 ```
 
 Missing Bioconductor packages (e.g. the package _Biostrings_) with 
 
 ```{r eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("Biostrings")
+> source("https://bioconductor.org/biocLite.R")
+> biocLite("Biostrings")
 ```
 
 The latest developer version, of hoardeR is located on GitHub, here
@@ -47,15 +47,15 @@ Packages from GitHub can be installed directly in R, using the _devtools_ packag
 the following commands are required
 
 ```{r eval=FALSE}
-install.packages("devtools")
-library("devtools")
-install_github("fischuu/hoardeR")
+> install.packages("devtools")
+> library("devtools")
+> install_github("fischuu/hoardeR")
 ```
 
 Once the package is installed, it can be loaded into the namespace 
 
-```{r, warning=FALSE}
-library(hoardeR)
+```{r, warning=FALSE, eval=FALSE}
+> library(hoardeR)
 ```
 
 # Using hoardeR for identifying cross-species orthologs of novel candidate genes
@@ -146,9 +146,19 @@ _species_ dataset, that comes with hoardeR
 bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
 ```
 
+```{r eval=FALSE}
+> head(species)
+```
+
 \tiny
-```{r text.width=200}
-head(species)
+```{r eval=FALSE}
+       Common.name         Scientific.name Taxon.ID       Ensembl.Assembly       Accession Variation.database Regulation.database Pre.assembly
+1   Aardvark (Pre)   Orycteropus afer afer  1230840                      -               -                  -                   -      OryAfe1
+2           Alpaca           Vicugna pacos    30538                vicPac1               -                  -                   -            -
+3     Amazon molly        Poecilia formosa    48698 Poecilia_formosa-5.1.2 GCA_000485575.1                  -                   -            -
+4     Anole lizard     Anolis carolinensis    28377              AnoCar2.0 GCA_000090745.1                  -                   -            -
+5        Armadillo    Dasypus novemcinctus     9361              Dasnov3.0 GCA_000208655.2                  -                   -            -
+6 Budgerigar (Pre) Melopsittacus undulatus    13146                      -               -                  -                   -    MelUnd6.3
 ```
 \normalsize
 
@@ -164,7 +174,7 @@ It is also possible to obtain the genomic information with this command from ass
 For that, the full syntax is
 
 ```{r eval=FALSE}
-getFastaFromBed(novelBed, species="Bos taurus", release = "84", fastaFolder=NULL, version=NULL)
+> getFastaFromBed(novelBed, species="Bos taurus", release = "84", fastaFolder=NULL, version=NULL)
 ```
 
 Here, the Ensembl release version and also the assmebly version can be specified. However, if no release number is given (i.e. _release=NULL_), the function assumes
@@ -193,26 +203,297 @@ Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
 To obtain then the corresponding fasta objects, the command is
 
 ```{r eval=FALSE}
-getFastaFromBed(novelBed, species="Ovis aries", release = NULL, fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
+> getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
+                  fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
 ```
 
 assuming again that the fasta files are located in _/home/daniel/fasta/_
 
 ```{r eval=FALSE}
-bed <- data.frame(Chr=c(1,10,12),
-                  Start=c(24985574,69326152,36272084),
-                  End=c(25059288,69326476,36272933),
-                  Gene=c("LOC1", "LOC2", "LOC3"))
-novelFA <- getFastaFromBed(bed, species="Bos taurus", release = "84", fastaFolder="/home/ejo138/temp")
+> bed <- data.frame(Chr=c(11,18,3),
+                    Start=c(72554673, 62550696, 18148822),
+                    End=c(72555273, 62551296, 18149422),
+                    Gene=c("LOC1", "LOC2", "LOC3"))
+> novelFA <- getFastaFromBed(bed, species="Bos taurus", release = "84", 
+                             fastaFolder="/home/ejo138/temp")
 ```
 
-The option to extract the fasta sequences via bedtools is, however, much faster and is the preferred way. The internal function is especially useful for small bed files 
-or fast testing purposes.
+The option to extract the fasta sequences via bedtools is, however, much faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes.
 
-  blastSeq(novelFA, 
-           email="daniel.fischer@luke.fi",
-           xmlFolder=file.path(projFolder,"hoardeROut/"),
-           logFolder=file.path(projFolder,"hoardeRLog/"),
-           keepInMemory=FALSE
-           )
-           
+A previous stored fasta file can be imported to hoardeR with the _importFA()_ function:
+
+```{r eval=FALSE}
+> novelFA <- importFA(file="/home/daniel/myFasta.fa")
+```
+
+The names of the fasta sequences should follow the form like
+
+```{r eval=FALSE}
+>Chr:Start-End
+```
+
+That meansm, for a sequence from chromosome 12 that starts at 123 and end at 456 the fasta sequence should be named like the following.
+
+```{r eval=FALSE}
+>12:123-456
+```
+
+Once the fasta object is available in R, it can be send to the NCBI blast service, using the central hoardeR function _blastSeq()_
+
+```{r eval=FALSE}
+>  blastSeq(novelFA, 
+            email="daniel.fischer@luke.fi",
+            xmlFolder=file.path(projFolder,"hoardeROut/"),
+            logFolder=file.path(projFolder,"hoardeRLog/"),
+            keepInMemory=FALSE
+            )
+```           
+
+The main parameters are the fasta object, then for etiquette reasons a valid email address of the person who sends the data to NCBI and
+the required folder locations on the HDD. If they are not available, hoardeR will create them.
+
+The _xmlFolder_ stores the results delivered back from NCBI in xml format and the _logFolder_ stores the log files. These files are
+especially then important, when the run crashes and should be continued or if the computer is switched off in between. 
+
+If a crashed run should be continued, it is enough to run the same command as the initially one using the same fasta object and hoardeR
+will continue from the point, where it crashed or it was interrupted. If the option _verbose=TRUE_ is set (default), hoardeR keeps 
+reporting status updates of the blast runs. There are still some finetuning parameters available, see the manual for details. However,
+there are some etiquette parameters of NCBI that cannot be changed. These are e.g the frequency and amounts of requests.
+
+The verbose output of a _blastSeq_ run looks as follows
+
+```{r eval=FALSE}
+Missing: 3 
+Running: 1 
+Finished: 0 
+Avg. Blast Time: 00:00:00 
+Total running time: 00:00:04 
+---------------------------------------------------------------
+```
+
+indicating e.g. here that there were 3 fasta sequences to be blasted, one of them is already running an NCBI, 0 are finished so
+far and the running time of the whole run is 4 seconds. After a while, _blastSeq_ starts to check, if the active blast runs are
+finalized to spawn the next ones. In that case, the verbose output looks like this:
+
+```{r eval=FALSE}
+Run RW99J31C01R : 00:02:23 
+Missing: 1 
+Running: 1 
+Finished: 2 
+Avg. Blast Time: 00:01:10 
+Total running time: 00:02:40 
+---------------------------------------------------------------
+```
+
+Here, we see that there is still one sequence missing and one is also running. The ID number of that run is _RW99J31C01R_ and it is
+active for 2 minutes and 23 seconds. So far, two sequence runs are ready and their average running time was 1 minute and 10 seconds.
+
+The function stops, when there are no missing sequences anymore. The results of the run are stored in the _xmlFolder_. These results
+can already be analyzed while the _blastSeq_ run is still active, so intermediate results can be obtained on the fly.
+
+To analyze the blast results, first the xml files have to be imported to hoardeR. For that there is the _importXML()_ function.
+It expects the folder address where the xml files are stored, in our example it is the _hoardeROut_ folder in the _projFolder_ folder.
+
+```{r eval=FALSE}
+> xmls <- importXML(folder=file.path(projFolder,"hoardeROut/"))
+```
+
+One of the first steps is to check what hit organisms were found. As naturally all sequences are also found in Bos Taurus/Cow, the
+host organism can be excluded from the table
+
+```{r eval=FALSE}
+> tableSpecies(xmls, exclude="Bos taurus")
+```
+  
+This table can be displayed as barplot e.g. in the following way
+
+```{r eval=FALSE}
+> par(oma=c(5,0,0,0))
+> barplot(sort(tableSpecies(xmls, exclude="Bos taurus"), decreasing=TRUE), las=2)
+```
+
+Next the hits for the Sus scrofa/Pig will be visualized. For that, the xml results will be first filtered accordingly. For that
+also the tableSpecies command is used. This time, however, a species is not excluded, but explicitely defined. Further, instead 
+of just counting the occurances, we request in addition the location information:
+
+```{r eval=FALSE}
+> tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
+```
+
+\tiny
+```{r eval=FALSE}
+                                           Organism hitID hitLen hitChr  hitStart    hitEnd origChr origStart  origEnd
+28 Sus scrofa breed mixed chromosome 4, Sscrofa10.2   494    644      4 105815870 105816509       3  18148822 18149422
+```
+
+without the _locations=TRUE_ option, the output is be very minimalistic, as it just gives the frequencies:
+
+```{r eval=FALSE}
+> tableSpecies(xmls)
+  
+Bos taurus Equus caballus     Sus scrofa     Ovis aries 
+         6              1              1              3 
+
+> tableSpecies(xmls, species="Sus scrofa")
+Sus scrofa 
+         1 
+```
+
+The column _Organism_ indicates the hit organism and the corresponding assembly. In this case it is Sus scrofa and SScrofa10.2. Cross-checking with the _species_ data table
+reveals, that this assembly is the default assembly at Ensembl:
+```{r eval=FALSE}
+> species[grepl("Sus scrofa", species$Scientific.name),]       
+```
+
+\tiny
+
+```{r eval=FALSE}
+         Common.name Scientific.name Taxon.ID Ensembl.Assembly       Accession Variation.database Regulation.database Pre.assembly
+57               Pig      Sus scrofa     9823      Sscrofa10.2 GCA_000003025.4                  Y                   Y            -
+58 Pig FPC_map (Pre)  Sus scrofa map       NA                -               -                  -                   -          MAP      
+```
+
+\normalsize
+
+that means that the assembly can be obtained automatically from hoardeR for further analysis. The command _getAnnotation_ download automatically the 
+corresponding annotation into the folder _/home/daniel/annotation_:
+
+```{r eval=FALSE}
+> ssannot <- getAnnotation(species = "Sus scrofa", annotationFolder="/home/daniel/annotation")
+```
+
+Having the annotation inforamtion available from Ensembl, we can intersect the findings with the annotation. First we check if the found loci intersect with 
+an intergenic region in the Sus scrofa genome. Here, we assume that more than one hit was found and results would be stored in a list
+
+```{r eval=FALSE}
+> pigHits <- tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
+> pigInter <- list()
+> for(i in 1:nrow(pigHits)){
+>   pigInter[[i]] <- intersectXMLAnnot(pigHits[i,], ssannot)
+> }
+```
+
+However, unfortunately there is no intersection:
+
+```{r eval=FALSE}
+> pigInter
+[[1]]
+Empty data.table (0 rows) of 15 cols: V1,V2,V3,V4,V5,V6...
+```
+
+Hence, we allow for a larger seach area and add flanking sites of 100kB to each side of the search area:
+
+```{r eval=FALSE}
+> pigInter.flank <- list()
+> for(i in 1:nrow(pigHits)){
+>   pigInter.flank[[i]] <- intersectXMLAnnot(pigHits[i,], ssannot, flanking=100)
+> }
+# This part transforms the list into a data frame and remove those 'hits' that
+# do not report any intersection
+> pigInter.flank <- pigInter.flank[sapply(pigInter.flank,nrow)>0]
+> pigInter.flank <- do.call(rbind, pigInter.flank)
+
+```
+
+This results in an intersection:
+
+\tiny
+```{r eval=FALSE}
+> pigInter.flank
+   V1      V2   V3        V4        V5 V6 V7 V8                                                                                                    V9 origChr origStart  origEnd hitChr  hitStart    hitEnd
+1:  4 ensembl gene 105858080 105858409  .  -  . gene_id "ENSSSCG00000006603"; gene_version "2"; gene_source "ensembl"; gene_biotype "protein_coding";       3  18148822 18149422      4 105815870 105816509
+```
+\normalsize
+
+In order to visualize the results the _plotHit_ function can be used. In its basic appearance, it only plots the similarity between the 
+original and the hit organism like this:
+
+```{r eval=FALSE}
+>        plotHit(
++            hits=pigInter.flank,
++            flanking=100,
++            diagonal=0.25 ,
++            hitSpecies = "Sus scrofa",
++            origSpecies = "Bos taurus",
++            fastaFolder = "/home/ejo138/fasta/",
+           # The following options are optional
++            window=NULL , 
++            which=NULL,
++            figureFolder = "/home/daniel/figures/",
++            figurePrefix = "pigIS"
++            ) 
+```
+
+The parameters are then as follows. _hits_ expects the matrix from above with the hits. If this is a matrix (i.e. several hits were found)
+a figure folder should be provided, as for each hit a separate plot will be created. For example, we the above optional parameters a figure
+for each hit will be created in the folder _/home/daniel/figures/_, using the prefix _pigIS_. However, if only a single figure should be
+created, without storing it directly to the HDD, one would drop the _figureFolder_ and _figurePrefix_ parameters (they are _NULL_ by default)
+and instead specify in the _which_ option, which hit should be plotted. An alternative would be to restrict the matrix given to the _hits_ 
+option, e.g. for seeing the first hit only, one would use the option _hits=pigInter.flank[1,]_.
+
+The other option control the behavior of the plot. The flanking option defines the plotting area around the hit in Mb and the diagonal option
+defines the threshold after that a similarity line should be plotted. As higher that value (between 0 and 1) as more restrictive it is and
+as less similarity lines will be used in the plot. The two parameters _hitSpecies_ and _origSpecies_ define the two organisms that should
+be compared. In our case the original organism was Bos taurus/cow and the hit was Sus scrofa/pig. The location of the corresponding fasta 
+files (or to where they should be stored), is defined in the _fastaFolder_ option. Again, if the assembly is the same as in the _species_
+dataset, the fasta files will be automatically fetched from the Ensembl page. In case a tailored assembly is required, it can be specified
+with additional options, see the manual for further instructions on that. 
+
+The similarity is calculated using a shifting window approach. That means, the plotting area is divided into chunks of a certain length,
+defined with the _window_ option. By default that window has the similar lengths as the hit-sequence has, but an own value can be defined
+in the _window option_. Our function then tests all pairwise combinations between the chunks of the origianl organism and the hit organism and
+calculates the similarity between them and stores the best result. That way, each chunk of original organism gets a chunk from the hit
+organism assigned. Only those combinations are then considered further, that are at least having a threshold value as defined in _diagonal_.
+
+With that, the figure for the pig would look like this:
+
+![Similarity between Pig and Cow](/home/ejo138/GitHub/hoardeR/vignettes/pigFlanking.png)
+
+On the top line the annotation of Bos taurus is plotted, on the bottom line the one of Sus scrofa, followed by the axes of the chromosomal 
+regions. The vertical center line indicates the hit, further highlighted with the black spots on the chromosomal regions. It appears that
+this region is rather similar, although in the case of Bos taurus it seems that the genomic region is a bit stretched, as the lines are 
+not parallel but open up towards the Bos taurus side. Also, it seems that the identified gene in the flanking region corresponds to an 
+already annotated gene in Bos taurus.
+
+
+```{r eval=FALSE}
+>        plotHit(
++            hits=pigInter.flank,
++            flanking=100,
++            window=NULL , 
++            diagonal=0.25 ,
++            hitSpecies = "Sus scrofa",
++            origSpecies = "Bos taurus",
++            fastaFolder = "/home/ejo138/fasta/",
++            origAnnot=btannot,
++            hitAnnot=ssannot
++        #    coverage=TRUE,
++        #    bamFolder = "/mnt/data2/Data/Ruminomics Papilla/",
++            #indexOffset=94,
++         #   figureFolder = "/home/ejo138/figures/",
++         #   figurePrefix = "pigIS"
++              ) 
+```
+
+We continue with examining the same hit for Ovis aries/sheep. Here we have
+
+
+```{r eval=FALSE}
+> tableSpecies(xmls, species="Ovis aries", locations = TRUE)
+```
+
+\tiny
+
+```{r eval=FALSE}
+                                                                        Organism hitID hitLen hitChr  hitStart    hitEnd origChr origStart  origEnd
+8   Ovis aries breed Texel chromosome 3, Oar_v4.0, whole genome shotgun sequence   577    616      3  33956005  33955391      11  72554673 72555273
+16 Ovis aries breed Texel chromosome 14, Oar_v4.0, whole genome shotgun sequence   553    613     14  59259439  59260042      18  62550696 62551296
+24  Ovis aries breed Texel chromosome 1, Oar_v4.0, whole genome shotgun sequence   539    604      1 101361981 101362569       3  18148822 18149422
+```
+
+\normalsize
+
+Indicating that the hit comes from the Oar\_v4.0 assembly. However, in Ensembl is only the Oar\_v.3.1 assembly and hence, the automatic
+download would use the wrong assembly and consequently also would operate on the wrong coordiantes. Hence, the correct assembly has to
+be downloaded from the Ovis aries consortium or NCBI and stored as chromosome-wise fasta files in the fasta folder. Same holds also for the
+annotation files. 
