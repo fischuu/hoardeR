@@ -22,3 +22,10 @@ substrRight <- function(x, n){
 
 #---------------------------------------------------------------------------------------------------------
 
+getSameOrder <- function(x,y){
+ newPos <- numeric(length(y))
+ for(i in 1:length(y)){
+   newPos[i] <- which(y[i]==x)
+ }
+ newPos
+}
