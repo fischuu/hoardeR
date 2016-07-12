@@ -1,6 +1,7 @@
 LOG of the CHANGES in the package Test
 
-Version 0.2:
+Version 0.9:
+* Major update for functionality and usability
 * Added the authors@R filed to the Description
 * Added the log option to blastSeq. This way a crashed blast run and continue where it crashed.
 * Added the nrow option for the 'importGTF' function
@@ -12,6 +13,10 @@ Version 0.2:
 * Bugfixed the blastSeq function
 * Bugfixed the importXML function
 * The 'summary.fa' function is now more informative
+* Added the 'plotHit' function
+* Added the 'intersectXMLAnnot' function
+* Added several small helper functions
+* Added the 'getfastaFromBed' function
 
 Version 0.1:
 * Added the data example.fa

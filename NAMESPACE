@@ -1,4 +1,13 @@
-import(httr, XML, stringr, MASS, R.utils, data.table, seqinr, Biostrings, Rsamtools, GenomicRanges, bamsignals, IRanges)
+import(httr, XML, stringr, MASS, R.utils, data.table)
+
+importFrom(seqinr, comp)
+importFrom(seqinr, read.fasta)
+importFrom(bamsignals, bamCount)
+importFrom(Biostrings, nucleotideSubstitutionMatrix)
+importFrom(Biostrings, pairwiseAlignment)
+importFrom(GenomicRanges, GRanges)
+importFrom(IRanges, IRanges)
+
 
 export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
        importGTF, importGFF3, importPedMap, importBlastTab, intersectXMLAnnot,

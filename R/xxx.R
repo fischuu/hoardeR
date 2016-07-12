@@ -1,3 +1,5 @@
+# Make the species data available without loading it.
+
 .onLoad <- function(libname, pkgname) {
-  data("species", package="hoardeR", envir=parent.env(environment()))
+  utils::data("species", package="hoardeR", envir=parent.env(environment()))
 }

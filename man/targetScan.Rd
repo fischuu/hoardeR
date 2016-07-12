@@ -9,14 +9,14 @@
   This function requests from the webpage targetscan.org the stored information for mirnas.
 }
 \usage{
-   targetScan(mirna=NULL, species="Human", release="7.1", maxOut=NULL)
+   targetScan(mirna=NULL, species=NULL, release="7.1", maxOut=NULL)
 }
 
 \arguments{
   \item{mirna}{The name of the mirna (\code{String}).}
   \item{species}{The species identifier, see details (\code{String}).}
   \item{release}{The release version of targetscan.org.}
-  \item{macOut}{The amount of target genes, default (\code{NULL}) is all.}
+  \item{maxOut}{The amount of target genes, default (\code{NULL}) is all.}
 }
 
 \details{

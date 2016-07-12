@@ -4,6 +4,7 @@ subtitle: "Guided Cross-Species Identification of Novel Gene Candidates"
 author: "Daniel Fischer and Anu Sironen"
 date: "July 7, 2016"
 output:
+  html_notebook: default
   pdf_document:
     toc: true
     toc_depth: 2
@@ -21,8 +22,8 @@ command
 ```
 
 There are no special system requirements for the installation. However there are a few package dependencies that have to be met.
-Normally, these dependencies are installed automatically, too. If not, missing Cran packages be installed prior to the installation
-as above, with
+Normally these dependencies are installed automatically, too. If not, missing Cran packages need then to be installed prior to the
+installation as above, with
 
 ```{r eval=FALSE}
 > install.packages("packageName")
@@ -43,8 +44,8 @@ and the address on Cran with the latest stable release version is
 
 https://cran.r-project.org/web/packages/hoardeR/
 
-Packages from GitHub can be installed directly in R, using the _devtools_ package. To install hoardeR from GitHub,
-the following commands are required
+Packages from GitHub can be installed directly in R, using the _devtools_ package. To install the latest developer version of
+hoardeR from GitHub, run the following commands
 
 ```{r eval=FALSE}
 > install.packages("devtools")
@@ -61,6 +62,8 @@ Once the package is installed, it can be loaded into the namespace
 # Using hoardeR for identifying cross-species orthologs of novel candidate genes
 
 ## Typical workflow prior the use of hoardeR
+
+### Preparation of novel gene loci
 The common application of hoardeR is to search cross-species orthologs of unannotated, but active regions in a present organism. For that, typically an RNA-seq
 experiment has been conducted, the reads have been mapped to a reference genome and gene expressions have been estimated using some annotation.
 
@@ -105,8 +108,7 @@ The first lines of a bed file containing the same information would look like th
 ```
 
 For the identification of cross-species orthologs, the exon structure is not the primary interest. Rather, the whole genomic region that hosts a novel candidate gene is
-used here. Typically, not all novel gene candidates are considered and the lists are filtered according to some criteria, e.g. that a certain amount of genes is located
-within these regions, or a certain amount of samples have to have reads in that region.
+used here. Typically, not all novel gene candidates are considered and the list is filtered according to some criteria, e.g. that a certain amount of samples have to have a minimum number of reads in that region.
 
 The final set of regions of interest is then available in bed format, e.g. like this
 
@@ -117,7 +119,7 @@ The final set of regions of interest is then available in bed format, e.g. like 
 1       9347375     9347527     XLOC_000047
 ```
 
-
+### Extraction of nucleotide sequence of novel candidate region
 
 For these loci, the nucleotide sequences have to be extracted. There are two way to do that. The first option is to do it outside of R using bedtools. For that, the
 bed file has to be saved to the HDD first. Assuming the _data.frame_ that contains the bed information is called _novelBed_ and we defined a system path to the project,

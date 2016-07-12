@@ -3,7 +3,7 @@
 \docType{package}
 
 \title{
-  Collect and Retrieve Annotation Data for Various Genetic Data.
+  Collect and Retrieve Annotation Data for Various Genomic Data Using Different Webservices.
 }
 
 \description{
@@ -21,8 +21,8 @@
   \tabular{ll}{
     Package: \tab hoardeR\cr
     Type: \tab Package\cr
-    Version: \tab 0.2\cr
-    Date: \tab 2014-10-06\cr
+    Version: \tab 0.9\cr
+    Date: \tab 2016-12-07\cr
     License: \tab GPL\cr
     LazyLoad: \tab yes\cr
   }
@@ -31,7 +31,7 @@
 \author{
   Daniel Fischer, Anu Sironen
 
-  Maintainer: Daniel Fischer <daniel.fischer@mtt.fi>
+  Maintainer: Daniel Fischer <daniel.fischer@luke.fi>
 }
 
 \keyword{multivariate}
