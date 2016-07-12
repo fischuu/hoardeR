@@ -13,7 +13,7 @@
 }
 
 \arguments{
-  \item{file}{File name of the file.}
+  \item{file}{Filename}
 }
 
 \details{

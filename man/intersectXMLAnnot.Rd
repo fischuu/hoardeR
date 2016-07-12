@@ -6,7 +6,7 @@ Intersect XML object with annotation object
 }
 
 \description{
-For a loaded annotation this function intersects the loci of it with the output of the tableSpecies function.
+For a annotation object this function intersects the loci of it with the output of the tableSpecies function.
 }
 \usage{
   intersectXMLAnnot(tabSpecies, annot, level="gene", flanking=NULL)

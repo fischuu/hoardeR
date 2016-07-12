@@ -6,11 +6,11 @@ Get fasta information based on locations in bed-format
 }
 
 \description{
-Tables the species in xml file
+For a given fasta and a bed file this function can extract the nucleotide sequences and stores them as fasta file.
 }
 \usage{
   getFastaFromBed(bed, species=NULL, release = "84", fastaFolder=NULL,
-                  version=NULL, verbose=TRUE, export=NULL)
+                  version=NULL, verbose=TRUE, export=NULL, filename=NULL)
 }
 
 \arguments{
@@ -21,7 +21,7 @@ Tables the species in xml file
   \item{version}{Version ID of the reference genome.}
   \item{verbose}{Logical, should informative status updates be given.}
   \item{export}{Foldername.}
-  
+  \item{filename}{Filename to store the FA object.}  
 }
 
 \details{
@@ -31,10 +31,11 @@ Tables the species in xml file
  If a standard species, release and version is provided and the data is available from the Ensembl webpage, the functions automatically
  downloads the required files, takes the loci and extracts then the nucleotide sequences from it. 
  
- The export function (currently not implemented), specifies then a folder to where the fasta file should be stored.
+ The export function, specifies then a folder to where the fasta file should be stored. If no filename is provided, the filename is then
+ the object name passed to the \code{bed} function.
 }
 \value{
-A \code{fa} object containing the nucleotide sequences in fasta format.
+An \code{fa} object containing the nucleotide sequences in fasta format.
 }
 
 \author{
@@ -45,12 +46,12 @@ A \code{fa} object containing the nucleotide sequences in fasta format.
 \examples{
 \dontrun{
 
-myBed <- data.frame(chr=c(1,2,45),
-                    start=c(235265,12356742,7564345),
-                    end=c(435265,12386742,7864345),
-                    gene=c("LOC1", "LOC2", "LOC3"))
+myBed <- data.frame(chr=c(1,2),
+                    start=c(235265,12356742),
+                    end=c(435265,12386742),
+                    gene=c("LOC1", "LOC2"))
 
-getFastaFromBed(myBed, species="Homo sapiens", fastaFolder="/home/user/fasta/")
+myFA <- getFastaFromBed(myBed, species="Homo sapiens", fastaFolder="/home/user/fasta/", export=TRUE)
 }
 }
 

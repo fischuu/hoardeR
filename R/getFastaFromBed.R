@@ -1,4 +1,7 @@
-getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL, version=NULL, verbose=TRUE, export=NULL){
+getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL, version=NULL, verbose=TRUE, export=NULL, fileName=NULL){
+  
+  if(is.null(fileName)) fileName <- deparse(substitute(bed))
+  exportFileName <- fileName
   
 # Input checks
   if(is.null(bed)) stop("No bed data given!")
@@ -32,7 +35,9 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
   }
   names(novelFA) <- paste(">",bed[,1],":",bed[,2],"-",bed[,3],sep="")
   if(!is.null(export)){
-    cat("Sorry, the export function is not yet implemented, please store the output of this function manually.")
+    fileConn<-file(file.path(fastaFolder,paste(exportFileName,".fa",sep="")))
+    writeLines( mixVectors(names(novelFA), toupper(unlist(novelFA))), fileConn)
+    close(fileConn)
   }
   class(novelFA) <- "fa"
   novelFA

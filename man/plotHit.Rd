@@ -6,7 +6,7 @@ Visualization of a cross-species hit
 }
 
 \description{
-For each cross-species hit the function plots the similarity within that area with annotation and coverage track.
+For each cross-species hit the function plots the similarity within that area together with an optional annotation and coverage track.
 }
 \usage{
   plotHit(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
@@ -49,29 +49,29 @@ For each cross-species hit the function plots the similarity within that area wi
 }
 
 \details{
- This function is the workhorse of hoardeR and visualizes the findings blast and intersection runs. It is really flexibel to handle the hits and  
+ This function is the workhorse of hoardeR and visualizes the findings of the blast and intersection runs. It is really flexibel to handle the hits and  
  hence there are many different options. The required options are \code{hits}, \code{hitSpecies}, \code{origSpecies} and \code{fastaFolder}.
  
  The hit object is an object as provided by \code{intersectXMLAnnot} and contains all intersections of interest (=intersections that are in close
- proximity in th hit species). Naturally the hit and the origianl species have to be specified as well as the folder, where the required fasta
+ proximity of a gene in the hit species). Naturally the hit and the original species have to be specified as well as the folder, where the required fasta
  files are stored, or to where they should  be downloaded. If the species are the default species from Ensembl (as can be seen in the data.frame
- \code{species}), the annotation and assembly will be automaically downloaded to the specified location on the harddrive. Changes from that
+ \code{species}), the annotation and assembly will be automatically downloaded to the specified location on the harddrive. Changes from that
  version can be adjusted with the \code{release} and the \code{version} option, but the filenames have still to match the convention, as they
  are provided by Ensembl. For example the human assembly for chromosome 18 is labeled as
  
  \url{Homo_sapiens.GRCh38.dna.chromosome.18.fa.gz}
  
- That means, fasta files need to be gzipped and they have to be chromosome-wise available. First there is the scientific species identifier, then 
- the assembly version, and a fixed string 'dna.chromosome'. With that schema any possible fasta file can be provided to \code{plotHit}. If in 
+ That means, fasta files need to be gzipped and they have to be available chromosome-wise. First there is the scientific species identifier, then 
+ the assembly version, followed by a fixed string 'dna.chromosome'. With that schema any possible fasta file can be provided to \code{plotHit}. If in 
  addition to the similarity also a coverage track should be added, the option \code{coverage} has to be set to \code{TRUE}. The option 
- \code{smoothPara} sets then the level of smoothing of the coverage, by default no smoothing will be applied. 
+ \code{smoothPara} sets then the level of smoothing of the coverage. By default no smoothing will be applied. 
  
- In case a annotation track is requested (\code{annot=TRUE}), the annotations can be provided to the \code{origAnnot} and \code{hitAnnot} options.
+ In case an annotation track is requested (\code{annot=TRUE}), the annotation objects need to be provided to the \code{origAnnot} and \code{hitAnnot} options.
  
- The option \code{diagonal} defines the minimum level of similarity that a diagonal match will be plotted. The colors are then towrds green for
+ The option \code{diagonal} defines the minimum level of similarity so that a (diagonal) match will be plotted. The colors are then towards green for
  total similarity and towards red for total disagree, based on a nucleotide mismatch matrix.
  
- If the option \code{verbose} is set the function gives a verbose output while running. Further, if \code{output=TRUE} then, in addition to the
+ If the option \code{verbose=TRUE} is set, the function gives a verbose output while running. Further, if \code{output=TRUE} then, in addition to the
  figure also a data.frame with the numerical results is provided. 
  
  In case that \code{hits} contains more than one hit, the \code{plotHit} function plots for each hit a figure. In that case a folder should be
@@ -89,7 +89,7 @@ For each cross-species hit the function plots the similarity within that area wi
  
 }
 \value{
-A table with intersection loci.
+Optional, a table with intersection loci.
 }
 
 \author{

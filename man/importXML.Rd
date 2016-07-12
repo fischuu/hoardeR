@@ -2,18 +2,18 @@
 \alias{importXML}
 
 \title{
-  Import a XML File produced by the blastSeq function
+  Import an XML File produced by the blastSeq function
 }
 
 \description{
-  This function imports a xml file produced from \code{blastSeq}.
+  This function imports an xml file produced from \code{blastSeq}.
 }
 \usage{
   importXML(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRUE)
 }
 
 \arguments{
-  \item{folder}{Folder , where the xml files are stored.}
+  \item{folder}{Folder where the xml files are stored.}
   \item{seqNames}{Sequence names.}
   \item{which}{Which of the provided sequence names should be imported.}
   \item{idTH}{Identity threshold, see details.}
@@ -21,7 +21,7 @@
 }
 
 \details{
-  This function imports a xml files produced from the \code{blastSeq} function.
+  This function imports xml files produced from the \code{blastSeq} function.
   The \code{idTh} options sets the limit, what the minimum id threshold is until a hit will be
   taken into the result data frame.
   

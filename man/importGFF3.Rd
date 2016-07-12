@@ -19,6 +19,8 @@
 \details{
   This function imports a gff file and splits the last column which is usually tricky to handle as the order of the variables is not always
   the same.
+  
+  This function is currently improvement and its use might be unefficient.
 }
 \value{
   A data frame containing the columns of the gtf file, including the splitted last column.

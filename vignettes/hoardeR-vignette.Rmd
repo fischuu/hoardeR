@@ -59,6 +59,9 @@ Once the package is installed, it can be loaded into the namespace
 > library(hoardeR)
 ```
 
+Currently many minor functions of the package are going to be improved, so it is recommended to use those functions that are explained in this
+vignette, as their functionality is tested.
+
 # Using hoardeR for identifying cross-species orthologs of novel candidate genes
 
 ## Typical workflow prior the use of hoardeR

@@ -2,23 +2,23 @@
 \alias{getEnsgInfo}
 
 \title{
- Retrieve Gene Information From The NCBI Database.
+ Retrieve Gene Information From the NCBI Database.
 }
 
 \description{
-  This function retrieves for a given Ensemble Number the corresponding information from the NCBI database.
+  This function retrieves for a given Ensembl Number the corresponding information from the NCBI database.
 }
 \usage{
   getEnsgInfo(ensg)
 }
 
 \arguments{
-  \item{ensg}{Ensemble ID (\code{String}).}
+  \item{ensg}{Ensembl ID (\code{String}).}
 }
 
 \details{
- This function retrieves for a given Ensemble Number the corresponding information from the NCBI database. The 
- object \code{ensg} can also be a vector of Ensemble IDs.
+ This function retrieves for a given Ensembl Number the corresponding information from the NCBI database. The 
+ object \code{ensg} can also be a vector of Ensembl IDs.
 }
 \value{
   A matrix with information.

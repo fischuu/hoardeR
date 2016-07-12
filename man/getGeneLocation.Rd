@@ -2,7 +2,7 @@
 \alias{getGeneLocation}
 
 \title{
- Extracting Gene Locations.
+ Extracting Gene Locations
 }
 
 \description{

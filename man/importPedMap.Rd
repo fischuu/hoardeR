@@ -32,6 +32,8 @@
   
   The \code{genoSep} option provides the separator between the Alleles within one Genotype, e.g 'A A' (\code{genoSep=" "}) or
   'A/A' (\code{genoSep="/"}).
+  
+  This function is currently improvement and its use might be unefficient.
 }
 \value{
   A list of type \code{pedMap} with the three list items:

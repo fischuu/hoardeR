@@ -39,7 +39,8 @@
  The \code{xmlFolder} parameter specifies the folder to where the XML results will be stored.  In case the folder does not exist, R will create it.
 
  In case the option \code{keepInMemory} is set to TRUE the Blast results will be kept in memory, otherwise they will
- be just written to the HDD. Especially if many sequences are used to Blast it is recommended to drop the result from the memory.
+ be just written to the HDD. Especially if many sequences are send to the blast service it is recommended to drop the result from the memory,
+ meaning to set the option \code{keepinMemory=FALSE}.
  
  If log files should be written (\code{createLog=TRUE}) a log path should be given in \code{logPath}. However, if a xmlPath is given and the
  option \code{createLog=TRUE} is set, then the log folder will be automatically created in the parental folder of the \code{xmlFolder} and is
@@ -56,7 +57,7 @@
 
 \examples{
 \dontrun{
-blastSeq("ACGTGCATCGACTAGCTACGACTACGACTATC")
+blastSeq("ACGTGCATCGACTAGCTACGACTACGACTATC", email="my.name@somewhere.com")
 }
 }
 

@@ -18,11 +18,11 @@
 
 \details{
  This function imports a standard fasta file. It assumes that label and sequence lines are alternating,
- meaning in the odd lines is the sequence name given, starting with > and in the even rows are the 
+ meaning in the odd lines are the sequence names given, starting with > and in the even rows are the 
  corresponding sequences.
 }
 \value{
- An object of class \code{fa} containing the sequences. The names coorespond to the sequence names given in the fasta file.
+ An object of class \code{fa} containing the sequences. The names correspond to the sequence names given in the fasta file.
 }
 
 \author{

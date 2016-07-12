@@ -9,10 +9,10 @@
 \description{
   The hoardeR package is designed for collecting, retrieving and transforming data
   from various sources. The current main focus is on setting up a connection to
-  the NCBI Blast service. Also, the gene information for Ensemble Genes can
+  the NCBI Blast service. Also, the gene information for Ensembl Genes can
   be retrieved from NCBI.
-  Methods for visualizing the results are currently under development. The latest
-  'night-build' of the package can be retrieved from
+  Methods for visualizing the results are are also provided. The latest
+  developer version of the package can be downloaded from
   
   https://github.com/fischuu/hoardeR
 }

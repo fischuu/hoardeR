@@ -20,7 +20,9 @@
 }
 
 \details{
- Extracting a gene sequence from NCBI database.
+ Extracting a gene sequence from NCBI database. For a list of available organism, visit
+ 
+\url{http://genome.ucsc.edu/cgi-bin/das/dsn}. All id="." field are available.
 }
 \value{
   A string that contains the genomic sequence.
@@ -34,6 +36,7 @@
 \dontrun{
 # Extracting for Sus Scrofa, build version 3:
 getGeneSeq(1,2134,14532,"susScr3")
+getGeneSeq(10,1233312,1233350,"hg38")
 }
 }
 
