@@ -1,14 +1,14 @@
 ---
-title: "Vignette: hoardeR"
-subtitle: "Guided Cross-Species Identification of Novel Gene Candidates"
+title: 'Vignette: hoardeR'
 author: "Daniel Fischer and Anu Sironen"
 date: "July 7, 2016"
 output:
-  html_notebook: default
   pdf_document:
-    toc: true
+    number_sections: yes
+    toc: yes
     toc_depth: 2
-    number_sections: true
+  html_notebook: default
+subtitle: Guided Cross-Species Identification of Novel Gene Candidates
 ---
 
 
@@ -502,3 +502,85 @@ Indicating that the hit comes from the Oar\_v4.0 assembly. However, in Ensembl i
 download would use the wrong assembly and consequently also would operate on the wrong coordiantes. Hence, the correct assembly has to
 be downloaded from the Ovis aries consortium or NCBI and stored as chromosome-wise fasta files in the fasta folder. Same holds also for the
 annotation files. 
+
+
+# Example: From coordinates to Figures
+
+We start with a set of interesting coordiantes that we found in Bos Taurus like these:
+
+```{r coordOfInterest}
+locOI <- data.frame(Chr=c(24, 5, 11, 19, 5, 24, 5, 11, 12,11),
+                    Start=c(26086513, 1431663, 89702565, 43254346, 101281570, 59388059, 115646465, 78786315, 48438860, 1792346),
+                    End=c(26089288, 1433152, 89704152, 43255472, 101289811, 59557181, 115647845, 78813068, 48460710, 1794824),
+                    Gene=c(paste("LOC",1:10,sep="")))
+head(locOI)
+```
+
+First, we need to extract the nucleotide sequences at these positions, e.g. with the help of _getFastaFromBed_ and store them on the HDD for later purposes.
+
+```{r exampleGetFastaFromBed}
+getFastaFromBed(locOI,species="Bos taurus", fastaFolder="/home/ejo138/fastaNew", export=TRUE)
+```
+
+Then, we import the file again to R (we could have assigned the previous command also directly to an object, then we could ommit the following step)
+
+```{r importFastaExample}
+locOI.fasta <- importFA(file="/home/ejo138/fastaNew/locOI.fa")
+```
+
+That fasta file we can then send to the NCBI blast service to get the XML files of possible cross-species hits back:
+
+```{r sendFastaExample, message=FALSE, warning=FALSE, include=FALSE}
+blastSeq(locOI.fasta, 
+         email="daniel.fischer@luke.fi", 
+         xmlFolder="/home/ejo138/temp/hoardeR/")
+```
+
+Once all runs are finished, we import the result xml files to R
+
+```{r}
+xmlNew <- importXML(folder="/home/ejo138/temp/hoardeR/", idTH=0.8)
+tableSpecies(xmlNew)
+
+oaHits <- tableSpecies(xmlNew, species="Ovis aries", locations=TRUE)
+
+oaannot4.0 <- getAnnotation(species = "Ovis aries", release="NCBI", version="Oar_v4.0", type="gff", annotationFolder="/home/ejo138/Annotations/")
+for(i in 0:24){
+  refName <- paste("NC_0",19458+i,".2",sep="") 
+  oaannot4.0$V1[oaannot4.0$V1==refName] <- i+1
+}
+i <- 25
+refName <- paste("NC_0",19458+i,".2",sep="") 
+oaannot4.0$V1[oaannot4.0$V1==refName] <- "X"
+
+goatInter4.0 <- list()
+for(i in 1:nrow(oaHits)){
+  goatInter4.0[[i]] <- intersectXMLAnnot(oaHits[i,], oaannot4.0, flanking=20)
+}
+
+goatInter4.0 <- goatInter4.0[sapply(goatInter4.0,nrow)>0]
+goatInter4.0 <- do.call(rbind, goatInter4.0)
+
+
+btannot <- getAnnotation(species = "Bos taurus", annotationFolder="/home/ejo138/Annotations/")
+
+# Check the sheep hits:    
+      plotHit(
+            hits=goatInter4.0,
+            flanking=20,
+            window=NULL , 
+            diagonal=0.25 ,
+            hitSpecies = "Ovis aries",
+            hitSpeciesVersion = "Oar_v4.0",
+            origSpecies = "Bos taurus",
+            fastaFolder = "/home/ejo138/fasta/",
+            origAnnot=btannot,
+            hitAnnot=oaannot4.0,
+            coverage=TRUE,
+            bamFolder = "/mnt/data2/Data/Ruminomics Papilla",
+            which=1:2,
+            #indexOffset=94,
+            figureFolder = "/home/ejo138/figures/",
+            figurePrefix = "sheepNOVEL"
+              )
+```

@@ -10,7 +10,7 @@ For a given fasta and a bed file this function can extract the nucleotide sequen
 }
 \usage{
   getFastaFromBed(bed, species=NULL, release = "84", fastaFolder=NULL,
-                  version=NULL, verbose=TRUE, export=NULL, filename=NULL)
+                  version=NULL, verbose=TRUE, export=NULL, fileName=NULL)
 }
 
 \arguments{
@@ -21,7 +21,7 @@ For a given fasta and a bed file this function can extract the nucleotide sequen
   \item{version}{Version ID of the reference genome.}
   \item{verbose}{Logical, should informative status updates be given.}
   \item{export}{Foldername.}
-  \item{filename}{Filename to store the FA object.}  
+  \item{fileName}{Filename to store the FA object.}  
 }
 
 \details{

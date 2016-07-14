@@ -2,7 +2,7 @@ Package: hoardeR
 Type: Package
 Title: Collect and Retrieve Annotation Data for Various Genomic Data Using Different Webservices
 Version: 0.9
-Date: 2016-12-07
+Date: 2016-15-07
 Authors@R: c(person(given = "Daniel", family = "Fischer", role = c("aut","cre"), email = "daniel.fischer@luke.fi"),
              person(given = "Anu", family = "Sironen", role = "aut"))
 Author: Daniel Fischer [aut, cre], Anu Sironen [aut]

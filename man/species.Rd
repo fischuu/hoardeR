@@ -2,7 +2,7 @@
 \name{species}
 \alias{species}
 \title{Available species at Ensembl}
-\format{A data frame with XXX species.}
+\format{A data frame with 87 species.}
 \source{
 As downloaded on 20.6.2016 from
 

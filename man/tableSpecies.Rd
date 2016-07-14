@@ -9,7 +9,8 @@ Tables the species in xml file
 Tables the species in xml file
 }
 \usage{
-  tableSpecies(xml, species=NULL, type="chr", minOutput=TRUE, exclude="", locations=FALSE)
+  tableSpecies(xml, species=NULL, type="chr", minOutput=TRUE, exclude="",
+               locations=FALSE)
 }
 
 \arguments{
@@ -25,7 +26,7 @@ Tables the species in xml file
 \details{
  Function provides a table of identified species. This table can e.g. be put into the \code{barplot} function to visualize the findings.
  
- Further, if the option \code{locations}is set to \code{TRUE} the function not only tables the species, but also the individual locations
+ Further, if the option \code{locations} is set to \code{TRUE} the function not only tables the species, but also the individual locations
  of the hits. This output is required for the further steps. Hence, this function plays a important role in the identification pipeline.
 }
 \value{

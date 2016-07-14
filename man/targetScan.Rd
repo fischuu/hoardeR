@@ -21,7 +21,7 @@
 
 \details{
  This function sends a miRNA name to the targetscan.org webpage, retrieves the information and gives it back as a data.frame.
- Options for \code{species} are \code{"Human", "Mouse", "Rat", "Chimpanzee", "Rhesus", "Cow", "Dog", "Opossum", "Chicken", "Frog"}.
+ Options for \code{species} are \code{"Human", "Mouse", "Rat", "Chimpanzee",} \code{"Rhesus", "Cow", "Dog", "Opossum", "Chicken", "Frog"}.
 }
 
 \value{
