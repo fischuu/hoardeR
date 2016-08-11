@@ -539,7 +539,7 @@ blastSeq(locOI.fasta,
 Once all runs are finished, we import the result xml files to R
 
 ```{r}
-xmlNew <- importXML(folder="/home/ejo138/temp/hoardeR/", idTH=0.8)
+xmlNew <- importXML(folder="/home/ejo138/temp/hoardeR/", idTH=0.4)
 tableSpecies(xmlNew)
 
 oaHits <- tableSpecies(xmlNew, species="Ovis aries", locations=TRUE)
@@ -555,7 +555,7 @@ oaannot4.0$V1[oaannot4.0$V1==refName] <- "X"
 
 goatInter4.0 <- list()
 for(i in 1:nrow(oaHits)){
-  goatInter4.0[[i]] <- intersectXMLAnnot(oaHits[i,], oaannot4.0, flanking=20)
+  goatInter4.0[[i]] <- intersectXMLAnnot(oaHits[i,], oaannot4.0, flanking=50)
 }
 
 goatInter4.0 <- goatInter4.0[sapply(goatInter4.0,nrow)>0]
@@ -567,7 +567,7 @@ btannot <- getAnnotation(species = "Bos taurus", annotationFolder="/home/ejo138/
 # Check the sheep hits:    
       plotHit(
             hits=goatInter4.0,
-            flanking=20,
+            flanking=50,
             window=NULL , 
             diagonal=0.25 ,
             hitSpecies = "Ovis aries",
@@ -578,9 +578,9 @@ btannot <- getAnnotation(species = "Bos taurus", annotationFolder="/home/ejo138/
             hitAnnot=oaannot4.0,
             coverage=TRUE,
             bamFolder = "/mnt/data2/Data/Ruminomics Papilla",
-            which=1:2,
+            #which=1:2,
             #indexOffset=94,
-            figureFolder = "/home/ejo138/figures/",
+            figureFolder = "/home/ejo138/ownCloud/",
             figurePrefix = "sheepNOVEL"
               )
 ```

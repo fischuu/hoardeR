@@ -10,12 +10,9 @@ importFrom(IRanges, IRanges)
 
 
 export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
-       importGTF, importGFF3, importPedMap, importBlastTab, intersectXMLAnnot,
+       importBlastTab, intersectXMLAnnot,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
        plotHit, getFastaFromBed)
 
 S3method(print,fa)
 S3method(summary,fa)
-S3method(print,pedMap)
-S3method(summary,pedMap)
-

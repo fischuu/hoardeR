@@ -411,8 +411,8 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
       groupMeans <- groupMeans/maxCounts
       groupMeans <- groupMeans + 2
 
-      centers <- as.matrix(features@ranges)
-      centers <- centers[,1] + centers[,2]/2 
+#      centers <- as.matrix(features@ranges)
+      centers <- (2*features@ranges@start + features@ranges@width)/2 
       
       if(is.numeric(smoothPara)){
         for(groupRun in 1:max(groupIndex)){
