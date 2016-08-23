@@ -1,7 +1,7 @@
 ---
 title: 'Vignette: hoardeR'
 author: "Daniel Fischer and Anu Sironen"
-date: "July 7, 2016"
+date: "August 23, 2016"
 output:
   pdf_document:
     number_sections: yes
@@ -14,7 +14,7 @@ subtitle: Guided Cross-Species Identification of Novel Gene Candidates
 
 # Installation
 
-The installation of hoardeR is straight forward, it is located on Cran and can be installed with the 
+The installation of hoardeR is straight forward, it is located on Cran and can be installed from within R with the 
 command
 
 ```{r eval=FALSE}
@@ -29,7 +29,7 @@ installation as above, with
 > install.packages("packageName")
 ```
 
-Missing Bioconductor packages (e.g. the package _Biostrings_) with 
+and missing Bioconductor packages (e.g. the package _Biostrings_) with 
 
 ```{r eval=FALSE}
 > source("https://bioconductor.org/biocLite.R")
@@ -38,14 +38,13 @@ Missing Bioconductor packages (e.g. the package _Biostrings_) with
 
 The latest developer version, of hoardeR is located on GitHub, here
 
-https://github.com/fischuu/hoardeR
+&nbsp;&nbsp; <https://github.com/fischuu/hoardeR>
 
 and the address on Cran with the latest stable release version is
 
-https://cran.r-project.org/web/packages/hoardeR/
+&nbsp;&nbsp; <https://cran.r-project.org/web/packages/hoardeR/>
 
-Packages from GitHub can be installed directly in R, using the _devtools_ package. To install the latest developer version of
-hoardeR from GitHub, run the following commands
+Packages from GitHub can be installed directly in R, using the _devtools_ package. To install the latest developer version of hoardeR from GitHub, run the following commands
 
 ```{r eval=FALSE}
 > install.packages("devtools")
@@ -452,7 +451,7 @@ organism assigned. Only those combinations are then considered further, that are
 
 With that, the figure for the pig would look like this:
 
-![Similarity between Pig and Cow](/home/ejo138/GitHub/hoardeR/vignettes/pigFlanking.png)
+![Similarity between Pig and Cow](./pigFlanking.png)
 
 On the top line the annotation of Bos taurus is plotted, on the bottom line the one of Sus scrofa, followed by the axes of the chromosomal 
 regions. The vertical center line indicates the hit, further highlighted with the black spots on the chromosomal regions. It appears that
@@ -518,19 +517,19 @@ head(locOI)
 
 First, we need to extract the nucleotide sequences at these positions, e.g. with the help of _getFastaFromBed_ and store them on the HDD for later purposes.
 
-```{r exampleGetFastaFromBed}
+```{r exampleGetFastaFromBed, eval=FALSE}
 getFastaFromBed(locOI,species="Bos taurus", fastaFolder="/home/ejo138/fastaNew", export=TRUE)
 ```
 
 Then, we import the file again to R (we could have assigned the previous command also directly to an object, then we could ommit the following step)
 
-```{r importFastaExample}
+```{r importFastaExample, eval=FALSE}
 locOI.fasta <- importFA(file="/home/ejo138/fastaNew/locOI.fa")
 ```
 
 That fasta file we can then send to the NCBI blast service to get the XML files of possible cross-species hits back:
 
-```{r sendFastaExample, message=FALSE, warning=FALSE, include=FALSE}
+```{r sendFastaExample, message=FALSE, warning=FALSE, include=FALSE, eval=FALSE}
 blastSeq(locOI.fasta, 
          email="daniel.fischer@luke.fi", 
          xmlFolder="/home/ejo138/temp/hoardeR/")
@@ -538,7 +537,7 @@ blastSeq(locOI.fasta,
 
 Once all runs are finished, we import the result xml files to R
 
-```{r}
+```{r, eval=FALSE}
 xmlNew <- importXML(folder="/home/ejo138/temp/hoardeR/", idTH=0.4)
 tableSpecies(xmlNew)
 
