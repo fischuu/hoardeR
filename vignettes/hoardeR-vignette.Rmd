@@ -65,7 +65,6 @@ vignette, as their functionality is tested.
 
 ## Typical workflow prior the use of hoardeR
 
-### Preparation of novel gene loci
 The common application of hoardeR is to search cross-species orthologs of unannotated, but active regions in a present organism. For that, typically an RNA-seq
 experiment has been conducted, the reads have been mapped to a reference genome and gene expressions have been estimated using some annotation.
 
@@ -121,34 +120,30 @@ The final set of regions of interest is then available in bed format, e.g. like 
 1       9347375     9347527     XLOC_000047
 ```
 
-### Extraction of nucleotide sequence of novel candidate region
+## Extraction of nucleotide sequence of novel candidate region
 
 For these loci, the nucleotide sequences have to be extracted. There are two way to do that. The first option is to do it outside of R using bedtools. For that, the
-bed file has to be saved to the HDD first. Assuming the _data.frame_ that contains the bed information is called _novelBed_ and we defined a system path to the project,
-called _projFolder_. The command to export the _data.frame_ then is
+bed file has to be saved to the harddrive first. Assuming the `data.frame` that contains the bed information is called `novelBed` and we have a defined system path to the project,
+called `projFolder`. An example command to export the data frame `novelBed` then is
 
 ```{bash eval=FALSE}
-  projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
-  write.table(novelBed, file.path(projFolder,"novel.bed"), row.names=FALSE, 
-              col.names=FALSE, sep="\t", quote=FALSE)
+> projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
+> write.table(novelBed, file.path(projFolder,"novel.bed"), row.names=FALSE, 
++              col.names=FALSE, sep="\t", quote=FALSE)
 ```
 
-In the console this bed file can then be used to extract the fasta files, using the bedtools tool like this
+In the console this bed file can then be used to extract the fasta files, using `bedtools` like this
 
 ```{bash eval=FALSE}
 bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
 ```
 
-Here, the _<input FASTA>_ is a fasta file that contains the genome information of the species under investigation. If the resulting _novel.fa_ file is empty or
-some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). This approach is especially then adviceable, when the species of interest is rare or the fasta file is not available from ensembl in the latest version.
+Here, `<input FASTA>` is a fasta file that contains the genome information of the species under investigation. If the resulting `novel.fa` file is empty or
+some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). Extracting the sequences in such a way is especially then adviceable, when the species of interest is rare or the fasta file is not available from Ensembl in the latest version.
 
 However, if the species and also the genome assembly version is available at ensembl,  the fasta information can be obtained straight with the hoardeR function
-_getFastaFromBed_. The hoardeR package is able to download the most common species genomes and annotations, a list of available combinations can be found in the
-_species_ dataset, that comes with hoardeR
+`getFastaFromBed`. The hoardeR package is able to directly download the most common species genomes and annotations, a list of available combinations can be found in the `species` dataset, that comes with hoardeR
 
-```{bash eval=FALSE}
-bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
-```
 
 ```{r eval=FALSE}
 > head(species)
@@ -166,23 +161,29 @@ bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
 ```
 \normalsize
 
-Of particular interest are here the columns _Scientific.name_ and _Ensembl.assembly_. If your species of interest matches your used assembly, you can use the automatic
-hoardeR function _getFastaFromBed_ to obtain your fasta object like this. Here, we assume that our species of interest is cow/bos taurus and the fasta files should be
-downloaded to the folder _/home/daniel/fasta/_
+Of particular interest are here the columns `Scientific.name` and `Ensembl.assembly`. If your species of interest matches your used assembly, you can use the automatic
+hoardeR function `getFastaFromBed` to obtain your fasta object like this. Here, we assume that our species of interest is cow respective bos taurus and the fasta files should be
+downloaded to the folder `/home/daniel/fasta/`. From the `species` table we see that, if no further information are provided then the assembly version `UMD3.1` is downloaded.
 
 ```{r eval=FALSE}
-getFastaFromBed(novelBed, species="Bos taurus", fastaFolder="/home/daniel/fasta/")
+> novelBed <- data.frame(Chr=c(11,18,3),
+                         Start=c(72554673, 62550696, 18148822),
+                         End=c(72555273, 62551296, 18149422),
+                         Gene=c("LOC1", "LOC2", "LOC3"))
+
+> myFasta <- getFastaFromBed(novelBed, species="Bos taurus", 
++                            fastaFolder="/home/daniel/fasta/")
 ```
 
-It is also possible to obtain the genomic information with this command from assemblies that are not provided from Ensembl, or that have a newer/older version number.
-For that, the full syntax is
+With the same command it is also possible to obtain the genomic information from assemblies that are published under a different Ensembl release, or that are not at Ensembl or that have a newer/older assembly version. For that, the full syntax is
 
 ```{r eval=FALSE}
-> getFastaFromBed(novelBed, species="Bos taurus", release = "84", fastaFolder=NULL, version=NULL)
+> myFasta <- getFastaFromBed(novelBed, species="Bos taurus", release = "84", 
++                            fastaFolder=NULL, version=NULL)
 ```
 
-Here, the Ensembl release version and also the assmebly version can be specified. However, if no release number is given (i.e. _release=NULL_), the function assumes
-to find a non-ensembl fasta file in the folder _fastaFolder_. These fasta files need then to be of the format, e.g. for the cow assembly version UMD3.1
+Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes
+to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files need then to be of the following format, e.g. for the cow assembly version UMD3.1
 
 ```{r eval=FALSE}
 Bos_taurus.UMD3.1.dna.chromosome.1.fa.gz
@@ -194,8 +195,7 @@ Bos_taurus.UMD3.1.dna.chromosome.3.fa.gz
 That means, first the scientific name, with underscores, then a dot, then the assembly identifier followed by another dot, then _dna.chromosome._ and the chromosome
 identifier, and then the file ending _fa.gz_. That means, the fasta files have to be gzipped.
 
-As a working example, on Ensembl is only the sheep genome assembly 'Oar\_v3.1', if one needs to work with the 'Oar\_v4.0', one would download the chromosome wise files
-and then store them in some folder on the HDD as 
+As a non-Ensembl example, on Ensembl is only the sheep genome assembly 'Oar\_v3.1', if one needs to work with the 'Oar\_v4.0', one would download the chromosome-wise files and then store them in some folder on the harddrive as 
 
 ```{r eval=FALSE}
 Ovis_aries.Oar_v4.0.dna.chromosome.1.fa.gz
@@ -204,27 +204,23 @@ Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
 ...
 ```
 
-To obtain then the corresponding fasta objects, the command is
+To obtain then the corresponding fasta objects (of class `fa`), the command is
 
 ```{r eval=FALSE}
-> getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
-                  fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
+> myFasta <- getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
+                             fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
 ```
 
-assuming again that the fasta files are located in _/home/daniel/fasta/_
+assuming again that the fasta files are located in `/home/daniel/fasta/`.
+
+The option to extract the fasta sequences via bedtools is, however, much faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes. An `fa`-object can be stored
+to the harddrive via
 
 ```{r eval=FALSE}
-> bed <- data.frame(Chr=c(11,18,3),
-                    Start=c(72554673, 62550696, 18148822),
-                    End=c(72555273, 62551296, 18149422),
-                    Gene=c("LOC1", "LOC2", "LOC3"))
-> novelFA <- getFastaFromBed(bed, species="Bos taurus", release = "84", 
-                             fastaFolder="/home/ejo138/temp")
+exportFA(myFasta, file="/home/daniel/myFasta.fa")
 ```
 
-The option to extract the fasta sequences via bedtools is, however, much faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes.
-
-A previous stored fasta file can be imported to hoardeR with the _importFA()_ function:
+A previous stored or downloaded fasta file can be imported to hoardeR with the `importFA()` function:
 
 ```{r eval=FALSE}
 > novelFA <- importFA(file="/home/daniel/myFasta.fa")
@@ -236,35 +232,36 @@ The names of the fasta sequences should follow the form like
 >Chr:Start-End
 ```
 
-That meansm, for a sequence from chromosome 12 that starts at 123 and end at 456 the fasta sequence should be named like the following.
+That means, for a sequence from chromosome 12 that starts at 123 and ends at 456 the fasta sequence should be named like the following.
 
 ```{r eval=FALSE}
 >12:123-456
 ```
 
-Once the fasta object is available in R, it can be send to the NCBI blast service, using the central hoardeR function _blastSeq()_
+## Sending sequences to NCBI
+
+Once the fasta object is available in R, it can be send to the NCBI blast service, using the central hoardeR function `blastSeq()`
 
 ```{r eval=FALSE}
 >  blastSeq(novelFA, 
-            email="daniel.fischer@luke.fi",
-            xmlFolder=file.path(projFolder,"hoardeROut/"),
-            logFolder=file.path(projFolder,"hoardeRLog/"),
-            keepInMemory=FALSE
-            )
++           email="daniel.fischer@luke.fi",
++           xmlFolder=file.path(projFolder,"hoardeROut/"),
++           logFolder=file.path(projFolder,"hoardeRLog/"),
++           keepInMemory=FALSE)
 ```           
 
-The main parameters are the fasta object, then for etiquette reasons a valid email address of the person who sends the data to NCBI and
-the required folder locations on the HDD. If they are not available, hoardeR will create them.
+The main parameters are the fasta object (here called `novelFA`), then for etiquette reasons a valid email address of the person who sends the data to NCBI and
+the required folder locations on the harddrive. If they are not available, hoardeR will create them without asking.
 
-The _xmlFolder_ stores the results delivered back from NCBI in xml format and the _logFolder_ stores the log files. These files are
+The `xmlFolder` stores the results delivered back from NCBI in xml format and the `logFolder` stores the log files. These files are
 especially then important, when the run crashes and should be continued or if the computer is switched off in between. 
 
 If a crashed run should be continued, it is enough to run the same command as the initially one using the same fasta object and hoardeR
-will continue from the point, where it crashed or it was interrupted. If the option _verbose=TRUE_ is set (default), hoardeR keeps 
+will continue from the point, where it crashed or where it was interrupted. If the option `verbose=TRUE` is set (default), hoardeR keeps 
 reporting status updates of the blast runs. There are still some finetuning parameters available, see the manual for details. However,
-there are some etiquette parameters of NCBI that cannot be changed. These are e.g the frequency and amounts of requests.
+there are some etiquette parameters of NCBI that cannot be changed to smaller values than the defaults. These are e.g the frequency of the requests and the total amount of parallel blast runs.
 
-The verbose output of a _blastSeq_ run looks as follows
+The verbose output of a `blastSeq` run looks as follows
 
 ```{r eval=FALSE}
 Missing: 3 
@@ -275,7 +272,7 @@ Total running time: 00:00:04
 ---------------------------------------------------------------
 ```
 
-indicating e.g. here that there were 3 fasta sequences to be blasted, one of them is already running an NCBI, 0 are finished so
+indicating e.g. here that there were still 3 fasta sequences to be blasted, one of them is already running an NCBI, 0 are finished so
 far and the running time of the whole run is 4 seconds. After a while, _blastSeq_ starts to check, if the active blast runs are
 finalized to spawn the next ones. In that case, the verbose output looks like this:
 
@@ -289,11 +286,13 @@ Total running time: 00:02:40
 ---------------------------------------------------------------
 ```
 
-Here, we see that there is still one sequence missing and one is also running. The ID number of that run is _RW99J31C01R_ and it is
-active for 2 minutes and 23 seconds. So far, two sequence runs are ready and their average running time was 1 minute and 10 seconds.
+Here, we see that there is still one sequence missing and one is also running. The ID number of that run is `RW99J31C01R` and it is
+active since 2 minutes and 23 seconds. So far, two sequence runs are ready and their average running time was 1 minute and 10 seconds.
 
-The function stops, when there are no missing sequences anymore. The results of the run are stored in the _xmlFolder_. These results
-can already be analyzed while the _blastSeq_ run is still active, so intermediate results can be obtained on the fly.
+The function stops, when there are no missing sequences anymore. The results of the run are stored in the `xmlFolder`. These results
+can already be analyzed while the `blastSeq` run is still active, so intermediate results can be obtained on the fly.
+
+## Analyze the Blast Results
 
 To analyze the blast results, first the xml files have to be imported to hoardeR. For that there is the _importXML()_ function.
 It expects the folder address where the xml files are stored, in our example it is the _hoardeROut_ folder in the _projFolder_ folder.

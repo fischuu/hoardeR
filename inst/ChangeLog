@@ -17,6 +17,7 @@ Version 0.9:
 * Added the 'intersectXMLAnnot' function
 * Added several small helper functions
 * Added the 'getfastaFromBed' function
+* Added the 'exportFA' function
 
 Version 0.1:
 * Added the data example.fa
