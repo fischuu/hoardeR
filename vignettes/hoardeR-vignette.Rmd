@@ -294,8 +294,8 @@ can already be analyzed while the `blastSeq` run is still active, so intermediat
 
 ## Analyze the Blast Results
 
-To analyze the blast results, first the xml files have to be imported to hoardeR. For that there is the _importXML()_ function.
-It expects the folder address where the xml files are stored, in our example it is the _hoardeROut_ folder in the _projFolder_ folder.
+To analyze the blast results, first the xml files have to be imported to hoardeR. For that there is the `importXML()` function.
+It expects the folder address where the xml files are stored, in our example it is the `hoardeROut` folder in the `projFolder` folder.
 
 ```{r eval=FALSE}
 > xmls <- importXML(folder=file.path(projFolder,"hoardeROut/"))
@@ -316,39 +316,45 @@ This table can be displayed as barplot e.g. in the following way
 ```
 
 Next the hits for the Sus scrofa/Pig will be visualized. For that, the xml results will be first filtered accordingly. For that
-also the tableSpecies command is used. This time, however, a species is not excluded, but explicitely defined. Further, instead 
-of just counting the occurances, we request in addition the location information:
+also the tableSpecies command is used. This time, however, a species is not excluded with the `exlude` option, but explicitely defined
+with the `species` parameter. Further, instead of just counting the occurances, we request in addition the location information by
+setting `locations=TRUE`:
 
 ```{r eval=FALSE}
 > tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
 ```
 
-\tiny
+\scriptsize
 ```{r eval=FALSE}
                                            Organism hitID hitLen hitChr  hitStart    hitEnd origChr origStart  origEnd
 28 Sus scrofa breed mixed chromosome 4, Sscrofa10.2   494    644      4 105815870 105816509       3  18148822 18149422
 ```
+\normalsize
 
-without the _locations=TRUE_ option, the output is be very minimalistic, as it just gives the frequencies:
+without the `locations=TRUE` option, the output is very minimalistic, as it just gives the frequencies:
 
 ```{r eval=FALSE}
 > tableSpecies(xmls)
   
 Bos taurus Equus caballus     Sus scrofa     Ovis aries 
          6              1              1              3 
+```
 
+Especially when a single species is defined, without setting `locations=TRUE` the function just gives the frequency.         
+         
+```{r eval=FALSE}
 > tableSpecies(xmls, species="Sus scrofa")
 Sus scrofa 
          1 
 ```
 
-The column _Organism_ indicates the hit organism and the corresponding assembly. In this case it is Sus scrofa and SScrofa10.2. Cross-checking with the _species_ data table
+The column `Organism` indicates the hit organism and the corresponding assembly. In this case it is Sus scrofa and Sscrofa10.2. Cross-checking with the `species` data table
 reveals, that this assembly is the default assembly at Ensembl:
 ```{r eval=FALSE}
 > species[grepl("Sus scrofa", species$Scientific.name),]       
 ```
 
-\tiny
+\scriptsize
 
 ```{r eval=FALSE}
          Common.name Scientific.name Taxon.ID Ensembl.Assembly       Accession Variation.database Regulation.database Pre.assembly
@@ -358,14 +364,14 @@ reveals, that this assembly is the default assembly at Ensembl:
 
 \normalsize
 
-that means that the assembly can be obtained automatically from hoardeR for further analysis. The command _getAnnotation_ download automatically the 
-corresponding annotation into the folder _/home/daniel/annotation_:
+That means that the assembly can be obtained automatically from hoardeR for further analysis without using any additional parameters. The command `getAnnotation` downloads automatically the corresponding annotation into the specified folder (here: `/home/daniel/annotation`):
 
 ```{r eval=FALSE}
-> ssannot <- getAnnotation(species = "Sus scrofa", annotationFolder="/home/daniel/annotation")
+> ssannot <- getAnnotation(species = "Sus scrofa", 
++                          annotationFolder="/home/daniel/annotation")
 ```
 
-Having the annotation inforamtion available from Ensembl, we can intersect the findings with the annotation. First we check if the found loci intersect with 
+Having the annotation information available from Ensembl, we can intersect the Blast results with the annotation. First we check if the found loci intersect with 
 an intergenic region in the Sus scrofa genome. Here, we assume that more than one hit was found and results would be stored in a list
 
 ```{r eval=FALSE}
@@ -384,14 +390,15 @@ However, unfortunately there is no intersection:
 Empty data.table (0 rows) of 15 cols: V1,V2,V3,V4,V5,V6...
 ```
 
-Hence, we allow for a larger seach area and add flanking sites of 100kB to each side of the search area:
+Hence, we allow for a larger seach area and add flanking sites of 100kB to each side of the search area, using the option `flanking=100` in 
+the `intersectXMLAnnot()` function:
 
 ```{r eval=FALSE}
 > pigInter.flank <- list()
 > for(i in 1:nrow(pigHits)){
 >   pigInter.flank[[i]] <- intersectXMLAnnot(pigHits[i,], ssannot, flanking=100)
 > }
-# This part transforms the list into a data frame and remove those 'hits' that
+# This part transforms the list into a data frame and removes those 'hits' that
 # do not report any intersection
 > pigInter.flank <- pigInter.flank[sapply(pigInter.flank,nrow)>0]
 > pigInter.flank <- do.call(rbind, pigInter.flank)
@@ -408,7 +415,12 @@ This results in an intersection:
 ```
 \normalsize
 
-In order to visualize the results the _plotHit_ function can be used. In its basic appearance, it only plots the similarity between the 
+The intersections contains first the annotation information as provided by the annotation file and then in addition the location of the hit in the
+host organism (`origChr`, `origStart`, `origEnd`) and in the hit organism (`hitChr`, `hitStart`, `hitEnd`).
+
+## Visualize the intersected Blast results
+
+In order to visualize the results the `plotHit` function can be used. In its basic usage, it only plots the similarity between the 
 original and the hit organism like this:
 
 ```{r eval=FALSE}
@@ -427,33 +439,28 @@ original and the hit organism like this:
 +            ) 
 ```
 
-The parameters are then as follows. _hits_ expects the matrix from above with the hits. If this is a matrix (i.e. several hits were found)
-a figure folder should be provided, as for each hit a separate plot will be created. For example, we the above optional parameters a figure
-for each hit will be created in the folder _/home/daniel/figures/_, using the prefix _pigIS_. However, if only a single figure should be
-created, without storing it directly to the HDD, one would drop the _figureFolder_ and _figurePrefix_ parameters (they are _NULL_ by default)
-and instead specify in the _which_ option, which hit should be plotted. An alternative would be to restrict the matrix given to the _hits_ 
-option, e.g. for seeing the first hit only, one would use the option _hits=pigInter.flank[1,]_.
+The parameters are then as follows. `hits` expects the matrix from above with the intersected hits. If `hits` receives a matrix (i.e. several hits were found) a figure folder should be provided, as for each hit a separate plot will be created. For example, with the above optional parameters a figure for each hit will be created in the folder `/home/daniel/figures/`, using the prefix `pigIS`. However, if only a single figure should be
+created, without storing it directly to the hard drive, one would drop the `figureFolder` and `figurePrefix` parameters (they are `NULL` by default)
+and instead specify in the `which` option, which hit should be plotted. An alternative would be to restrict the matrix given to the `hits` 
+option, e.g. for seeing the first hit only, one would use the option `hits=pigInter.flank[1,]`.
 
-The other option control the behavior of the plot. The flanking option defines the plotting area around the hit in Mb and the diagonal option
-defines the threshold after that a similarity line should be plotted. As higher that value (between 0 and 1) as more restrictive it is and
-as less similarity lines will be used in the plot. The two parameters _hitSpecies_ and _origSpecies_ define the two organisms that should
+The other required options control the behavior of the plot. The `flanking` option defines the plotting area around the hit in Mb and the diagonal option is a threshold for the minimum similarity after that a similarity line should be plotted. As higher that value (between 0 and 1) as more restrictive it is and
+as less similarity lines will be used in the plot. The two parameters `hitSpecies` and `origSpecies` define the two organisms that should
 be compared. In our case the original organism was Bos taurus/cow and the hit was Sus scrofa/pig. The location of the corresponding fasta 
-files (or to where they should be stored), is defined in the _fastaFolder_ option. Again, if the assembly is the same as in the _species_
+files (or to where they should be stored), is defined in the `fastaFolder` option. Again, if the assembly is the same as in the `species`
 dataset, the fasta files will be automatically fetched from the Ensembl page. In case a tailored assembly is required, it can be specified
-with additional options, see the manual for further instructions on that. 
+with additional options, see the manual or a later example for further instructions on that. 
 
 The similarity is calculated using a shifting window approach. That means, the plotting area is divided into chunks of a certain length,
-defined with the _window_ option. By default that window has the similar lengths as the hit-sequence has, but an own value can be defined
-in the _window option_. Our function then tests all pairwise combinations between the chunks of the origianl organism and the hit organism and
-calculates the similarity between them and stores the best result. That way, each chunk of original organism gets a chunk from the hit
-organism assigned. Only those combinations are then considered further, that are at least having a threshold value as defined in _diagonal_.
+defined with the `window` option. By default that window has the similar length as the hit-sequence has, but an own value can be defined
+in the `window` option. Our function then tests all pairwise combinations between the chunks of the original organism and the hit organism,
+calculates the similarity between them and stores the best result. That way, each chunk/window of the original organism gets assigned a chunk from the hit organism. Only those combinations are then considered further, that are at least having a similarity value as defined in `diagonal`.
 
 With that, the figure for the pig would look like this:
 
 ![Similarity between Pig and Cow](./pigFlanking.png)
 
-On the top line the annotation of Bos taurus is plotted, on the bottom line the one of Sus scrofa, followed by the axes of the chromosomal 
-regions. The vertical center line indicates the hit, further highlighted with the black spots on the chromosomal regions. It appears that
+On the top part of the plot the annotation of Bos taurus is plotted, on the bottom part the one of Sus scrofa, followed by the axes of the chromosomal regions. The vertical center line indicates the hit, further highlighted with the black spots on the chromosomal regions. It appears that
 this region is rather similar, although in the case of Bos taurus it seems that the genomic region is a bit stretched, as the lines are 
 not parallel but open up towards the Bos taurus side. Also, it seems that the identified gene in the flanking region corresponds to an 
 already annotated gene in Bos taurus.
@@ -501,48 +508,25 @@ download would use the wrong assembly and consequently also would operate on the
 be downloaded from the Ovis aries consortium or NCBI and stored as chromosome-wise fasta files in the fasta folder. Same holds also for the
 annotation files. 
 
-
-# Example: From coordinates to Figures
-
-We start with a set of interesting coordiantes that we found in Bos Taurus like these:
-
-```{r coordOfInterest}
-locOI <- data.frame(Chr=c(24, 5, 11, 19, 5, 24, 5, 11, 12,11),
-                    Start=c(26086513, 1431663, 89702565, 43254346, 101281570, 59388059, 115646465, 78786315, 48438860, 1792346),
-                    End=c(26089288, 1433152, 89704152, 43255472, 101289811, 59557181, 115647845, 78813068, 48460710, 1794824),
-                    Gene=c(paste("LOC",1:10,sep="")))
-head(locOI)
-```
-
-First, we need to extract the nucleotide sequences at these positions, e.g. with the help of _getFastaFromBed_ and store them on the HDD for later purposes.
-
-```{r exampleGetFastaFromBed, eval=FALSE}
-getFastaFromBed(locOI,species="Bos taurus", fastaFolder="/home/ejo138/fastaNew", export=TRUE)
-```
-
-Then, we import the file again to R (we could have assigned the previous command also directly to an object, then we could ommit the following step)
-
-```{r importFastaExample, eval=FALSE}
-locOI.fasta <- importFA(file="/home/ejo138/fastaNew/locOI.fa")
-```
-
-That fasta file we can then send to the NCBI blast service to get the XML files of possible cross-species hits back:
-
-```{r sendFastaExample, message=FALSE, warning=FALSE, include=FALSE, eval=FALSE}
-blastSeq(locOI.fasta, 
-         email="daniel.fischer@luke.fi", 
-         xmlFolder="/home/ejo138/temp/hoardeR/")
-```
-
-Once all runs are finished, we import the result xml files to R
+From the NCBI page we can download the Ovis aries annotation in gff format and we copy the file into the `/home/daniel/Annotations/` folder,
+using the filename `Ovis_aries.Oar_v4.0.NCBI.chr.gff.gz`. The naming follwos again the same scheme, first is the scientific name of the
+organism with underscores, then is the assembly version, then the release source, followed by the required file ending. Please notice that the
+annotation needs to be zipped. The annotation can then be loaded to hoarder again with `getAnnotation()` command, specifying the required
+parameters.
 
 ```{r, eval=FALSE}
-xmlNew <- importXML(folder="/home/ejo138/temp/hoardeR/", idTH=0.4)
-tableSpecies(xmlNew)
+oaannot4.0 <- getAnnotation(species = "Ovis aries", release="NCBI", version="Oar_v4.0", type="gff", annotationFolder="/home/daniel/Annotations/")
+```
 
+The blast hits are imported as before with
+
+```{r eval=FALSE}
 oaHits <- tableSpecies(xmlNew, species="Ovis aries", locations=TRUE)
+```
 
-oaannot4.0 <- getAnnotation(species = "Ovis aries", release="NCBI", version="Oar_v4.0", type="gff", annotationFolder="/home/ejo138/Annotations/")
+In order to adjust the namings, some additional hand-on is required, e.g. in the following type of way:
+
+```{r eval=FALSE}
 for(i in 0:24){
   refName <- paste("NC_0",19458+i,".2",sep="") 
   oaannot4.0$V1[oaannot4.0$V1==refName] <- i+1
@@ -550,35 +534,51 @@ for(i in 0:24){
 i <- 25
 refName <- paste("NC_0",19458+i,".2",sep="") 
 oaannot4.0$V1[oaannot4.0$V1==refName] <- "X"
+```
 
-goatInter4.0 <- list()
+With that the intersections between the hits and the annotation, using a flanking side of 50Mb can be calculated and then finally merged into a data frame.
+
+```{r eval=FALSE}
+sheepInter4.0 <- list()
 for(i in 1:nrow(oaHits)){
-  goatInter4.0[[i]] <- intersectXMLAnnot(oaHits[i,], oaannot4.0, flanking=50)
+  sheepInter4.0[[i]] <- intersectXMLAnnot(oaHits[i,], oaannot4.0, flanking=50)
 }
 
-goatInter4.0 <- goatInter4.0[sapply(goatInter4.0,nrow)>0]
-goatInter4.0 <- do.call(rbind, goatInter4.0)
+sheepInter4.0 <- sheepInter4.0[sapply(sheepInter4.0,nrow)>0]
+sheepInter4.0 <- do.call(rbind, sheepInter4.0)
+```
 
+To visualize the annotations for the original organism is still required, this followed the standard annotation as defined in the `species` table
+and so the basic command for it is again
 
+```{r eval=FALSE}
 btannot <- getAnnotation(species = "Bos taurus", annotationFolder="/home/ejo138/Annotations/")
+```
 
-# Check the sheep hits:    
+The following command will plot then the 
+
+```{r eval =FALSE}
       plotHit(
-            hits=goatInter4.0,
+            hits=sheepInter4.0,
             flanking=50,
             window=NULL , 
             diagonal=0.25 ,
             hitSpecies = "Ovis aries",
             hitSpeciesVersion = "Oar_v4.0",
             origSpecies = "Bos taurus",
-            fastaFolder = "/home/ejo138/fasta/",
+            fastaFolder = "/home/daniel/fasta/",
             origAnnot=btannot,
             hitAnnot=oaannot4.0,
             coverage=TRUE,
-            bamFolder = "/mnt/data2/Data/Ruminomics Papilla",
-            #which=1:2,
-            #indexOffset=94,
-            figureFolder = "/home/ejo138/ownCloud/",
+            bamFolder = "/home/daniel/bams/",
+            which=1:2,
+            figureFolder = "/home/daniel/figures/",
             figurePrefix = "sheepNOVEL"
               )
 ```
+
+Here, more optional parameters are used. These are, in addition to the already previous used ones, the definition of the usedhit species version 
+in `hitSpeciesVersion`. Further, the logical flag `coverage=TRUE` is set. If this is the case, the function expects to find bam files in a folder
+defined in `bamFolder` that contain information about the coverage. The plot that shows in addition then also the coverage would look this this:
+
+![Similarity between Sheep and Cow](./coverageExample.png)
