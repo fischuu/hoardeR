@@ -1,10 +1,10 @@
 ---
-title: 'Vignette: hoardeR'
+title: 'An introduction to hoardeR'
 author: "Daniel Fischer and Anu Sironen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette: hoardeR}
+  %\VignetteIndexEntry{An introduction to hoardeR}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
