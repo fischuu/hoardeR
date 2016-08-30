@@ -8,6 +8,10 @@ importFrom(Biostrings, pairwiseAlignment)
 importFrom(GenomicRanges, GRanges)
 importFrom(IRanges, IRanges)
 
+importFrom("grDevices", "colorRampPalette", "dev.off", "png")
+importFrom("graphics", "axis", "lines", "plot", "polygon", "rect","text")
+importFrom("stats", "loess", "median", "predict", "quantile")
+importFrom("utils", "download.file", "read.csv", "read.table","setTxtProgressBar", "txtProgressBar", "write.table")
 
 export(importFA, blastSeq, exportFA, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
        importBlastTab, intersectXMLAnnot,
