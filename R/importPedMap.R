@@ -1,4 +1,5 @@
 importPedMap <- function(ped, map=NULL, pedSep="\t", pedHeader=FALSE, genoSep=" ", mapSep="\t", mapHeader=FALSE, na.value="0"){
+  .Deprecated("GenomicTools::importPedMap")
   # If no extension is given, add it to the path
     pedExtension <- substr(ped,nchar(ped)-3,nchar(ped))
     if(pedExtension!=".ped")  ped <- paste(ped,".ped",sep="")

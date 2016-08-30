@@ -5,7 +5,6 @@ Version 0.9:
 * Added the authors@R filed to the Description
 * Added the log option to blastSeq. This way a crashed blast run and continue where it crashed.
 * Added the nrow option for the 'importGTF' function
-* Added the 'importPedMap' function
 * Added the 'print.pedMap' function
 * Added the 'summary.pedMap' function
 * Added the 'targetScan' function
@@ -18,6 +17,9 @@ Version 0.9:
 * Added several small helper functions
 * Added the 'getfastaFromBed' function
 * Added the 'exportFA' function
+* Added the 'exportBed' function
+* Deprecated the 'importPedMap' function
+* Added the package Vignette
 
 Version 0.1:
 * Added the data example.fa
