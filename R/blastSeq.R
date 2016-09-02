@@ -107,7 +107,7 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
       active <- c(active,sendThis)
       seqInfo$seqRID[sendThis] <- RID[sendThis]
       sendThis <- sendThis + 1
-      write.table(seqInfo,file=paste(logFolder,"seqRID-info.csv",sep=""), quote=FALSE, row.names=FALSE) 
+      if(!keepInMemory) write.table(seqInfo,file=paste(logFolder,"seqRID-info.csv",sep=""), quote=FALSE, row.names=FALSE) 
     } else {
       Sys.sleep(delay_rid) 
       for(i in active){

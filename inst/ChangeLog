@@ -1,5 +1,10 @@
 LOG of the CHANGES in the package Test
 
+Version 0.9.1:
+* Typos in manual fixed
+* Minor bugfixes in 'blastSeq'
+* Added the function importBed()
+
 Version 0.9:
 * Major update for functionality and usability
 * Added the authors@R filed to the Description

@@ -57,7 +57,7 @@
 
 \examples{
 \dontrun{
-blastSeq("ACGTGCATCGACTAGCTACGACTACGACTATC", email="my.name@somewhere.com")
+blastSeq("ACGTGCATCGACTAGCTACGACTACGACTATC", email="my.name@somewhere.com", createLog=FALSE)
 }
 }
 
