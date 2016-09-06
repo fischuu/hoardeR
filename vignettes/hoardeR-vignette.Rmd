@@ -1,18 +1,16 @@
 ---
-title: 'An Introduction to hoardeR'
+title: "An Introduction to hoardeR"
 author: "Daniel Fischer and Anu Sironen"
-date: "`r Sys.Date()`"
+date: '`r Sys.Date()`'
 output:
-  rmarkdown::html_vignette:
-    toc: true
-    fig_caption: yes
   pdf_document:
-    toc: true
     fig_caption: yes
-vignette: >
-  %\VignetteIndexEntry{An Introduction to hoardeR}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
+    toc: yes
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    toc: yes
+vignette: |
+  %\VignetteIndexEntry{An Introduction to hoardeR} %\VignetteEngine{knitr::rmarkdown} %\usepackage[utf8]{inputenc}
 ---
 
 # Installation
