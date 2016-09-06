@@ -3,7 +3,7 @@
 \docType{package}
 
 \title{
-  Collect and Retrieve Annotation Data for Various Genomic Data Using Different Webservices.
+  Collect and Retrieve Annotation Data for Various Genomic Data Using Different Web Services.
 }
 
 \description{
@@ -22,7 +22,7 @@
     Package: \tab hoardeR\cr
     Type: \tab Package\cr
     Version: \tab 0.9\cr
-    Date: \tab 2016-08-29\cr
+    Date: \tab 2016-09-01\cr
     License: \tab GPL\cr
     LazyLoad: \tab yes\cr
   }

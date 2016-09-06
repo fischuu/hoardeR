@@ -45,7 +45,7 @@ The latest developer version, of `hoardeR` is located on GitHub, here
 
 and the address on Cran with the latest stable release version is
 
-&nbsp;&nbsp; <https://cran.r-project.org/web/packages/hoardeR/>
+&nbsp;&nbsp; <https://cran.r-project.org/package=hoardeR/>
 
 A webpage for the latest news on hoardeR can be found here:
 
