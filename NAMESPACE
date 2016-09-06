@@ -13,7 +13,7 @@ importFrom("graphics", "axis", "lines", "plot", "polygon", "rect","text")
 importFrom("stats", "loess", "median", "predict", "quantile")
 importFrom("utils", "download.file", "read.csv", "read.table","setTxtProgressBar", "txtProgressBar", "write.table")
 
-export(importFA, blastSeq,exportBed, exportFA, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
+export(importBed, importFA, blastSeq,exportBed, exportFA, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
        importBlastTab, intersectXMLAnnot,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
        plotHit, getFastaFromBed)
