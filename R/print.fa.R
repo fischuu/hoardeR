@@ -12,4 +12,5 @@
     }
   }
   print(X,...)
+  if(n<length(x)) message("Fasta sequences ommited to print: ", length(x)-n)
 } 

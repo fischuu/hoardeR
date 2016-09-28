@@ -10,7 +10,9 @@ output:
     fig_caption: yes
     toc: yes
 vignette: |
-  %\VignetteIndexEntry{An Introduction to hoardeR} %\VignetteEngine{knitr::rmarkdown} %\usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{An Introduction to hoardeR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 ---
 
 # Installation
@@ -19,22 +21,22 @@ The installation of `hoardeR` is straight forward, it is located on Cran and can
 command
 
 ```{r eval=FALSE}
-R> install.packages("hoardeR")
+install.packages("hoardeR")
 ```
 
-There are no special system requirements for the installation. However there are a few package dependencies that have to be met.
+There are no special system requirements for the installation. However, there are a few package dependencies that have to be met.
 Normally these dependencies are installed automatically, too. If not, missing Cran packages need then to be installed prior to the
 installation as above, with
 
 ```{r eval=FALSE}
-R> install.packages("packageName")
+install.packages("packageName")
 ```
 
 and missing Bioconductor packages (e.g. the package `Biostrings`) with 
 
 ```{r eval=FALSE}
-R> source("https://bioconductor.org/biocLite.R")
-R> biocLite("Biostrings")
+source("https://bioconductor.org/biocLite.R")
+biocLite("Biostrings")
 ```
 
 The latest developer version, of `hoardeR` is located on GitHub, here
@@ -49,26 +51,26 @@ A webpage for the latest news on hoardeR can be found here:
 
 &nbsp;&nbsp; <http://hoarder.danielfischer.name>
 
-Packages from GitHub can be installed directly in R, using the `devtools` package. To install the latest developer version of
+Packages from GitHub can be installed directly from R, using the `devtools` package. To install the latest developer version of
 `hoardeR` from GitHub, run the following commands
 
 ```{r eval=FALSE}
-R> install.packages("devtools")
-R> library("devtools")
-R> install_github("fischuu/hoardeR")
+install.packages("devtools")
+library("devtools")
+install_github("fischuu/hoardeR")
 ```
 
 Once the package is installed, it can be loaded into the namespace 
 
 ```{r, warning=FALSE, eval=FALSE}
-R> library(hoardeR)
+library(hoardeR)
 ```
 
 # Using hoardeR for identifying cross-species orthologs of novel candidate genes
 
 ## Typical workflow prior the use of hoardeR
 
-The common application of `hoardeR` is to search cross-species orthologs of unannotated, but active regions in a present organism. For that, typically an RNA-seq
+The common application of `hoardeR` is to search cross-species orthologs of unannotated, but active regions in a present organism. For that typically an RNA-seq
 experiment has been conducted, the reads have been mapped to a reference genome and gene expressions have been estimated using some annotation.
 
 Further, reads from non-annotated regions have been analysed and a set of novel gene candidate regions has been identified. This can be done either
@@ -112,7 +114,7 @@ The first lines of a bed file containing the same information would look like th
 ```
 
 For the identification of cross-species orthologs, the exon structure is not the primary interest. Rather, the whole genomic region that hosts a novel candidate gene is
-used here. Typically, not all novel gene candidates are considered and the list is filtered according to some criteria, e.g. that a certain amount of samples have to have a minimum number of reads in that region.
+used here. Typically not all novel gene candidates are considered and the list is filtered according to some criteria e.g., that a certain amount of samples have to have a minimum number of reads in that region.
 
 The final set of regions of interest is then available in bed format, e.g. like this
 
@@ -125,13 +127,12 @@ The final set of regions of interest is then available in bed format, e.g. like 
 
 ## Extraction of nucleotide sequence of novel candidate region
 
-For any loci of interest the nucleotide sequences have to be extracted. There are two way to do that. The first option is to do it outside of R using bedtools. For that, the
-bed file has to be saved to the harddrive first. Assuming the `data.frame` that contains the bed information is called `novelBed` and we have a defined system path to the project,
-called `projFolder`. An example command to export the data frame `novelBed` then is
+For any loci of interest the nucleotide sequences have to be extracted. There are two ways to do that. The first option is to do it outside of R using bedtools. For that, the
+bed file has to be saved to the harddrive first. Assuming the `data.frame` that contains the bed information is called `novelBed` and we have a defined system path to the project, called `projFolder`. An example command to export the data frame `novelBed` then is
 
 ```{bash eval=FALSE}
-R> projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
-R> exportBed(novelBed, file=file.path(projFolder,"novel.bed"))
+projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
+exportBed(novelBed, file=file.path(projFolder,"novel.bed"))
 ```
 
 In the console this bed file can then be used to extract the fasta files, using `bedtools` like this
@@ -143,12 +144,12 @@ bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
 Here, `<input FASTA>` is a fasta file that contains the genome information of the species under investigation. If the resulting `novel.fa` file is empty or
 some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). Extracting the sequences in such a way is especially then adviceable, when the species of interest is rare or the fasta file is not available from Ensembl in the latest version.
 
-However, if the species and also the genome assembly version is available from Ensembl,  the fasta information can be obtained straight with the `hoardeR` function
+However, if the species and also the genome assembly version is available from Ensembl, the fasta information can be obtained straight with the `hoardeR` function
 `getFastaFromBed`. The `hoardeR` package is able to directly download the genomes and annotations of the most common species, a list of available combinations can be found in the `species` dataset, that comes with `hoardeR`
 
 
 ```{r eval=FALSE}
-R> head(species)
+head(species)
 ```
 
 \tiny
@@ -164,24 +165,24 @@ R> head(species)
 \normalsize
 
 Of particular interest are here the columns `Scientific.name` and `Ensembl.Assembly`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic
-hoardeR function `getFastaFromBed` with the default settings to obtain your fasta object. Here, we assume that our species of interest is cow respective bos taurus and the fasta files should be
+`hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. Here, we assume that our species of interest is cow respective bos taurus and the fasta files should be
 downloaded to the folder `/home/daniel/fasta/`. From the `species` table we see that, if no further information are provided then the assembly version `UMD3.1` is downloaded.
 
 ```{r eval=FALSE}
-R> novelBed <- data.frame(Chr=c(11,18,3),
-                          Start=c(72554673, 62550696, 18148822),
-                          End=c(72555273, 62551296, 18149422),
-                          Gene=c("LOC1", "LOC2", "LOC3"))
+novelBed <- data.frame(Chr=c(11,18,3),
+                       Start=c(72554673, 62550696, 18148822),
+                       End=c(72555273, 62551296, 18149422),
+                       Gene=c("LOC1", "LOC2", "LOC3"))
 
-R> myFasta <- getFastaFromBed(novelBed, species="Bos taurus", 
-+                             fastaFolder="/home/daniel/fasta/")
+myFasta <- getFastaFromBed(novelBed, species="Bos taurus", 
+                           fastaFolder="/home/daniel/fasta/")
 ```
 
 With the same command it is also possible to obtain the genomic information from assemblies that are published under a different Ensembl release, or that are not at Ensembl or that have a newer/older assembly version. For that, the full syntax is
 
 ```{r eval=FALSE}
-R> myFasta <- getFastaFromBed(novelBed, species="Bos taurus", release = "84", 
-+                             fastaFolder=NULL, version=NULL)
+myFasta <- getFastaFromBed(novelBed, species="Bos taurus", release = "84", 
+                           fastaFolder="/home/daniel/fasta/", version=NULL)
 ```
 
 Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes
@@ -209,8 +210,8 @@ Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
 To obtain then the corresponding fasta objects (of class `fa`), the command is
 
 ```{r eval=FALSE}
-R> myFasta <- getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
-                              fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
+myFasta <- getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
+                           fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
 ```
 
 assuming again that the fasta files are located in `/home/daniel/fasta/`.
@@ -219,13 +220,13 @@ The option to extract the fasta sequences via bedtools is, however, much faster 
 to the harddrive via
 
 ```{r eval=FALSE}
-R> exportFA(myFasta, file="/home/daniel/myFasta.fa")
+exportFA(myFasta, file="/home/daniel/myFasta.fa")
 ```
 
 A previously stored or downloaded fasta file can be imported to `hoardeR` with the `importFA()` function:
 
 ```{r eval=FALSE}
-R> novelFA <- importFA(file="/home/daniel/myFasta.fa")
+novelFA <- importFA(file="/home/daniel/myFasta.fa")
 ```
 
 The names of the fasta sequences should follow the form like
@@ -245,25 +246,26 @@ That means, for a sequence from chromosome 12 that starts at 123 and ends at 456
 Once the fasta object is available in R, it can be send to the NCBI blast service, using the central `hoardeR` function `blastSeq()`
 
 ```{r eval=FALSE}
-R>  blastSeq(novelFA, 
-+            email="daniel.fischer@luke.fi",
-+            xmlFolder=file.path(projFolder,"hoardeROut/"),
-+            logFolder=file.path(projFolder,"hoardeRLog/"),
-+            keepInMemory=FALSE)
+  blastSeq(novelFA, 
+           email="daniel.fischer@luke.fi",
+           xmlFolder=file.path(projFolder,"hoardeROut/"),
+           logFolder=file.path(projFolder,"hoardeRLog/"),
+           keepInMemory=FALSE)
 ```           
 
 The main parameters are the fasta object (here called `novelFA`), then for etiquette reasons a valid email address of the person who sends the data to NCBI and
-the required folder locations on the harddrive. If they are not available, `hoardeR` will create them without asking.
+the required folder locations on the harddrive. The folder needs to exist on the HDD, `hoardeR` would not create a novel parent folder for the log files.
 
 The `xmlFolder` stores the results that are delivered from NCBI in xml format and the `logFolder` stores the log files. These files are
-especially then important, when the run crashes and should be continued or if the computer is switched off in between. 
+especially then important, when the run crashes and should be continued or if the computer is switched off in between. in that case, obviously no new sequences
+are sent anymore to NCBI.
 
 If a crashed run should be continued, it is enough to run the same command as the initially one using the same fasta object and `hoardeR`
 will continue from the point, where it crashed or where it was interrupted. If the option `verbose=TRUE` is set (default), `hoardeR` keeps 
 reporting status updates of the blast runs. There are still some fine-tuning parameters available, see the manual for details. However,
 there are some etiquette parameters of NCBI that cannot be changed to smaller values than the defaults. These are e.g. the frequency of the requests and the total amount of parallel blast runs.
 
-The verbose output of a `blastSeq` run straight after executing the command looks as follows
+The verbose output of a `blastSeq` runs straight after executing the command looks as follows
 
 ```{r eval=FALSE}
 Missing: 3 
@@ -274,7 +276,7 @@ Total running time: 00:00:04
 ---------------------------------------------------------------
 ```
 
-indicating e.g. that here are still three fasta sequences waiting to be blasted, one sequence is already running an NCBI, zero are finished so
+indicating e.g. that here are still three fasta sequences waiting to be finished, one sequence is already running an NCBI, zero are finished so
 far and the running time of the whole run is 4 seconds. After a while (option `delay_rid`), `blastSeq` starts to check, if the active blast runs are
 finalized. If there are still free blast slots available (maximum number is defined via `n_blast` option), `blastSeq` spawns the next ones. In that case, the verbose output looks like this:
 
@@ -300,7 +302,7 @@ To analyze the blast results, first the xml files have to be imported to `hoarde
 It expects the folder address where the xml files are stored, in our example it is the `hoardeROut` folder in the `projFolder` folder.
 
 ```{r eval=FALSE}
-R> xmls <- importXML(folder=file.path(projFolder,"hoardeROut/"))
+xmls <- importXML(folder=file.path(projFolder,"hoardeROut/"))
 ```
 
 One of the first steps is to check what hit organisms were found. As naturally all sequences are also found in Bos Taurus/Cow, the

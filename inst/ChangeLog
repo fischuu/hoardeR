@@ -2,8 +2,12 @@ LOG of the CHANGES in the package Test
 
 Version 0.9.1:
 * Typos in manual fixed
+* Typos in vignette fixed
 * Minor bugfixes in 'blastSeq'
-* Added the function importBed()
+* Added the function 'importBed()'
+* output of 'print.fa()' adjusted
+* Bugfix in 'getFastaFromBed()'
+    - 'version' option wasn't used properly
 
 Version 0.9:
 * Major update for functionality and usability

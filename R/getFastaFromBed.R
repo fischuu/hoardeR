@@ -15,7 +15,9 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
   if(is.null(version)){
     temp <- hoardeR::species
     speciesVersion <- temp$Ensembl.Assembly[temp$Scientific.name==species]    
-  }   
+  } else {
+    speciesVersion <- version
+  }  
   if(verbose) cat("Using species version:", speciesVersion,"\n")
   
 # First the required original fasta file
