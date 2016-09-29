@@ -34,7 +34,7 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
     if(verbose) cat("Read original fasta file:\n   ", .file ,"\n")
     # seqSpecies <- read.fasta(.file,seqtype="DNA")
     # novelFA[bedRun] <- paste(seqSpecies[[1]][bed$Start[bedRun]:bed$End[bedRun]],collapse="")
-    tmp <- scanFa("K:/Ovis_aries.Oar_v4.0.dna.chromosome.1.fa.gz")
+    tmp <- scanFa(.file)
     novelFA[bedRun] <- as.character(subseq(tmp,bed$Start[bedRun],bed$End[bedRun]))
   }
   names(novelFA) <- paste(">",bed[,1],":",bed[,2],"-",bed[,3],sep="")

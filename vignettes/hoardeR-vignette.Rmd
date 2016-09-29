@@ -238,7 +238,7 @@ myFasta <- getFastaFromBed(novelBed, species="Bos taurus", release = "84",
                            fastaFolder="/home/daniel/fasta/", version=NULL)
 ```
 
-Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files need then to be of the following format, e.g. for the cow assembly version UMD3.1
+Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files needs then to be of the following format, e.g. for the cow assembly version UMD3.1
 
 ```{r eval=FALSE}
 Bos_taurus.UMD3.1.dna.chromosome.1.fa.gz
@@ -247,8 +247,7 @@ Bos_taurus.UMD3.1.dna.chromosome.3.fa.gz
 ...
 ```
 
-That means, first the scientific name, with underscores, then a dot, then the assembly identifier followed by another dot, then `dna.chromosome.` and the chromosome
-identifier, and then the file extension `fa.gz`. That means, the fasta files have to be gzipped.
+That means, first the scientific name, with underscores, then a dot, then the assembly identifier (as provided in the `version`option) followed by another dot, then `dna.chromosome.` and the chromosome identifier, and then the file extension `fa.gz`. That means, the fasta files have to be gzipped.
 
 Consider now an example where the genome is not available from Ensembl. On Ensembl is only the sheep genome assembly 'Oar\_v3.1' available, if one needs to work with the 'Oar\_v4.0' assembly, one would download the chromosome-wise files and then store them in some folder on the harddrive as 
 
@@ -269,8 +268,10 @@ myFasta <- getFastaFromBed(novelBed, species="Ovis aries", release = NULL,
 assuming again that the fasta files are located in `/home/daniel/fasta/`. Here, the `release` option is set to `NULL` (No ensemble release), but the
 `species` and `version` are set instead.
 
-The option to extract the fasta sequences via bedtools is, however, much faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes. An `fa`-object can be stored
-to the harddrive via
+The option to extract the fasta sequences via bedtools is, however, faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes. Also, to the best of our knowledge, bedtools is not available for Windows systems. The `getFastaFromBed`
+function is currently under development to improve its performance to be competetive, especially for larger bed files.
+
+To export an `fa` from R to the harddrive, the function `exportFA` can be used. It just needs the `fa` object itself and also the filename to store it.
 
 ```{r eval=FALSE}
 exportFA(myFasta, file="/home/daniel/myFasta.fa")
@@ -293,6 +294,10 @@ That means, for a sequence from chromosome 12 that starts at 123 and ends at 456
 ```{r eval=FALSE}
 >12:123-456
 ```
+
+
+Currently this function should only be used for smaller fasta files like candidate sequences, but not for whole chromosomes. For that, the function
+`Rsamtools::scanFa`is recommended.
 
 ## Sending sequences to NCBI
 
