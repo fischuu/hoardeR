@@ -17,15 +17,15 @@ vignette: |
 
 # Installation
 
-The installation of `hoardeR` is straight forward, it is located on Cran and can be installed from within R with the 
+The installation of `hoardeR` is straight forward. It is located on Cran and can be installed from within R with the 
 command
 
 ```{r eval=FALSE}
 install.packages("hoardeR")
 ```
 
-There are no special system requirements for the installation. However, there are a few package dependencies that have to be met.
-Normally these dependencies are installed automatically, too. If not, missing Cran packages need then to be installed prior to the
+There are no special system requirements for the installation. However, there are a few package dependencies that have to be fulfilled.
+Normally these dependencies are installed automatically, too. If not, missing Cran packages need to be installed prior to the
 installation as above, with
 
 ```{r eval=FALSE}
@@ -62,8 +62,8 @@ install_github("fischuu/hoardeR")
 
 Once the package is installed, it can be loaded into the namespace 
 
-```{r, warning=FALSE, eval=FALSE}
-library(hoardeR)
+```{r, warning=FALSE, eval=TRUE}
+library("hoardeR")
 ```
 
 # Using hoardeR for identifying cross-species orthologs of novel candidate genes
@@ -97,7 +97,7 @@ The first rows of a typical gtf file would like this:
 
 \normalsize
 
-The first lines of a bed file containing the same information would look like this:
+The first lines of a bed file containing the same information would look like this (tab-separated):
 
 
 ```{bash eval=FALSE}
@@ -127,66 +127,118 @@ The final set of regions of interest is then available in bed format, e.g. like 
 
 ## Extraction of nucleotide sequence of novel candidate region
 
-For any loci of interest the nucleotide sequences have to be extracted. There are two ways to do that. The first option is to do it outside of R using bedtools. For that, the
-bed file has to be saved to the harddrive first. Assuming the `data.frame` that contains the bed information is called `novelBed` and we have a defined system path to the project, called `projFolder`. An example command to export the data frame `novelBed` then is
+For any loci of interest the nucleotide sequences have to be extracted. There are two ways to do that. The first option is to do it outside of R using e.g., bedtools. If the candidate regions have been determined within R, the bed file has to be saved to the harddrive first. Assuming a data frame that
+contains the bed information is called `novelBed` and we have a defined system path to the project, called `projFolder`. The command that can be used
+to export the data table in bed format is `exportBed()`. The `exportBed` function is a simple wrapper around the standard `write.table` that used the
+corrected setting to meet the requirements of a bed file.
+
+The function expects as first argument the data frame that contains the information and then the place to where the bed file should be stored. Further,
+the option `header` is available (`logical`), that determines if the first line should contain the variable names or not, as some applications require
+a header line in the bed file. Example commands to export the data frame `novelBed` are
 
 ```{bash eval=FALSE}
-projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
-exportBed(novelBed, file=file.path(projFolder,"novel.bed"))
+# Write the bed file into the working directory
+  exportBed(novelBed, file="novel.bed")
+
+# Alternative: Use a variable to define the right folder
+  projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
+  exportBed(novelBed, file=file.path(projFolder,"novel.bed"))
 ```
 
-In the console this bed file can then be used to extract the fasta files, using `bedtools` like this
+In the console this bed file can then be used to extract the fasta files, using the `bedtools` program like this
 
 ```{bash eval=FALSE}
 bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
 ```
 
-Here, `<input FASTA>` is a fasta file that contains the genome information of the species under investigation. If the resulting `novel.fa` file is empty or
-some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). Extracting the sequences in such a way is especially then adviceable, when the species of interest is rare or the fasta file is not available from Ensembl in the latest version.
+Here, `<input FASTA>` is a fasta file that contains the genome information of the species under investigation. If the output file `novel.fa` is empty or
+some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). Extracting the sequences in such a way is especially then adviceable, when the species of interest is rare or the fasta file is not available from Ensembl in the latest version. Also if many sequences should be extracted, bedtools is faster then the implemented R function.
 
-However, if the species and also the genome assembly version is available from Ensembl, the fasta information can be obtained straight with the `hoardeR` function
-`getFastaFromBed`. The `hoardeR` package is able to directly download the genomes and annotations of the most common species, a list of available combinations can be found in the `species` dataset, that comes with `hoardeR`
+However, if the species and also the genome assembly version is available from Ensembl, the fasta information can be obtained straight with the `hoardeR` function `getFastaFromBed`. The `hoardeR` package is able to directly download the genomes and annotations of the most common species, a list of available combinations can be found in the `species` dataset, that comes with `hoardeR`
 
 
 ```{r eval=FALSE}
 head(species)
 ```
-
 \tiny
-```{r eval=FALSE}
-       Common.name         Scientific.name Taxon.ID       Ensembl.Assembly       Accession Variation.database Regulation.database Pre.assembly
-1   Aardvark (Pre)   Orycteropus afer afer  1230840                      -               -                  -                   -      OryAfe1
-2           Alpaca           Vicugna pacos    30538                vicPac1               -                  -                   -            -
-3     Amazon molly        Poecilia formosa    48698 Poecilia_formosa-5.1.2 GCA_000485575.1                  -                   -            -
-4     Anole lizard     Anolis carolinensis    28377              AnoCar2.0 GCA_000090745.1                  -                   -            -
-5        Armadillo    Dasypus novemcinctus     9361              Dasnov3.0 GCA_000208655.2                  -                   -            -
-6 Budgerigar (Pre) Melopsittacus undulatus    13146                      -               -                  -                   -    MelUnd6.3
+```{r eval=TRUE, echo=FALSE, comment=NA, tidy=TRUE}
+options(width = 400)
+head(species)
 ```
 \normalsize
 
-Of particular interest are here the columns `Scientific.name` and `Ensembl.Assembly`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic
-`hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. Here, we assume that our species of interest is cow respective bos taurus and the fasta files should be
-downloaded to the folder `/home/daniel/fasta/`. From the `species` table we see that, if no further information are provided then the assembly version `UMD3.1` is downloaded.
+Of particular interest are here the columns `Scientific.name` and `Ensembl.Assembly`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic `hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. As an example, assume that our species of interest is _Cow_ (that has the scientif name _bos taurus_) and the fasta files should be downloaded
+to the folder `/home/daniel/fasta/`. We can use the function `findSpecies` to get specific rows in `species`. The function expects just one `string` and extracts then from the `species` object all rows that contain the string (Also substrings are possible) in any of its cells. Hence, this function
+can be used to find common names, scientific names or also assembly IDs.
+
+```{r eval=FALSE}
+findSpecies("Cow")
+```
+\tiny
+```{r eval=TRUE, echo=FALSE, comment=NA, tidy=TRUE}
+findSpecies("Cow")
+```
+\normalsize
+
+In its most basic usage, the `getFastaFromBed` function expects a data table (parameter `bed`), a species (parameter `species`) and a folder where
+it finds the fasta files or to where it can save them (parameter `fastaFolder`). The function first checks from the provided folder if the required
+fasta files are available, if not it will download the corresponding files from the Ensebml ftp server. The output of the function is then an object of class `fa`.
+
+\newpage
+
+A basic minimal example of the usage of the function:
 
 ```{r eval=FALSE}
 novelBed <- data.frame(Chr=c(11,18,3),
-                       Start=c(72554673, 62550696, 18148822),
-                       End=c(72555273, 62551296, 18149422),
+                       Start=c(72554673, 62550672, 18148822),
+                       End=c(72555273, 62551296, 18149488),
                        Gene=c("LOC1", "LOC2", "LOC3"))
 
 myFasta <- getFastaFromBed(novelBed, species="Bos taurus", 
                            fastaFolder="/home/daniel/fasta/")
+
 ```
 
-With the same command it is also possible to obtain the genomic information from assemblies that are published under a different Ensembl release, or that are not at Ensembl or that have a newer/older assembly version. For that, the full syntax is
+The content of `myFasta` looks then like this
+
+```{r eval=FALSE}
+myFasta
+
+$`>11:72554673-72555273`
+[1] "cccaagaagcaggaatgagagtggcgctttttctgccccaggtaacggtc..."
+
+$`>18:62550672-62551296`
+[1] "aggagatttgcctgcgaaacctctggttctcttagagcttccattcccgt..."
+
+Fasta sequences ommited to print: 1
+```
+
+To see a summary of the `fa` object, the S3 class function `summary` is available
+
+```{r eval=FALSE}
+summary(myFasta)
+
+Summary of fa object
+---------------
+Sequences      : 3 
+Minimum length : 601 
+1st quartile   : 613 
+Median length  : 625 
+Average length : 631 
+3rd quartile   : 646 
+Maximum length : 667 
+```
+
+
+The function `getFastaFromBed` has more options and it is also possible to obtain the genomic information from assemblies that are published under a different Ensembl release, or that are not at Ensembl at all or that have a newer/older assembly version. For that the optional parameters `release`
+and `version` are available. The full syntax is then
 
 ```{r eval=FALSE}
 myFasta <- getFastaFromBed(novelBed, species="Bos taurus", release = "84", 
                            fastaFolder="/home/daniel/fasta/", version=NULL)
 ```
 
-Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes
-to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files need then to be of the following format, e.g. for the cow assembly version UMD3.1
+Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files need then to be of the following format, e.g. for the cow assembly version UMD3.1
 
 ```{r eval=FALSE}
 Bos_taurus.UMD3.1.dna.chromosome.1.fa.gz
@@ -198,7 +250,7 @@ Bos_taurus.UMD3.1.dna.chromosome.3.fa.gz
 That means, first the scientific name, with underscores, then a dot, then the assembly identifier followed by another dot, then `dna.chromosome.` and the chromosome
 identifier, and then the file extension `fa.gz`. That means, the fasta files have to be gzipped.
 
-Consider now an example where the genome is not available from Ensembl. On Ensembl is only the sheep genome assembly 'Oar\_v3.1', if one needs to work with the 'Oar\_v4.0', one would download the chromosome-wise files and then store them in some folder on the harddrive as 
+Consider now an example where the genome is not available from Ensembl. On Ensembl is only the sheep genome assembly 'Oar\_v3.1' available, if one needs to work with the 'Oar\_v4.0' assembly, one would download the chromosome-wise files and then store them in some folder on the harddrive as 
 
 ```{r eval=FALSE}
 Ovis_aries.Oar_v4.0.dna.chromosome.1.fa.gz
@@ -207,14 +259,15 @@ Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
 ...
 ```
 
-To obtain then the corresponding fasta objects (of class `fa`), the command is
+To use then the corresponding fasta objects (of class `fa`), the command is
 
 ```{r eval=FALSE}
 myFasta <- getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
                            fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
 ```
 
-assuming again that the fasta files are located in `/home/daniel/fasta/`.
+assuming again that the fasta files are located in `/home/daniel/fasta/`. Here, the `release` option is set to `NULL` (No ensemble release), but the
+`species` and `version` are set instead.
 
 The option to extract the fasta sequences via bedtools is, however, much faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes. An `fa`-object can be stored
 to the harddrive via

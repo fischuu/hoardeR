@@ -1,19 +1,20 @@
 import(httr, XML, stringr, MASS, R.utils, data.table)
 
 importFrom(seqinr, comp)
-importFrom(seqinr, read.fasta)
+importFrom(seqinr, read.fasta) # switch to scanFa instead
 importFrom(bamsignals, bamCount)
-importFrom(Biostrings, nucleotideSubstitutionMatrix)
+importFrom(Biostrings, nucleotideSubstitutionMatrix, subseq)
 importFrom(Biostrings, pairwiseAlignment)
 importFrom(GenomicRanges, GRanges)
 importFrom(IRanges, IRanges)
+importFrom(Rsamtools, scanFa)
 
 importFrom("grDevices", "colorRampPalette", "dev.off", "png")
 importFrom("graphics", "axis", "lines", "plot", "polygon", "rect","text")
 importFrom("stats", "loess", "median", "predict", "quantile")
 importFrom("utils", "download.file", "read.csv", "read.table","setTxtProgressBar", "txtProgressBar", "write.table")
 
-export(importBed, importFA, blastSeq,exportBed, exportFA, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
+export(importBed, importFA, blastSeq,exportBed, exportFA, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
        importBlastTab, intersectXMLAnnot,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
        plotHit, getFastaFromBed)
