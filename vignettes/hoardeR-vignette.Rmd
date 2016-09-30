@@ -138,11 +138,11 @@ a header line in the bed file. Example commands to export the data frame `novelB
 
 ```{bash eval=FALSE}
 # Write the bed file into the working directory
-  exportBed(novelBed, file="novel.bed")
+  exportBed(novelBed, file = "novel.bed")
 
 # Alternative: Use a variable to define the right folder
   projFolder <- "/home/daniel/MyProjects/hoardeR-Example"
-  exportBed(novelBed, file=file.path(projFolder,"novel.bed"))
+  exportBed(novelBed, file = file.path(projFolder, "novel.bed"))
 ```
 
 In the console this bed file can then be used to extract the fasta files, using the `bedtools` program like this
@@ -189,13 +189,13 @@ fasta files are available, if not it will download the corresponding files from 
 A basic minimal example of the usage of the function:
 
 ```{r eval=FALSE}
-novelBed <- data.frame(Chr=c(11,18,3),
-                       Start=c(72554673, 62550672, 18148822),
-                       End=c(72555273, 62551296, 18149488),
-                       Gene=c("LOC1", "LOC2", "LOC3"))
+novelBed <- data.frame(Chr = c(11,18,3),
+                       Start = c(72554673, 62550672, 18148822),
+                       End = c(72555273, 62551296, 18149488),
+                       Gene = c("LOC1", "LOC2", "LOC3"))
 
-myFasta <- getFastaFromBed(novelBed, species="Bos taurus", 
-                           fastaFolder="/home/daniel/fasta/")
+myFasta <- getFastaFromBed(novelBed, species = "Bos taurus", 
+                           fastaFolder = "/home/daniel/fasta/")
 
 ```
 
@@ -234,11 +234,11 @@ The function `getFastaFromBed` has more options and it is also possible to obtai
 and `version` are available. The full syntax is then
 
 ```{r eval=FALSE}
-myFasta <- getFastaFromBed(novelBed, species="Bos taurus", release = "84", 
-                           fastaFolder="/home/daniel/fasta/", version=NULL)
+myFasta <- getFastaFromBed(novelBed, species = "Bos taurus", release = "84", 
+                           fastaFolder = "/home/daniel/fasta/", version = NULL)
 ```
 
-Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release=NULL`), the function assumes to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files needs then to be of the following format, e.g. for the cow assembly version UMD3.1
+Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release = NULL`), the function assumes to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files needs then to be of the following format, e.g. for the cow assembly version UMD3.1
 
 ```{r eval=FALSE}
 Bos_taurus.UMD3.1.dna.chromosome.1.fa.gz
@@ -247,7 +247,8 @@ Bos_taurus.UMD3.1.dna.chromosome.3.fa.gz
 ...
 ```
 
-That means, first the scientific name, with underscores, then a dot, then the assembly identifier (as provided in the `version`option) followed by another dot, then `dna.chromosome.` and the chromosome identifier, and then the file extension `fa.gz`. That means, the fasta files have to be gzipped.
+That means, first the scientific name, with underscores, then a dot, then the assembly identifier (as provided in the `version` option) followed by another dot, then `dna.chromosome.` and the chromosome identifier, and then the file extension `fa.gz`.
+That means further, the fasta files have to be gzipped.
 
 Consider now an example where the genome is not available from Ensembl. On Ensembl is only the sheep genome assembly 'Oar\_v3.1' available, if one needs to work with the 'Oar\_v4.0' assembly, one would download the chromosome-wise files and then store them in some folder on the harddrive as 
 
@@ -261,17 +262,17 @@ Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
 To use then the corresponding fasta objects (of class `fa`), the command is
 
 ```{r eval=FALSE}
-myFasta <- getFastaFromBed(novelBed, species="Ovis aries", release = NULL, 
-                           fastaFolder="/home/daniel/fasta/", version="Oar_v4.0")
+myFasta <- getFastaFromBed(novelBed, species = "Ovis aries", release = NULL, 
+                           fastaFolder = "/home/daniel/fasta/", version = "Oar_v4.0")
 ```
 
 assuming again that the fasta files are located in `/home/daniel/fasta/`. Here, the `release` option is set to `NULL` (No ensemble release), but the
 `species` and `version` are set instead.
 
 The option to extract the fasta sequences via bedtools is, however, faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes. Also, to the best of our knowledge, bedtools is not available for Windows systems. The `getFastaFromBed`
-function is currently under development to improve its performance to be competetive, especially for larger bed files.
+function is currently under development to improve its performance especially for larger bed files.
 
-To export an `fa` from R to the harddrive, the function `exportFA` can be used. It just needs the `fa` object itself and also the filename to store it.
+To export an `fa` object from R to the harddrive, the function `exportFA` can be used. It just needs the `fa` object itself and also the filename to store it.
 
 ```{r eval=FALSE}
 exportFA(myFasta, file="/home/daniel/myFasta.fa")
@@ -297,7 +298,7 @@ That means, for a sequence from chromosome 12 that starts at 123 and ends at 456
 
 
 Currently this function should only be used for smaller fasta files like candidate sequences, but not for whole chromosomes. For that, the function
-`Rsamtools::scanFa`is recommended.
+`Rsamtools::scanFa` is recommended.
 
 ## Sending sequences to NCBI
 
@@ -306,17 +307,15 @@ Once the fasta object is available in R, it can be send to the NCBI blast servic
 ```{r eval=FALSE}
   blastSeq(novelFA, 
            email="daniel.fischer@luke.fi",
-           xmlFolder=file.path(projFolder,"hoardeROut/"),
-           logFolder=file.path(projFolder,"hoardeRLog/"),
-           keepInMemory=FALSE)
+           xmlFolder="/home/daniel/results/hoardeR/Proj1-Out",
+           logFolder="/home/daniel/results/hoardeR/Proj1-Log")
 ```           
 
-The main parameters are the fasta object (here called `novelFA`), then for etiquette reasons a valid email address of the person who sends the data to NCBI and
-the required folder locations on the harddrive. The folder needs to exist on the HDD, `hoardeR` would not create a novel parent folder for the log files.
+The main parameters are the `fa` object that contains the sequences to be blasted (here called `novelFA`) and for etiquette reasons a valid email address of the person who sends the data to NCBI. Further, it is possible to define a folder name and location for the xml and log files on the harddrive. If the folder does not exist on the HDD, `hoardeR` will create it. If no `logFolder` is provided, it will automatically be created as a subfolder of `xmlFolder` and is called `logs`. If also no `xmlFolder` is provided, then `hoardeR` creates in the working directory a new project folder called `hoardeR` followed by a timestamp.
 
 The `xmlFolder` stores the results that are delivered from NCBI in xml format and the `logFolder` stores the log files. These files are
-especially then important, when the run crashes and should be continued or if the computer is switched off in between. in that case, obviously no new sequences
-are sent anymore to NCBI.
+especially then important, when the run crashes and should be continued or if the computer is switched off in between. During the time the computer
+is switched off, obviously no new sequences are sent anymore to NCBI.
 
 If a crashed run should be continued, it is enough to run the same command as the initially one using the same fasta object and `hoardeR`
 will continue from the point, where it crashed or where it was interrupted. If the option `verbose=TRUE` is set (default), `hoardeR` keeps 
@@ -329,7 +328,7 @@ The verbose output of a `blastSeq` runs straight after executing the command loo
 Missing: 3 
 Running: 1 
 Finished: 0 
-Avg. Blast Time: 00:00:00 
+Avg. Blast Time: NA 
 Total running time: 00:00:04 
 ---------------------------------------------------------------
 ```
@@ -348,8 +347,7 @@ Total running time: 00:02:40
 ---------------------------------------------------------------
 ```
 
-Here, we see that there is still one sequence missing and one is also running. The ID number of that run is `RW99J31C01R` and it is
-active since 2 minutes and 23 seconds. So far, two sequence runs are ready and their average running time was 1 minute and 10 seconds.
+Here, we see that there is still one sequence missing and its sequence was already sent, as indicated by the fact that there is also one sequence running. The ID number of that run is `RW99J31C01R` and it is active since 2 minutes and 23 seconds. So far, two sequence runs are finished and their average running time was 1 minute and 10 seconds.
 
 The function stops, when there are neither missing nor running sequences anymore. The results of the run are stored in the `xmlFolder`. These results
 can already be analyzed while the `blastSeq` run is still active, so intermediate results can be obtained on the fly. For that, just open another instance of R and continue to analyze the Blast results.
@@ -357,39 +355,46 @@ can already be analyzed while the `blastSeq` run is still active, so intermediat
 ## Analyze the Blast Results
 
 To analyze the blast results, first the xml files have to be imported to `hoardeR`. For that there is the `importXML()` function.
-It expects the folder address where the xml files are stored, in our example it is the `hoardeROut` folder in the `projFolder` folder.
+It expects the folder address where the xml files are stored, in our example it is the `hoardeROut` folder in the `projFolder` folder. The output
+of the function is then stored in the `xmls` object.
 
 ```{r eval=FALSE}
 xmls <- importXML(folder=file.path(projFolder,"hoardeROut/"))
 ```
 
 One of the first steps is to check what hit organisms were found. As naturally all sequences are also found in Bos Taurus/Cow, the
-host organism can be excluded from the table
+host organism can be excluded from the table with the `exclude` option.
 
 ```{r eval=FALSE}
-R> tableSpecies(xmls, exclude="Bos taurus")
+tableSpecies(xmls, exclude="Bos taurus")
 ```
   
 This table can be displayed as barplot e.g. in the following way
 
 ```{r eval=FALSE}
-R> par(oma=c(5,0,0,0))
-R> barplot(sort(tableSpecies(xmls, exclude="Bos taurus"), decreasing=TRUE), las=2)
+barplot(tableSpecies(xmls))
 ```
 
-Next the hits for the Sus scrofa/Pig will be visualized. For that, the xml results will be first filtered accordingly. For that
-also the tableSpecies command is used. This time, however, a species is not excluded with the `exclude` option, but explicitely defined
-with the `species` parameter. Further, instead of just counting the occurances, we request in addition the location information by
-setting `locations=TRUE`:
+or with some formatting, in case more bars are to be plotted (as it is common, if many sequences were sent)
 
 ```{r eval=FALSE}
-R> tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
+par(oma=c(5,0,0,0))
+barplot(sort(tableSpecies(xmls, exclude="Bos taurus"), decreasing=TRUE), las=2)
+```
+
+The function can also summarize all hits in a certain hit organism.
+For example, all hits in Pig/Sus scrofa should be printed. For that, the xml results will be first filtered accordingly. 
+This time, however, a species is not excluded with the `exclude` option, but explicitely defined with the `species` parameter.
+Further, instead of just counting the occurances, we request in addition the location information by setting `locations=TRUE`:
+
+```{r eval=FALSE}
+tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
 ```
 
 \scriptsize
 ```{r eval=FALSE}
-                                           Organism hitID hitLen hitChr  hitStart    hitEnd origChr origStart  origEnd
-28 Sus scrofa breed mixed chromosome 4, Sscrofa10.2   494    644      4 105815870 105816509       3  18148822 18149422
+                                            Organism hitID hitLen hitChr  hitStart    hitEnd origChr origStart  origEnd
+15 Sus scrofa breed mixed chromosome 13, Sscrofa10.2   542    610     13 152539332 152538724       1  62550672 62551296
 ```
 \normalsize
 
@@ -410,10 +415,9 @@ Sus scrofa
          1 
 ```
 
-The column `Organism` indicates the hit organism and the corresponding assembly. In this case it is Sus scrofa and Sscrofa10.2. Cross-checking with the `species` data table
-reveals, that this assembly is the default assembly at Ensembl:
+The column `Organism` indicates the hit organism and the corresponding assembly. In this case it is Sus scrofa and Sscrofa10.2. Cross-checking with the `species` data table using the `findSpecies()` function reveals, that this assembly is the default assembly at Ensembl:
 ```{r eval=FALSE}
-R> species[grepl("Sus scrofa", species$Scientific.name),]       
+findSpecies("Sus scrofa") 
 ```
 
 \scriptsize
@@ -426,53 +430,48 @@ R> species[grepl("Sus scrofa", species$Scientific.name),]
 
 \normalsize
 
-That means that the assembly can be obtained automatically from `hoardeR` for further analysis without using any additional parameters. The command `getAnnotation` downloads automatically the corresponding annotation into the specified folder (here: `/home/daniel/annotation`):
+That means that the assembly can be obtained automatically from `hoardeR` for further analysis without using any additional parameters. The command `getAnnotation` downloads automatically the corresponding annotation into a folder specified in `annotationFolder` (here: `/home/daniel/annotation`). Again, if nothing is specified (`annotationFolder=NULL`, default), the working directory is used intead. 
 
 ```{r eval=FALSE}
-R> ssannot <- getAnnotation(species = "Sus scrofa", 
-+                           annotationFolder="/home/daniel/annotation")
+ssannot <- getAnnotation(species = "Sus scrofa", 
++                        annotationFolder="/home/daniel/annotation")
 ```
 
 Having the annotation information available from Ensembl, we can intersect the Blast results with the annotation. First we check if the found loci intersect with an intergenic region in the Sus scrofa genome. Here, we assume that more than one hit was found and results would be stored in a list
 
 ```{r eval=FALSE}
-R> pigHits <- tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
-R> pigInter <- list()
-R> for(i in 1:nrow(pigHits)){
-R>   pigInter[[i]] <- intersectXMLAnnot(pigHits[i,], ssannot)
-R> }
+pigHits <- tableSpecies(xmls, species="Sus scrofa", locations = TRUE)
+pigInter <- intersectXMLAnnot(pigHits, ssannot)
+
 ```
 
 However, unfortunately there is no intersection:
 
 ```{r eval=FALSE}
-R> pigInter
+pigInter
+
 [[1]]
 Empty data.table (0 rows) of 15 cols: V1,V2,V3,V4,V5,V6...
 ```
 
-Hence, we allow for a larger seach area and add flanking sites of 100kB to each side of the search area (that means, 100kB are added to each side of the annotated regions), using the option `flanking=100` in 
-the `intersectXMLAnnot()` function:
+Hence, we allow for a larger seach area and add flanking sites of 1000kB to each side of the search area (that means, 1000kB is added to each side of the annotated regions), using the option `flanking=1000` in the `intersectXMLAnnot()` function:
 
 ```{r eval=FALSE}
-R> pigInter.flank <- list()
-R> for(i in 1:nrow(pigHits)){
-R>   pigInter.flank[[i]] <- intersectXMLAnnot(pigHits[i,], ssannot, flanking=100)
-R> }
-# This part transforms the list into a data frame and removes those 'hits' that
-# do not report any intersection
-R> pigInter.flank <- pigInter.flank[sapply(pigInter.flank,nrow)>0]
-R> pigInter.flank <- do.call(rbind, pigInter.flank)
-
+pigInter.flank <- intersectXMLAnnot(pigHits, ssannot, flanking=1000)
 ```
 
 This results in an intersection:
 
 \tiny
 ```{r eval=FALSE}
-R> pigInter.flank
-   V1      V2   V3        V4        V5 V6 V7 V8                                                                                                    V9 origChr origStart  origEnd hitChr  hitStart    hitEnd
-1:  4 ensembl gene 105858080 105858409  .  -  . gene_id "ENSSSCG00000006603"; gene_version "2"; gene_source "ensembl"; gene_biotype "protein_coding";       3  18148822 18149422      4 105815870 105816509
+pigInter.flank
+
+   V1      V2   V3        V4        V5 V6 V7 V8
+1: 13 ensembl gene 153238002 153238055  .  -  .
+                                                                                                                   V9 origChr origStart  origEnd hitChr
+1: gene_id "ENSSSCG00000019624"; gene_version "1"; gene_name "SNORD12"; gene_source "ensembl"; gene_biotype "snoRNA";       1  62550672 62551296     13
+    hitStart    hitEnd
+1: 152539332 152538724
 ```
 \normalsize
 

@@ -11,7 +11,10 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
                     End=bed[,3],
                     Gene=bed[,4])
   if(is.null(species)) stop("No species given!")    
-  if(is.null(fastaFolder)) stop("No directory with fasta files given!")   
+  if(is.null(fastaFolder)){
+    warning("No directory with fasta files given! Use the working directory: \n", getwd())
+    fastaFolder <- getwd()
+    }  
   if(is.null(version)){
     temp <- hoardeR::species
     speciesVersion <- temp$Ensembl.Assembly[temp$Scientific.name==species]    

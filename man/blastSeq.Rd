@@ -10,7 +10,7 @@
 }
 \usage{
   blastSeq(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, 
-           xmlFolder=NULL,logFolder=NULL, keepInMemory=TRUE,
+           xmlFolder=NULL,logFolder=NULL, keepInMemory=FALSE,
            database="chromosome", verbose=TRUE, createLog=TRUE)
 }
 
@@ -40,7 +40,8 @@
 
  In case the option \code{keepInMemory} is set to TRUE the Blast results will be kept in memory, otherwise they will
  be just written to the HDD. Especially if many sequences are send to the blast service it is recommended to drop the result from the memory,
- meaning to set the option \code{keepinMemory=FALSE}.
+ meaning to set the option \code{keepinMemory=FALSE}. The option \code{keepinMemory=TRUE} is currently still under development and should not be
+ used.
  
  If log files should be written (\code{createLog=TRUE}) a log path should be given in \code{logPath}. However, if a xmlPath is given and the
  option \code{createLog=TRUE} is set, then the log folder will be automatically created in the parental folder of the \code{xmlFolder} and is

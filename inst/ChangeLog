@@ -10,7 +10,8 @@ Version 0.9.1:
     - 'version' option wasn't used properly
 * Improvements in 'getFastaFromBed()'
     - fasta files are now imported using the 'Rsamtools::scanFa' function
-
+* Improvements in 'summary.fa()'
+    - Output is now better aligned
 
 Version 0.9:
 * Major update for functionality and usability

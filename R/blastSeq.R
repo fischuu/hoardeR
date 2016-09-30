@@ -1,10 +1,10 @@
 # TODO:
 # Keep the timing values and return them also as a result
 
-blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=TRUE, database="chromosome", verbose=TRUE, createLog=TRUE){
-
+blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE, database="chromosome", verbose=TRUE, createLog=TRUE){
 
   startTime <- Sys.time()
+  firstRun <- TRUE
   
 # Polite system sleeps as requested from NCBI  
   if(delay_req<3) stop("Sending more requests than once every 3 seconds is considered to be rude from NCBI!")  
@@ -16,25 +16,24 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
   if(is.null(names(seq))) names(seq) <- 1:totalSeq
 
 # Check about the xml folder settings
-  writeXML <- FALSE
-  if(!is.null(xmlFolder)){
-  # check if the path is provided properly
-    
-    writeXML <- TRUE
-    dir.create(xmlFolder, showWarnings = FALSE)
+  writeXML <- TRUE
+  if(is.null(xmlFolder)){
+   xmlFolder <- paste("hoardeR-",format(Sys.time(), "%d.%m.%Y@%X"),sep="") 
+   xmlFolder <- gsub(":","-", xmlFolder)
   }
   
+  dir.create(xmlFolder, showWarnings = FALSE)  
 # Set up the log folder
   if(createLog){
     if(is.null(logFolder)){
       if(is.null(xmlFolder)){
         stop("No log/xml path given.")
       } else {
-        logFolder <- strsplit(xmlFolder,"/")[[1]]
-        logFolder <- logFolder[nchar(logFolder)>0]
-        logFolder <- logFolder[1:(length(logFolder)-1)]
-        logFolder <- paste(c(logFolder,"hoardeRlogs/"),collapse="/")
-        logFolder <- paste("/",logFolder,sep="")
+        #logFolder <- strsplit(xmlFolder,"/")[[1]]
+        #logFolder <- logFolder[nchar(logFolder)>0]
+        #logFolder <- logFolder[1:(length(logFolder)-1)]
+        logFolder <- file.path(xmlFolder,"logs")
+        message("Create/use log folder: ", logFolder)
       }
     }
     dir.create(logFolder, showWarnings = FALSE)    
@@ -49,24 +48,24 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
 
 # Read/Write the RID/sequence info table
   if(createLog){
-    if(file.exists(paste(logFolder,"seqRID-info.csv",sep=""))){
-      seqInfoImported <- read.table(paste(logFolder,"seqRID-info.csv",sep=""), header=TRUE, stringsAsFactors=FALSE)
+    if(file.exists(file.path(logFolder,"seqRID-info.csv"))){
+      seqInfoImported <- read.table(file.path(logFolder,"seqRID-info.csv"), header=TRUE, stringsAsFactors=FALSE)
       if(sum(seqInfo$seqNames==seqInfoImported$seqNames)!=nrow(seqInfo)) stop("Log-file mismatch! Please provide the right log file for the existing project or change the logFolder option.")
       seqInfo <- seqInfoImported
     } else {
-      write.table(seqInfo,file=paste(logFolder,"seqRID-info.csv",sep=""), quote=FALSE, row.names=FALSE)      
+      write.table(seqInfo,file=file.path(logFolder,"seqRID-info.csv"), quote=FALSE, row.names=FALSE)      
     }
   }
 
 # Write the project Log
   if(createLog){
-    if(file.exists(paste(logFolder,"hoardeR.log",sep=""))){
-      fileConn<-file(paste(logFolder,"hoardeR.log",sep=""))
+    if(file.exists(file.path(logFolder,"hoardeR.log"))){
+      fileConn<-file(file.path(logFolder,"hoardeR.log"))
       logLines <- readLines(fileConn)
       close(fileConn)      
       startTime <- as.POSIXct(logLines[1])
     } else {  
-      fileConn<-file(paste(logFolder,"hoardeR.log",sep=""))
+      fileConn<-file(file.path(logFolder,"hoardeR.log"))
       writeLines(c(as.character(startTime),
                    "---------------------------------",
                    "Settings:",
@@ -107,9 +106,13 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
       active <- c(active,sendThis)
       seqInfo$seqRID[sendThis] <- RID[sendThis]
       sendThis <- sendThis + 1
-      if(!keepInMemory) write.table(seqInfo,file=paste(logFolder,"seqRID-info.csv",sep=""), quote=FALSE, row.names=FALSE) 
+      if(!keepInMemory) write.table(seqInfo,file=file.path(logFolder,"seqRID-info.csv"), quote=FALSE, row.names=FALSE) 
     } else {
-      Sys.sleep(delay_rid) 
+      if(!firstRun){
+        Sys.sleep(delay_rid)
+      } else {
+        firstRun <- FALSE 
+      }
       for(i in active){
         res[[i]] <- getBlastResult(RID[i]) 
         Sys.sleep(delay_req)
@@ -122,26 +125,31 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
            timeAvg <- timeStat(timings[timings!="0"])
         # Write here then the XML file to the folder
            if(writeXML){
-             file.create(paste(xmlFolder,names(seq)[i],".xml",sep=""))
-             fileConn <- file(paste(xmlFolder,names(seq)[i],".xml",sep=""))
+             xmlFile <- paste(names(seq)[i],".xml",sep="")
+             xmlFile <- gsub(">","", xmlFile)
+             xmlFile <- gsub(":",".", xmlFile)
+             file.create(file.path(xmlFolder, xmlFile  ))
+             fileConn <- file(file.path(xmlFolder,xmlFile ))
              writeLines(res[[i]]$blastRes, fileConn)
              close(fileConn)  
-             write.table(seqInfo,file=paste(logFolder,"seqRID-info.csv",sep=""), quote=FALSE, row.names=FALSE)  
+             write.table(seqInfo,file=file.path(logFolder,"seqRID-info.csv"), quote=FALSE, row.names=FALSE)  
            }
            if(!keepInMemory){
              res[[i]] <- NULL
            }
         } else {
           seqInfo$seqRuntime[seqInfo$seqNames==names(seq)[i]] <- res[[i]]$time
-          write.table(seqInfo,file=paste(logFolder,"seqRID-info.csv",sep=""), quote=FALSE, row.names=FALSE)  
+          write.table(seqInfo,file=file.path(logFolder,"seqRID-info.csv"), quote=FALSE, row.names=FALSE)  
         }
       }
     }
     if(verbose){
+      timeAvgPrint <- timeAvg
+      if(timeAvgPrint=="00:00:00") timeAvgPrint <- "NA"
       cat("Missing:",totalSeq-ready,"\n")
       cat("Running:",length(active),"\n")
       cat("Finished:",ready,"\n")
-      cat("Avg. Blast Time:",timeAvg,"\n")
+      cat("Avg. Blast Time:",timeAvgPrint,"\n")
       cat("Total running time:",secToTime(as.numeric(Sys.time() - startTime, units="secs")),"\n")
       cat("---------------------------------------------------------------\n")
     }

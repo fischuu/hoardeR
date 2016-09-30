@@ -49,13 +49,14 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
       stop("Cannot resolve the hit organism gene name from the annotation file.")
     }
 
-    if(!is.null(figureFolder)) png(filename=paste(figureFolder,figurePrefix,hitRun+indexOffset,"-",tempGeneName,".png",sep=""), width=2000, height=1400)
+    if(!is.null(figureFolder)) png(filename=file.path(figureFolder,figurePrefix,hitRun+indexOffset,"-",tempGeneName,".png"), width=2000, height=1400)
     if(verbose) cat("Start to create figure for",tempGeneName,"(",date(),")\n")
   # Import the fasta files
   # ADD HERE STILL THE OPTION FOR AN OWN FASTA FILE!!!
     if(is.null(fastaFolder)){
-      stop("No directory with fasta file given!")    
-    } else {
+      message("No directory with fasta file given! Use the working directory:\n", getwd())    
+      fastaFolder <- getwd()
+    }
       if(is.null(origSpeciesVersion)){
         temp <- hoardeR::species
         origSpeciesVersion <- temp$Ensembl.Assembly[temp$Scientific.name==origSpecies]
@@ -83,7 +84,6 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
         if(!file.exists(.file)) download.file(paste(ensemblURL,fileName,sep=""), .file)
         if(verbose) cat("Read hit fasta file:\n   ", .file ,"\n")
         seqHit <- read.fasta(.file,seqtype="DNA")
-    }
     
     # Getting the constants
     origChr <- hits$origChr[hitRun]
@@ -166,7 +166,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
       origLeft.forPlotting <- seq(origStart,origStartFlank.forPlotting,-window)
       origRight.forPlotting <- seq(origEnd,origEndFlank.forPlotting,window)
       
-      if(verbose) cat("Slots (width/window) in area:", length(origLeft) + length(origRight) + 1,"\n")
+      if(verbose) message("Slots (width/window) in area:", length(origLeft) + length(origRight) + 1)
       
     # Get the plotting coordinates
       xRange.forPlotting <- range(c(origLeft.forPlotting,origRight.forPlotting))
@@ -195,25 +195,25 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
       HITwinSeqRight <- c()
 
       if(length(scoresLeft)>1){
-        if(verbose) cat("Get the left sequences\n")
+        if(verbose) message("Get the left sequences")
         for(i in 1:length(scoresLeft)){
           if(length(origLeft>1)) ORIGwinSeqLeft[i] <- paste(seqOrig[[1]][origLeft[length(origLeft)+1-i]:origLeft[length(origLeft)-i]],collapse="")
           if(length(hitLeft>1)) HITwinSeqLeft[i] <- paste(seqHit[[1]][hitLeft[length(hitLeft)+1-i]:hitLeft[length(hitLeft)-i]] ,collapse="")
           if(HITneg) HITwinSeqLeft[i] <- paste(rev(comp(strsplit(HITwinSeqLeft[i],"")[[1]])),collapse="")
         }
       } else {
-        if(verbose) cat("No left sequences, original sequence is on chromosome border\n")
+        if(verbose) message("No left sequences, original sequence is on chromosome border")
       }
   
       if(length(scoresRight)>1){
-         if(verbose) cat("Get the right sequences\n")
+         if(verbose) message("Get the right sequences")
          for(i in 1:length(scoresRight)){
            if(length(origRight>1)) ORIGwinSeqRight[i] <- paste(seqOrig[[1]][origRight[i]:origRight[1+i]], collapse="")  
            if(length(hitRight>1)) HITwinSeqRight[i] <- paste(seqHit[[1]][hitRight[i]:hitRight[i+1]],collapse="")
            if(HITneg) HITwinSeqRight[i] <- paste(rev(comp(strsplit(HITwinSeqRight[i],"")[[1]])),collapse="")
          }
       } else {
-        if(verbose) cat("No right sequences, original sequence is on chromosome border\n")
+        if(verbose) message("No right sequences, original sequence is on chromosome border")
       }
       origSequence <- paste(seqOrig[[1]][origStart:origEnd],collapse="")
       hitSequence <- paste(seqHit[[1]][hitStart:hitEnd],collapse="")
@@ -381,7 +381,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
     if(coverage){
 
       if(is.null(countWindow)) countWindow <- window
-      if(verbose) cat("\nWe use",length(fls),"bamfiles to calculate the average coverage.\n")
+      if(verbose) message("\nWe use",length(fls),"bamfiles to calculate the average coverage.")
       tmpStart <- seq(xRange[1],xRange[2],countWindow)
       tmpStart <- tmpStart[-length(tmpStart)]
       features <- GRanges( seqnames = origChr,
@@ -437,6 +437,6 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
     
     if(output) list(SHit=scoresHit, SL=scoresLeft,SR=scoresRight, scoreMat=scoreMatrix)
     if(!is.null(figureFolder)) dev.off()
-    if(verbose) cat("\nFigure created (",date(),")\n")
+    if(verbose) message("\nFigure created (",date(),")")
   }
 }

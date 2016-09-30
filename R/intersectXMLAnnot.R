@@ -1,4 +1,13 @@
 intersectXMLAnnot <- function(tabSpecies, annot, level="gene", flanking=NULL){
+  res <- list()
+  for(i in 1:nrow(tabSpecies)){
+    res[[i]] <- intersectXMLAnnot.internal(tabSpecies=tabSpecies[i,], annot=annot, level=level, flanking=flanking)
+  }
+  res <- do.call(rbind, res)
+  res
+}
+
+intersectXMLAnnot.internal <- function(tabSpecies, annot, level, flanking){
   start <- min(c(tabSpecies$hitStart,tabSpecies$hitEnd))
   end <-  max(c(tabSpecies$hitStart,tabSpecies$hitEnd))
   if(!is.null(flanking)){
