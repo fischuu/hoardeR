@@ -12,6 +12,7 @@ Version 0.9.1:
     - fasta files are now imported using the 'Rsamtools::scanFa' function
 * Improvements in 'summary.fa()'
     - Output is now better aligned
+* All connections to NCBI use now 'https' instead of 'http'
 
 Version 0.9:
 * Major update for functionality and usability

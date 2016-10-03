@@ -3,6 +3,9 @@
 
 blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE, database="chromosome", verbose=TRUE, createLog=TRUE){
 
+# Developer version variable
+  useLast <- FALSE
+  
   startTime <- Sys.time()
   firstRun <- TRUE
   
@@ -27,7 +30,18 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
   if(createLog){
     if(is.null(logFolder)){
       if(is.null(xmlFolder)){
-        stop("No log/xml path given.")
+        if(useLast){
+          if(verbose) cat("The useLast option is set and no log/xml is given. Search in the working directory for the last hoardeR log file...\n")
+          allFiles <- list.files(recursive = TRUE)
+          allLogs <- allFiles[grepl("\\.log",allFiles)]
+          timeDiffs <- Sys.time() - file.info(allLogs)$mtime
+          takeThisLog <- allLogs[which.min(timeDiffs)]
+          xmlFolder <- file.path(getwd(),strsplit(takeThisLog,"/logs")[[1]][1])
+          message("Use this folder as xml:", xmlFolder)
+          message("Use this folder as log:", file.path(xmlFolder,"logs") )
+        } else {
+          stop("No log/xml path given.")
+        }
       } else {
         #logFolder <- strsplit(xmlFolder,"/")[[1]]
         #logFolder <- logFolder[nchar(logFolder)>0]

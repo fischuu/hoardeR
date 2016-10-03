@@ -45,7 +45,7 @@
  
  If log files should be written (\code{createLog=TRUE}) a log path should be given in \code{logPath}. However, if a xmlPath is given and the
  option \code{createLog=TRUE} is set, then the log folder will be automatically created in the parental folder of the \code{xmlFolder} and is
- called \code{hoardeRlogs}
+ called \code{logs}.
 }
 
 \value{
