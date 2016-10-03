@@ -3,16 +3,16 @@ title: "An Introduction to hoardeR"
 author: "Daniel Fischer and Anu Sironen"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
+  rmarkdown::html_vignette:
     fig_caption: yes
     toc: yes
-  rmarkdown::html_vignette:
+  pdf_document:
     fig_caption: yes
     toc: yes
 vignette: |
   %\VignetteIndexEntry{An Introduction to hoardeR}
-  %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 # Installation

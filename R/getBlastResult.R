@@ -4,7 +4,7 @@ getBlastResult <- function(RID){
     newError <- TRUE
     while(newError & tries < 6){
       newError <- FALSE
-      tryCatch(blastRes <- scan(paste("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?RID=",RID, "&SHOW_OVERVIEW=no&FORMAT_TYPE=XML&ALIGNMENTS=0&NCBI_GI=yes&CMD=Get", sep = ""), what = "", sep = "\n", quiet = TRUE)
+      tryCatch(blastRes <- scan(paste("https://www.ncbi.nlm.nih.gov/blast/Blast.cgi?RID=",RID, "&SHOW_OVERVIEW=no&FORMAT_TYPE=XML&ALIGNMENTS=0&NCBI_GI=yes&CMD=Get", sep = ""), what = "", sep = "\n", quiet = TRUE)
                   
                 , error = function(e){
                           cat("An error occured, try",tries,"\n")
