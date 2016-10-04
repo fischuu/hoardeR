@@ -22,7 +22,7 @@
     Package: \tab hoardeR\cr
     Type: \tab Package\cr
     Version: \tab 0.9.1\cr
-    Date: \tab 2016-09-02\cr
+    Date: \tab 2016-10-04\cr
     License: \tab GPL\cr
     LazyLoad: \tab yes\cr
   }

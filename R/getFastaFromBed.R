@@ -12,7 +12,7 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
                     Gene=bed[,4])
   if(is.null(species)) stop("No species given!")    
   if(is.null(fastaFolder)){
-    warning("No directory with fasta files given! Use the working directory: \n", getwd())
+    message("No directory with fasta files given! Use the working directory: \n", getwd())
     fastaFolder <- getwd()
     }  
   if(is.null(version)){

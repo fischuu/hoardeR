@@ -8,8 +8,13 @@ Version 0.9.1:
 * output of 'print.fa()' adjusted
 * Bugfix in 'getFastaFromBed()'
     - 'version' option wasn't used properly
+* Improvements in 'getAnnotation()'
+    - Better guessing of right URL at Ensembl
 * Improvements in 'getFastaFromBed()'
     - fasta files are now imported using the 'Rsamtools::scanFa' function
+* Improvements in 'plotHit()'
+    - Better guessing of right URL at Ensembl
+    - Bam files that are used in groups are now displayed for better control
 * Improvements in 'summary.fa()'
     - Output is now better aligned
 * All connections to NCBI use now 'https' instead of 'http'

@@ -6,14 +6,20 @@ tableSpecies <- function(xml, species=NULL, type="chr", minOutput=TRUE, exclude=
   }
 
   if(locations){
-    xmlOne <- xml[[1]]
+    takeThis <- 1
+
+    while(takeThis<=length(xml)){
+      xmlOne <- xml[[takeThis]]
+      if(nrow(xmlOne)>0) break 
+      takeThis <- takeThis + 1
+    }
     origLoc <- names(xml)[1] 
     xmlOne$origChr <- gsub(">","",strsplit(origLoc,":")[[1]][1])
     xmlOne$origStart <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][1]
     xmlOne$origEnd <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][2]
     
-    if(length(xml)>=2){
-      for(i in 2:length(xml)){
+    if(length(xml)>takeThis){
+      for(i in (takeThis+1):length(xml)){
         tempXML <- xml[[i]]
         origLoc <- names(xml)[i] 
         if(nrow(tempXML)>0){

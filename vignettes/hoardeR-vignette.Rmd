@@ -3,10 +3,10 @@ title: "An Introduction to hoardeR"
 author: "Daniel Fischer and Anu Sironen"
 date: '`r Sys.Date()`'
 output:
-  rmarkdown::html_vignette:
+  pdf_document:
     fig_caption: yes
     toc: yes
-  pdf_document:
+  rmarkdown::html_vignette:
     fig_caption: yes
     toc: yes
 vignette: |
@@ -167,8 +167,8 @@ head(species)
 ```
 \normalsize
 
-Of particular interest are here the columns `Scientific.name` and `Ensembl.Assembly`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic `hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. As an example, assume that our species of interest is _Cow_ (that has the scientif name _bos taurus_) and the fasta files should be downloaded
-to the folder `/home/daniel/fasta/`. We can use the function `findSpecies` to get specific rows in `species`. The function expects just one `string` and extracts then from the `species` object all rows that contain the string (Also substrings are possible) in any of its cells. Hence, this function
+Of particular interest are here the columns `Scientific.name` and `Ensembl.Assembly`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic `hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. As an example, assume that our species of interest is _Cow_ (that has the scientific name _bos taurus_) and the fasta files should be downloaded
+to the folder `/home/daniel/fasta/`. To check the available entries in the `species` table, we can use the function `findSpecies` to get specific rows in `species`. The function expects just one `string` and extracts then from the `species` object all rows that contain the string (also substrings are possible) in any of its cells. Hence, this function
 can be used to find common names, scientific names or also assembly IDs.
 
 ```{r eval=FALSE}
@@ -180,9 +180,11 @@ findSpecies("Cow")
 ```
 \normalsize
 
-In its most basic usage, the `getFastaFromBed` function expects a data table (parameter `bed`), a species (parameter `species`) and a folder where
+This means, by default `hoardeR` uses the Cow assembly `UMD3.1` if nothing else is specified-
+
+In its most basic usage, the `getFastaFromBed` function expects a data table (parameter `bed`), a species identifier (parameter `species`) and a folder where
 it finds the fasta files or to where it can save them (parameter `fastaFolder`). The function first checks from the provided folder if the required
-fasta files are available, if not it will download the corresponding files from the Ensebml ftp server. The output of the function is then an object of class `fa`.
+fasta files are available, if not it will download the corresponding files from the Ensembl ftp server. The output of the function is then an object of class `fa`.
 
 \newpage
 
@@ -269,10 +271,18 @@ myFasta <- getFastaFromBed(novelBed, species = "Ovis aries", release = NULL,
 assuming again that the fasta files are located in `/home/daniel/fasta/`. Here, the `release` option is set to `NULL` (No ensemble release), but the
 `species` and `version` are set instead.
 
-The option to extract the fasta sequences via bedtools is, however, faster and is the recommended way. The internal function is especially useful for small bed files or fast testing purposes. Also, to the best of our knowledge, bedtools is not available for Windows systems. The `getFastaFromBed`
+The internal function is especially useful for small bed files or fast testing purposes. Also, to the best of our knowledge, bedtools is not available for Windows systems. The `getFastaFromBed`
 function is currently under development to improve its performance especially for larger bed files.
 
-To export an `fa` object from R to the harddrive, the function `exportFA` can be used. It just needs the `fa` object itself and also the filename to store it.
+It is also possible to write out a fasta file while creating the `fa` object. For that, a folder location (option `export` and a filename (option `fileName`) needs to be specified
+
+```{r eval=FALSE}
+myFasta <- getFastaFromBed(novelBed, species = "Ovis aries", release = NULL, 
+                           fastaFolder = "/home/daniel/fasta/", version = "Oar_v4.0",
+                           export = "/home/daniel/fasta", fileName="seqFasta")
+```
+
+To export an existing `fa` object from R to the harddrive, the function `exportFA` can be used. It just needs the `fa` object itself and also the filename to store it.
 
 ```{r eval=FALSE}
 exportFA(myFasta, file="/home/daniel/myFasta.fa")
@@ -318,7 +328,10 @@ especially then important, when the run crashes and should be continued or if th
 is switched off, obviously no new sequences are sent anymore to NCBI.
 
 If a crashed run should be continued, it is enough to run the same command as the initially one using the same fasta object and `hoardeR`
-will continue from the point, where it crashed or where it was interrupted. If the option `verbose=TRUE` is set (default), `hoardeR` keeps 
+will continue from the point, where it crashed or where it was interrupted. In case that during the previous commans no `xmlFolder` was speciefied
+and `hoardeR` created it automatically, the `xmlFolder` needs to be specified to continue from it.
+
+If the option `verbose=TRUE` is set (default), `hoardeR` keeps 
 reporting status updates of the blast runs. There are still some fine-tuning parameters available, see the manual for details. However,
 there are some etiquette parameters of NCBI that cannot be changed to smaller values than the defaults. These are e.g. the frequency of the requests and the total amount of parallel blast runs.
 
@@ -333,7 +346,7 @@ Total running time: 00:00:04
 ---------------------------------------------------------------
 ```
 
-indicating e.g. that here are still three fasta sequences waiting to be finished, one sequence is already running an NCBI, zero are finished so
+indicating e.g. that here are still three fasta sequences waiting to be finished, one sequence is already running at NCBI, zero are finished so
 far and the running time of the whole run is 4 seconds. After a while (option `delay_rid`), `blastSeq` starts to check, if the active blast runs are
 finalized. If there are still free blast slots available (maximum number is defined via `n_blast` option), `blastSeq` spawns the next ones. In that case, the verbose output looks like this:
 
@@ -516,7 +529,7 @@ defined with the `window` option. By default that window has the similar length 
 in the `window` option. Our function then tests all pairwise combinations between the chunks of the original organism and the hit organism,
 calculates the similarity between them and stores the best result. That way, each chunk/window of the original organism gets assigned a chunk from the hit organism. Only those combinations are then considered further, that are at least having a similarity value as defined in `diagonal`.
 
-With that, the figure for the pig would look like this:
+With that, the figure for the cow/pig similarity would look like this:
 
 ```{r, fig.retina = NULL, fig.cap="Similarity between Pig and Cow", echo=FALSE}
 knitr::include_graphics("./pigFlanking.png")
@@ -527,7 +540,195 @@ this region is rather similar, although in the case of Bos taurus it seems that 
 not parallel but open up towards the Bos taurus side. Also, it seems that the identified gene in the flanking region corresponds to an 
 already annotated gene in Bos taurus.
 
-We continue with examining the same hit for Ovis aries/sheep. Here we have
+The plotHit function can add also a coverage track to the plot. In that case, a folder with bam files needs to be specified. Different groups for different
+colors, as e.g., in case/control study common, can also be added. The extended command for these options is then e.g.:
+
+```{r eval =FALSE}
+      plotHit(
++             hits=pigInter.flank,
++             flanking=100,
++             diagonal=0.25 ,
++             hitSpecies = "Sus scrofa",
++             origSpecies = "Bos taurus",
++             origAnnot=btannot,
++             hitAnnot=ssannot,
++             fastaFolder = "/home/daniel/fasta/",
++             figureFolder = "/home/daniel/figures/",
++             figurePrefix = "pigIS",
++             coverage=TRUE,
++             bamFolder = "/home/daniel/bams/",
++             groupIndex = c(1,1,2,2,1,2),
++             groupColor = c("blue", "red"))
+```
+
+In addition to the basic call, we request here the annotation tracks, by specifying the annotation objects as import previously (`btannot` and `ssannot`).
+Further, we request a coverage track (`coverage=TRUE`) and specify a folder where the function finds the bam-files. The `groupIndex` specifies then the 
+groups for the files (which needs to be in the same, lexicographical order, `plotHit` reports the groups classes for each file then for double checking)
+and then the color for each group. The figure would look then like this.
+
+```{r, fig.retina = NULL, fig.cap="Similarity between Pig and Cow, with added coverage and annotation", echo=FALSE}
+knitr::include_graphics("./coverageExample.jpg")
+```
+
+
+# Example use-case
+
+## Running hoardeR with the Ensembl default annotations
+
+```{r eval=FALSE}
+# Load the package
+  library(hoardeR)
+
+# Define the project folder
+  projFolder <- "/home/daniel/hoardeR-Example"
+  
+# Set the working directory accordingly
+  setwd(projFolder)
+  
+# Create some fake coordiantes in bed format
+  novelBed <- data.frame(Chr = c(4,11),
+                         Start = c(104591617,72554673),
+                         End = c(104591916,72555273),
+                         Gene = c("LOC1", "LOC2"))
+ 
+# Print the data  
+  novelBed
+  
+#  Chr     Start       End Gene
+#1   4 104591671 104591916 LOC1
+#2  11  72554673  72555273 LOC2
+
+# Get the fasta sequence for this
+  myFasta <- getFastaFromBed(novelBed, species="Sus scrofa")
+
+# No directory with fasta files given! Use the working directory: 
+#   /home/daniel/hoardeR-Example
+# Using species version: Sscrofa10.2 
+# Read original fasta file:
+#   /home/daniel/hoardeR-Example/Sus_scrofa.Sscrofa10.2.dna.chromosome.4.fa.gz 
+# trying URL 'ftp://ftp.ensembl.org/pub/release-84/fasta/sus_scrofa/dna/Sus_scrofa.Sscrofa10.2.dna.chromosome.11.fa.gz'
+# Content type 'unknown' length 23986000 bytes (22.9 MB)
+# ==================================================
+#   downloaded 22.9 MB
+#
+# Read original fasta file:
+#   /home/daniel/hoardeR-Example/Sus_scrofa.Sscrofa10.2.dna.chromosome.11.fa.gz     
+
+# Blast the sequences
+  myBlastRes <- blastSeq(myFasta, email="daniel.fischer@luke.fi")
+  
+# Missing: 2 
+# Running: 1 
+# Finished: 0 
+# Avg. Blast Time: NA 
+# Total running time: 00:00:04 
+# ---------------------------------------------------------------
+# Missing: 2 
+# Running: 2 
+# Finished: 0 
+# Avg. Blast Time: NA 
+# Total running time: 00:00:08 
+# ---------------------------------------------------------------
+# Run Z779DC03014 : 00:00:06 
+# Run Z779H9KF014 : 00:00:07 
+# Missing: 2 
+# Running: 2 
+# Finished: 0 
+# Avg. Blast Time: NA 
+# Total running time: 00:00:19 
+# ---------------------------------------------------------------
+# Run Z779H9KF014 : 00:02:28 
+# Missing: 1 
+# Running: 1 
+# Finished: 1 
+# Avg. Blast Time: 00:02:27 
+# Total running time: 00:02:39 
+# ---------------------------------------------------------------
+# Missing: 0 
+# Running: 0 
+# Finished: 2 
+# Avg. Blast Time: 00:03:21 
+# Total running time: 00:03:50 
+# ---------------------------------------------------------------
+
+# Import the XML
+  xmls <- importXML(folder="/home/daniel/hoardeR-Example/hoardeR-04.10.2016@13.19.22")
+  
+# Table the species
+  tableSpecies(xmls)
+
+#    Bos taurus Equus caballus     Sus scrofa     Ovis aries 
+#             2              1              1              1 
+   
+# This means, we have a couple of good hits in other species: Horse, Pig and Sheep
+# Lets consider the cow hits first:
+  cowHits <- tableSpecies(xmls, species = "Bos taurus", locations=TRUE)
+  cowHits
+
+#                                                                                               Organism hitID hitLen hitChr hitStart   hitEnd origChr origStart
+# 8 Bos taurus breed Hereford chromosome 3, alternate assembly Btau_5.0.1, whole genome shotgun sequence   280    298      3 16657347 16657644       4 104591617
+# 9          Bos taurus breed Hereford chromosome 3, Bos_taurus_UMD_3.1.1, whole genome shotgun sequence   280    298      3 16500510 16500807       4 104591617
+#     origEnd
+# 8 104591916
+# 9 104591916
+  
+# Here we see that there is one match in cow on Chromosome 3 with the Pig Chromosome 4 search area.
+# Further we can see that the Hit assembly version is UMD_3.1.1
+# We check if this assemble is the default in hoardeR
+  
+  findSpecies("Cow")
+   
+#    Common.name Scientific.name Taxon.ID Ensembl.Assembly       Accession Variation.database Regulation.database Pre.assembly
+# 38       Horse  Equus caballus     9796        Equ Cab 2 GCA_000002305.1                  Y                   -            -  
+
+# The 'Ensembl.Assembly' matches, so we can use the default paramters.
+  
+# Get the required annotations
+  ssannot <- getAnnotation(species = "Sus scrofa")
+# Check if file /home/daniel/hoardeR-Example/Sus_scrofa.Sscrofa10.2.84.chr.gtf.gz exists ...
+# ... file wasn't found. Try to download it from Ensembl ftp server.
+# trying URL 'ftp://ftp.ensembl.org/pub/release-84/gtf/sus_scrofa/Sus_scrofa.Sscrofa10.2.84.chr.gtf.gz'
+# Content type 'unknown' length 8166047 bytes (7.8 MB)
+# ==================================================
+# downloaded 7.8 MB
+ 
+  oaannot <- getAnnotation(species = "Bos taurus")
+# Check if file /home/daniel/hoardeR-Example/Equus_caballus.EquCab2.84.chr.gtf.gz exists ...
+# ... file wasn't found. Try to download it from Ensembl ftp server.
+# trying URL 'ftp://ftp.ensembl.org/pub/release-84/gtf/equus_caballus/Equus_caballus.EquCab2.84.chr.gtf.gz'
+# Content type 'unknown' length 8947208 bytes (8.5 MB)
+# ==================================================
+# downloaded 8.5 MB
+  
+# Now intersect the horse annotation with the matches
+  horseInter <- intersectXMLAnnot(horseHits, ecannot)
+  
+# Empty data.table (0 rows) of 15 cols: V1,V2,V3,V4,V5,V6...
+  
+# No matches were found (=no intergenic hits), so we extend the search area with flanking sites of 20Mb
+  
+  horseInter.flank <- intersectXMLAnnot(horseHits, ecannot, flanking=20)
+  horseInter.flank
+  
+#    V1      V2   V3       V4       V5 V6 V7 V8                                                                                                    V9 origChr
+# 1:  5 ensembl gene 43622645 43624010  .  -  . gene_id "ENSECAG00000016459"; gene_version "1"; gene_source "ensembl"; gene_biotype "protein_coding";      11
+#    origStart  origEnd hitChr hitStart   hitEnd
+# 1:  72554673 72555273      5 43607677 43607859
+  
+# Here we could find a match, we are going to visualize it.
+  
+  
+```  
+  
+# Import the XML
+  xmls <- importXML(folder="/home/ejo138/tmp/hoardeR-Example/hoardeR-04.10.2016@13.19.22")
+  xmls <- importXML(folder="c:/Users/ejo138/tmp/hoardeR-Example/hoardeR-03.10.2016@16-02-17")
+
+# Table the species  
+  tableSpecies(xmls)
+  tableSpecies(xmls, species = "Sus scrofa", locations=TRUE)
+```
+
 
 ```{r eval=FALSE}
 R> tableSpecies(xmls, species="Ovis aries", locations = TRUE)
@@ -617,6 +818,6 @@ in `hitSpeciesVersion`. Further, the logical flag `coverage=TRUE` is set. If thi
 defined in `bamFolder` that contain information about the coverage. The plot that shows in addition then also the coverage would look this this:
 
 ```{r, fig.retina = NULL, fig.cap="Similarity between Sheep and Cow", echo=FALSE}
-knitr::include_graphics("./coverageExample.png")
+knitr::include_graphics("./coverageExample.jpg")
 ```
 By default all bam files located in the `bamFolder` are taken and the average is taken. However, the filenames of single bam files can also be given to the `bamFiles` option. In case of a case/control study, it might be desirable to plot two different coverage curves. For that, the `groupIndex` defines to which group a bam file belongs and the color of the corresponding coverage is then defined in `groupColor`.

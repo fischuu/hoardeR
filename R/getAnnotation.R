@@ -17,14 +17,14 @@ getAnnotation <- function(species=NULL, release=84, version=NULL, annotationFold
   dir.create(annotationFolder, showWarnings=FALSE)
   species.int <- gsub(" ", "_",tolower(species))
   ensemblURL <- paste("ftp://ftp.ensembl.org/pub/release-",release,"/gtf/",species.int,"/",sep="")
-  fileName <-  paste(cap(species.int),".",version,".",release,".chr.",type,".gz",sep="")    
+  fileName <-  paste(cap(species.int),".",gsub(" ","",version),".",release,".chr.",type,".gz",sep="")    
   .file = file.path(annotationFolder, fileName)
   
   message("Check if file ",.file," exists ...")
   
   # download file
   if(!file.exists(.file)){
-    message("... file wasn't found. Try to download from Ensembl ftp server.")
+    message("... file wasn't found. Try to download it from Ensembl ftp server.")
     download.file(paste(ensemblURL,fileName,sep=""), .file)
   } else {
     message("... found!") 
