@@ -1,4 +1,4 @@
-`print.fa` <- function(x,n=2, seq.out=50, ...){
+`print.fa` <- function(x, n=2, seq.out=50, ...){
   if(!is.numeric(n)) stop("The argument n has to be numeric.")
   if(n>length(x)){
     n <- length(x)
@@ -12,4 +12,5 @@
     }
   }
   print(X,...)
+  if(n<length(x)) message("Fasta sequences ommited to print: ", length(x)-n)
 } 

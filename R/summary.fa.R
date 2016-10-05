@@ -2,7 +2,7 @@ summary.fa <- function(object, ...){
 
    nCharObj <- nchar(object)
    cat("Summary of fa object\n")
-   cat("---------------\n")
+   cat("--------------------\n")
    cat("Sequences      :",length(object),"\n")
    cat("Minimum length :",min(nCharObj),"\n")
    cat("1st quartile   :",quantile(nCharObj, 0.25),"\n")

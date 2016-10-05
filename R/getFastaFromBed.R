@@ -11,11 +11,16 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
                     End=bed[,3],
                     Gene=bed[,4])
   if(is.null(species)) stop("No species given!")    
-  if(is.null(fastaFolder)) stop("No directory with fasta files given!")   
+  if(is.null(fastaFolder)){
+    message("No directory with fasta files given! Use the working directory: \n", getwd())
+    fastaFolder <- getwd()
+    }  
   if(is.null(version)){
     temp <- hoardeR::species
     speciesVersion <- temp$Ensembl.Assembly[temp$Scientific.name==species]    
-  }   
+  } else {
+    speciesVersion <- version
+  }  
   if(verbose) cat("Using species version:", speciesVersion,"\n")
   
 # First the required original fasta file
@@ -30,8 +35,10 @@ getFastaFromBed <- function(bed, species=NULL, release = "84", fastaFolder=NULL,
     .file = file.path(fastaFolder, fileName)
     if(!file.exists(.file)) download.file(paste(ensemblURL,fileName,sep=""), .file)
     if(verbose) cat("Read original fasta file:\n   ", .file ,"\n")
-    seqSpecies <- read.fasta(.file,seqtype="DNA")
-    novelFA[bedRun] <- paste(seqSpecies[[1]][bed$Start[bedRun]:bed$End[bedRun]],collapse="")
+    # seqSpecies <- read.fasta(.file,seqtype="DNA")
+    # novelFA[bedRun] <- paste(seqSpecies[[1]][bed$Start[bedRun]:bed$End[bedRun]],collapse="")
+    tmp <- scanFa(.file)
+    novelFA[bedRun] <- as.character(subseq(tmp,bed$Start[bedRun],bed$End[bedRun]))
   }
   names(novelFA) <- paste(">",bed[,1],":",bed[,2],"-",bed[,3],sep="")
   if(!is.null(export)){

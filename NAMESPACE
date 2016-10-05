@@ -1,21 +1,20 @@
 import(httr, XML, stringr, MASS, R.utils, data.table)
 
-importFrom(seqinr, comp)
-importFrom(seqinr, read.fasta)
-importFrom(bamsignals, bamCount)
-importFrom(Biostrings, nucleotideSubstitutionMatrix)
-importFrom(Biostrings, pairwiseAlignment)
-importFrom(GenomicRanges, GRanges)
-importFrom(IRanges, IRanges)
+importFrom("bamsignals", bamCount)
+importFrom("Biostrings", nucleotideSubstitutionMatrix, pairwiseAlignment, subseq)
+importFrom("GenomicRanges", GRanges)
+importFrom("graphics", axis, lines, plot, polygon, rect, text)
+importFrom("grDevices", colorRampPalette, dev.off, png)
+importFrom("IRanges", IRanges)
+importFrom("Rsamtools", scanFa)
+importFrom("seqinr", read.fasta, comp)
+importFrom("stats", loess, median, predict, quantile)
+importFrom("utils", download.file, read.csv, read.table, setTxtProgressBar, txtProgressBar, write.table, sessionInfo)
 
-
-export(importFA, blastSeq, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
-       importGTF, importGFF3, importPedMap, importBlastTab, intersectXMLAnnot,
+export(importBed, importFA, blastSeq,exportBed, exportFA, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
+       importBlastTab, intersectXMLAnnot,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
        plotHit, getFastaFromBed)
 
 S3method(print,fa)
 S3method(summary,fa)
-S3method(print,pedMap)
-S3method(summary,pedMap)
-

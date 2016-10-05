@@ -28,6 +28,9 @@ Tables the species in xml file
  
  Further, if the option \code{locations} is set to \code{TRUE} the function not only tables the species, but also the individual locations
  of the hits. This output is required for the further steps. Hence, this function plays a important role in the identification pipeline.
+ 
+ Be default the option \code{type="chr"} is set so that only hits in species will full genomes will be reported. Further, the species names
+ are intersected with the \code{species} data frame and only those that appear there are reported.
 }
 \value{
 A \code{table} with the species from the XML file

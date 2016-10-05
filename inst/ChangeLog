@@ -1,11 +1,29 @@
 LOG of the CHANGES in the package Test
 
+Version 0.9.1:
+* Typos in manual fixed
+* Typos in vignette fixed
+* Minor bugfixes in 'blastSeq'
+* Added the function 'importBed()'
+* output of 'print.fa()' adjusted
+* Bugfix in 'getFastaFromBed()'
+    - 'version' option wasn't used properly
+* Improvements in 'getAnnotation()'
+    - Better guessing of right URL at Ensembl
+* Improvements in 'getFastaFromBed()'
+    - fasta files are now imported using the 'Rsamtools::scanFa' function
+* Improvements in 'plotHit()'
+    - Better guessing of right URL at Ensembl
+    - Bam files that are used in groups are now displayed for better control
+* Improvements in 'summary.fa()'
+    - Output is now better aligned
+* All connections to NCBI use now 'https' instead of 'http'
+
 Version 0.9:
 * Major update for functionality and usability
 * Added the authors@R filed to the Description
 * Added the log option to blastSeq. This way a crashed blast run and continue where it crashed.
 * Added the nrow option for the 'importGTF' function
-* Added the 'importPedMap' function
 * Added the 'print.pedMap' function
 * Added the 'summary.pedMap' function
 * Added the 'targetScan' function
@@ -17,6 +35,10 @@ Version 0.9:
 * Added the 'intersectXMLAnnot' function
 * Added several small helper functions
 * Added the 'getfastaFromBed' function
+* Added the 'exportFA' function
+* Added the 'exportBed' function
+* Deprecated the 'importPedMap' function
+* Added the package Vignette
 
 Version 0.1:
 * Added the data example.fa

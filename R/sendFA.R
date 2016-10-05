@@ -1,6 +1,6 @@
 sendFA <- function(FAseq, database, hl_size=20, program="blastn", filter="L", expect=10, email, method="POST"){
  if(method=="PUT"){
-   blastRun <- scan(paste("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?QUERY=",FAseq,"&DATABASE=",database,"&HITLIST_SIZE=",hl_size,"&FILTER=",filter,"&EXPECT=",expect,"&PROGRAM=",program,"&CLIENT=web&SERVICE=plain&NCBI_GI=on&PAGE=Nucleotides&CMD=Put&EMAIL=",email,"&TOOL=hoardeR" ,sep=""),what="raw")
+   blastRun <- scan(paste("https://www.ncbi.nlm.nih.gov/blast/Blast.cgi?QUERY=",FAseq,"&DATABASE=",database,"&HITLIST_SIZE=",hl_size,"&FILTER=",filter,"&EXPECT=",expect,"&PROGRAM=",program,"&CLIENT=web&SERVICE=plain&NCBI_GI=on&PAGE=Nucleotides&CMD=Put&EMAIL=",email,"&TOOL=hoardeR" ,sep=""),what="raw")
    RIDNo <- which((blastRun=="RID")==TRUE)
    RIDNo <- blastRun[RIDNo+2]
  } else if(method=="POST"){  
@@ -8,7 +8,7 @@ sendFA <- function(FAseq, database, hl_size=20, program="blastn", filter="L", ex
    newError <- TRUE
    while(newError & tries < 6){
      newError <- FALSE
-     tryCatch(post <- POST(url="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi",
+     tryCatch(post <- POST(url="https://www.ncbi.nlm.nih.gov/blast/Blast.cgi",
                            body=(list(QUERY=FAseq,
                                       DATABASE=database,
                                       HITLIST_SIZE=hl_size,

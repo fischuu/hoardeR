@@ -8,7 +8,7 @@ lastElement <- function(x){
 
 # This function mixes two vectors alternating
 mixVectors <- function(x,y){
-  c(rbind(x, y)) 
+  unlist(c(rbind(x, y)) )
 }
 
 # Merge two vectors into a data.frame by using the names of them as key

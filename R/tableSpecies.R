@@ -6,20 +6,28 @@ tableSpecies <- function(xml, species=NULL, type="chr", minOutput=TRUE, exclude=
   }
 
   if(locations){
-    xmlOne <- xml[[1]]
+    takeThis <- 1
+
+    while(takeThis<=length(xml)){
+      xmlOne <- xml[[takeThis]]
+      if(nrow(xmlOne)>0) break 
+      takeThis <- takeThis + 1
+    }
     origLoc <- names(xml)[1] 
     xmlOne$origChr <- gsub(">","",strsplit(origLoc,":")[[1]][1])
     xmlOne$origStart <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][1]
     xmlOne$origEnd <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][2]
     
-    for(i in 2:length(xml)){
-      tempXML <- xml[[i]]
-      origLoc <- names(xml)[i] 
-      if(nrow(tempXML)>0){
-        tempXML$origChr <- gsub(">","",strsplit(origLoc,":")[[1]][1])
-        tempXML$origStart <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][1]
-        tempXML$origEnd <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][2]
-        xmlOne <- rbind(xmlOne,tempXML)
+    if(length(xml)>takeThis){
+      for(i in (takeThis+1):length(xml)){
+        tempXML <- xml[[i]]
+        origLoc <- names(xml)[i] 
+        if(nrow(tempXML)>0){
+          tempXML$origChr <- gsub(">","",strsplit(origLoc,":")[[1]][1])
+          tempXML$origStart <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][1]
+          tempXML$origEnd <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][2]
+          xmlOne <- rbind(xmlOne,tempXML)
+        }
       }
     }
     
@@ -28,8 +36,10 @@ tableSpecies <- function(xml, species=NULL, type="chr", minOutput=TRUE, exclude=
     res <- xmlOne[grepl(species.int,xmlOne[,1]),]
   } else {
     xmlOne <- xml[[1]]
-    for(i in 2:length(xml)){
-      xmlOne <- rbind(xmlOne,xml[[i]])
+    if(length(xml)>=2){
+      for(i in 2:length(xml)){
+        xmlOne <- rbind(xmlOne,xml[[i]])
+      }
     }
     
     if(type=="chr") xmlOne <- xmlOne[!is.na(xmlOne$hitChr),]

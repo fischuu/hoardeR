@@ -2,6 +2,7 @@
 importXML <- function(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRUE){
   # Get the filenames and statistics about how many XML files we have
     fileList <- list.files(folder)
+    fileList <- fileList[substrRight(fileList,3)=="xml"]
     seqNamesFolder <- unlist(strsplit(fileList,".xml"))
     if(is.null(seqNames)) seqNames <- unlist(strsplit(fileList,".xml"))
     foundNames <- sum(is.element(seqNames,seqNamesFolder))
@@ -81,7 +82,9 @@ importXML <- function(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRU
     runningIndex <- runningIndex + 1
     if(verbose) if(runningIndex%%10==0) cat(runningIndex,"XML files processed.\n")
   }
-  names(result) <- seqNamesFolder[which]
+  useTheseNames <- paste(">",seqNamesFolder[which],sep="")
+  useTheseNames <- gsub("\\.",":",useTheseNames)
+  names(result) <- useTheseNames
   class(result) <- "xml"
   result
 }
