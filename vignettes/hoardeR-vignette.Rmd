@@ -3,6 +3,8 @@ title: "An Introduction to hoardeR"
 author: "Daniel Fischer and Anu Sironen"
 date: '`r Sys.Date()`'
 output:
+  html_document:
+    toc: yes
   pdf_document:
     fig_caption: yes
     toc: yes
@@ -152,35 +154,35 @@ bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
 ```
 
 Here, `<input FASTA>` is a fasta file that contains the genome information of the species under investigation. If the output file `novel.fa` is empty or
-some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). Extracting the sequences in such a way is especially then adviceable, when the species of interest is rare or the fasta file is not available from Ensembl in the latest version. Also if many sequences should be extracted, bedtools is faster then the implemented R function.
+some other errors occur, a common source of error is a mislabeling of the chromosomes between the input fasta file and the corresponding bed file (e.g. leading CHR, Chr, etc.). Extracting the sequences in such a way is especially then adviceable, when the species of interest is rare or the fasta file is not available from NCBI in the latest version. Also if many sequences should be extracted, bedtools is faster then the implemented R function.
 
-However, if the species and also the genome assembly version is available from Ensembl, the fasta information can be obtained straight with the `hoardeR` function `getFastaFromBed`. The `hoardeR` package is able to directly download the genomes and annotations of the most common species, a list of available combinations can be found in the `species` dataset, that comes with `hoardeR`
+However, if the species and also the genome assembly version is available from NCBI, the fasta information can be obtained straight with the `hoardeR` function `getFastaFromBed`. The `hoardeR` package is able to directly download the genomes and annotations of the most common species, a list of available combinations can be found in the `species` dataset, that comes with `hoardeR`
 
 
 ```{r eval=FALSE}
-head(species)
+species[1:6,1:5]
 ```
 \tiny
 ```{r eval=TRUE, echo=FALSE, comment=NA, tidy=TRUE}
 options(width = 400)
-head(species)
+species[1:6,1:5]
 ```
 \normalsize
 
-Of particular interest are here the columns `Scientific.name` and `Ensembl.Assembly`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic `hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. As an example, assume that our species of interest is _Cow_ (that has the scientific name _bos taurus_) and the fasta files should be downloaded
+Of particular interest are here the columns `Organism.Name` and `Assembly.Name`. If your species of interest and your used assembly matches with the information in the `species` table, you can use the automatic `hoardeR` function `getFastaFromBed` with the default settings to obtain your fasta object. As an example, assume that our species of interest is _Cattle_ (that has the scientific name _bos taurus_) and the fasta files should be downloaded
 to the folder `/home/daniel/fasta/`. To check the available entries in the `species` table, we can use the function `findSpecies` to get specific rows in `species`. The function expects just one `string` and extracts then from the `species` object all rows that contain the string (also substrings are possible) in any of its cells. Hence, this function
 can be used to find common names, scientific names or also assembly IDs.
 
 ```{r eval=FALSE}
-findSpecies("Cow")
+findSpecies("Cattle")
 ```
 \tiny
 ```{r eval=TRUE, echo=FALSE, comment=NA, tidy=TRUE}
-findSpecies("Cow")
+findSpecies("Cattle")
 ```
 \normalsize
 
-This means, by default `hoardeR` uses the Cow assembly `UMD3.1` if nothing else is specified-
+This means, by default `hoardeR` uses the Cow assembly `UMD_3.1.1` if nothing else is specified.
 
 In its most basic usage, the `getFastaFromBed` function expects a data table (parameter `bed`), a species identifier (parameter `species`) and a folder where
 it finds the fasta files or to where it can save them (parameter `fastaFolder`). The function first checks from the provided folder if the required
@@ -232,54 +234,25 @@ Maximum length : 667
 ```
 
 
-The function `getFastaFromBed` has more options and it is also possible to obtain the genomic information from assemblies that are published under a different Ensembl release, or that are not at Ensembl at all or that have a newer/older assembly version. For that the optional parameters `release`
-and `version` are available. The full syntax is then
+The function `getFastaFromBed` has more options and it is also possible to use own fasta files with it. For that, the species needs to be listed in the species data table and
+the fasta files need to be located in the `fastaFolder`. The naming has to follow the convention as set from NCBI. If an own assembly is specified `hoardeR` tells the filename
+under which it searches then the corresponding fasta file. For that, just provide an assembly identifier like this:
 
 ```{r eval=FALSE}
-myFasta <- getFastaFromBed(novelBed, species = "Bos taurus", release = "84", 
-                           fastaFolder = "/home/daniel/fasta/", version = NULL)
+myFasta2 <- getFastaFromBed(novelBed, species = "Bos taurus", assembly="UMD_3.1",
+                           fastaFolder = "/home/daniel/fasta/")
 ```
 
-Here, the Ensembl release version and also the assembly version can be specified. However, if no release number is given (i.e. `release = NULL`), the function assumes to find a non-Ensembl fasta file in the folder `fastaFolder`. The naming of these fasta files needs then to be of the following format, e.g. for the cow assembly version UMD3.1
-
-```{r eval=FALSE}
-Bos_taurus.UMD3.1.dna.chromosome.1.fa.gz
-Bos_taurus.UMD3.1.dna.chromosome.2.fa.gz
-Bos_taurus.UMD3.1.dna.chromosome.3.fa.gz
-...
-```
-
-That means, first the scientific name, with underscores, then a dot, then the assembly identifier (as provided in the `version` option) followed by another dot, then `dna.chromosome.` and the chromosome identifier, and then the file extension `fa.gz`.
-That means further, the fasta files have to be gzipped.
-
-Consider now an example where the genome is not available from Ensembl. On Ensembl is only the sheep genome assembly 'Oar\_v3.1' available, if one needs to work with the 'Oar\_v4.0' assembly, one would download the chromosome-wise files and then store them in some folder on the harddrive as 
-
-```{r eval=FALSE}
-Ovis_aries.Oar_v4.0.dna.chromosome.1.fa.gz
-Ovis_aries.Oar_v4.0.dna.chromosome.2.fa.gz
-Ovis_aries.Oar_v4.0.dna.chromosome.3.fa.gz
-...
-```
-
-To use then the corresponding fasta objects (of class `fa`), the command is
-
-```{r eval=FALSE}
-myFasta <- getFastaFromBed(novelBed, species = "Ovis aries", release = NULL, 
-                           fastaFolder = "/home/daniel/fasta/", version = "Oar_v4.0")
-```
-
-assuming again that the fasta files are located in `/home/daniel/fasta/`. Here, the `release` option is set to `NULL` (No ensemble release), but the
-`species` and `version` are set instead.
-
-The internal function is especially useful for small bed files or fast testing purposes. Also, to the best of our knowledge, bedtools is not available for Windows systems. The `getFastaFromBed`
-function is currently under development to improve its performance especially for larger bed files.
+The internal function is especially useful for small bed files or fast testing purposes. Also, to the best of our knowledge, bedtools is not available for Windows systems. The `getFastaFromBed` function is currently under development to improve its performance especially for larger bed files and also to get access to the corresponding assembly 
+archive at NCBI.
 
 It is also possible to write out a fasta file while creating the `fa` object. For that, a folder location (option `export` and a filename (option `fileName`) needs to be specified
 
 ```{r eval=FALSE}
-myFasta <- getFastaFromBed(novelBed, species = "Ovis aries", release = NULL, 
-                           fastaFolder = "/home/daniel/fasta/", version = "Oar_v4.0",
-                           export = "/home/daniel/fasta", fileName="seqFasta")
+myFasta <- getFastaFromBed(novelBed, species = "Ovis aries",  
+                           fastaFolder = "/home/daniel/fasta/",
+                           export = "/home/daniel/fasta", 
+                           fileName="seqFasta")
 ```
 
 To export an existing `fa` object from R to the harddrive, the function `exportFA` can be used. It just needs the `fa` object itself and also the filename to store it.

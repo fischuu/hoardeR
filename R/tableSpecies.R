@@ -2,7 +2,7 @@ tableSpecies <- function(xml, species=NULL, type="chr", minOutput=TRUE, exclude=
 
   species.int <- species
   if(is.null(species.int)){
-    species.int <- hoardeR::species$Scientific.name
+    species.int <- hoardeR::species$Organism.Name
   }
 
   if(locations){
