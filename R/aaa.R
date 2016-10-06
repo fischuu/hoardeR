@@ -55,3 +55,21 @@ adjustCHRLabel <- function(x){
   if(!is.na(tmp)) x <- sprintf("%02d",tmp)
   x
 }
+
+#--------------------------------------------------------------------------------------------------------
+
+# Get gene names from the V9 column of the annotation 
+
+getGeneName <- function(x){
+  if(grepl("gene_name", x)){
+    geneName <-gsub(' \"', '', strsplit(strsplit(x,"gene_name")[[1]][2],'\";')[[1]][1])
+  } else if(grepl("gene=", x)){
+    geneName <- strsplit(strsplit(x,"gene=")[[1]][[2]],";")[[1]][[1]]
+  } else if(grepl("gene_id", x)){
+    geneName <- gsub(' \"', '', strsplit(strsplit(x,"gene_id")[[1]][2],'\";')[[1]][1])
+  } else if(grepl("Name=",x)){
+    geneName <- gsub(' \"', '', strsplit(strsplit(x,"Name=")[[1]][2],'\";')[[1]][1])
+  }
+  geneName
+}
+

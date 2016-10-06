@@ -13,7 +13,7 @@ tableSpecies <- function(xml, species=NULL, type="chr", minOutput=TRUE, exclude=
       if(nrow(xmlOne)>0) break 
       takeThis <- takeThis + 1
     }
-    origLoc <- names(xml)[1] 
+    origLoc <- names(xml)[takeThis] 
     xmlOne$origChr <- gsub(">","",strsplit(origLoc,":")[[1]][1])
     xmlOne$origStart <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][1]
     xmlOne$origEnd <- strsplit(strsplit(origLoc,":")[[1]][2],"-")[[1]][2]

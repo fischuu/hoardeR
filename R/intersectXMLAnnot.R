@@ -18,7 +18,7 @@ intersectXMLAnnot.internal <- function(tabSpecies, annot, level, flanking){
   }
   tempAnnot <- annot[annot$V3==level,]
   tempAnnot <- tempAnnot[tempAnnot$V1==tabSpecies$hitChr]
-  tempAnnot <- tempAnnot[(tempAnnot$V4>=start) & (tempAnnot$V5<=end),]
+  tempAnnot <- tempAnnot[(as.numeric(tempAnnot$V4)>=start) & (as.numeric(tempAnnot$V5)<=end),]
   tempAnnot$origChr <- tabSpecies$origChr
   tempAnnot$origStart <- tabSpecies$origStart
   tempAnnot$origEnd <- tabSpecies$origEnd
