@@ -14,8 +14,14 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
   hitAnnotOrig <- hitAnnot
   
 # Input checks
-#  is(!is.numeric(diagonal)) stop("The option 'diagonal' needs to be numeric between 0 and 1.")
-  
+  if(!is.numeric(diagonal)){
+    stop("The option 'diagonal' needs to be numeric between 0 and 1.")   
+  } else {
+    if(diagonal>1) stop("The option 'diagonal' needs to be numeric between 0 and 1.")
+    if(diagonal<0) stop("The option 'diagonal' needs to be numeric between 0 and 1.")
+  }
+
+
   if(!is.null(bamFolder)){
     if(is.null(bamFiles)){
       fls <- list.files(bamFolder, recursive=TRUE, pattern="\\.bam$", full.names=TRUE)
@@ -75,7 +81,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
         filePath <- paste(NCBI.URL.orig,"Assembled_chromosomes/seq/", sep="")
         CHRfile <- getURL(filePath, ftp.use.epsv = TRUE, dirlistonly = TRUE)
         CHRfile <- strsplit(CHRfile,"\n")[[1]]
-        CHRfile <- CHRfile[grepl(paste(species.df$Assembly.Name[species.df$Organism.Name==origSpecies][1], "_chr",hits$origChr[hitRun],".fa.gz",sep=""), CHRfile)]
+        CHRfile <- CHRfile[grepl(paste(origSpeciesAssembly, "_chr",hits$origChr[hitRun],".fa.gz",sep=""), CHRfile)]
         
         .file = file.path(fastaFolder, CHRfile)
         if(!file.exists(.file)){
@@ -83,7 +89,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
           download.file(paste(filePath,CHRfile,sep=""), .file, quiet = TRUE)
         }
         if(file.size(.file)<1){
-          cat("File could not be downloaded. If you want to use the assembly", speciesAssembly, "for", species,"please provide the file: ", .file,"\n")       
+          cat("File could not be downloaded. If you want to use the assembly", origSpeciesAssembly, "for", species,"please provide the file: ", .file,"\n")       
         } else {
           if(verbose) cat("Read original fasta file:\n   ", .file ,"\n")
           seqOrig <- read.fasta(.file,seqtype="DNA")
@@ -94,7 +100,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
         filePath <- paste(NCBI.URL.hit,"Assembled_chromosomes/seq/", sep="")
         CHRfile <- getURL(filePath, ftp.use.epsv = TRUE, dirlistonly = TRUE)
         CHRfile <- strsplit(CHRfile,"\n")[[1]]
-        CHRfile <- CHRfile[grepl(paste(species.df$Assembly.Name[species.df$Organism.Name==hitSpecies][1], "_chr",hits$hitChr[hitRun],".fa.gz",sep=""), CHRfile)]
+        CHRfile <- CHRfile[grepl(paste(hitSpeciesAssembly, "_chr",hits$hitChr[hitRun],".fa.gz",sep=""), CHRfile)]
         
         .file = file.path(fastaFolder, CHRfile)
         if(!file.exists(.file)){
@@ -102,7 +108,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
           download.file(paste(filePath,CHRfile,sep=""), .file, quiet = TRUE)
         }
         if(file.size(.file)<1){
-          cat("File could not be downloaded. If you want to use the assembly", speciesAssembly, "for", species,"please provide the file: ", .file,"\n")       
+          cat("File could not be downloaded. If you want to use the assembly", hitSpeciesAssembly, "for", species,"please provide the file: ", .file,"\n")       
         } else {
           if(verbose) cat("Read hit fasta file:\n   ", .file ,"\n")
           seqHit <- read.fasta(.file,seqtype="DNA")
@@ -371,6 +377,10 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
     # In case the annot flag is set, add it to the plot
     if(annot){
       if(!is.null(origAnnot)){
+      # Casting the coordinates of the annotation files
+        origAnnot$V4 <- as.numeric(origAnnot$V4)
+        origAnnot$V5 <- as.numeric(origAnnot$V5)
+        
         origAnnot <- origAnnot[origAnnot$V1==origChr,]
         origAnnot <- origAnnot[((origAnnot$V4<=xRange[2]) & (origAnnot$V4>=xRange[1]))  ,]
         origAnnot <- origAnnot[((origAnnot$V5<=xRange[2]) & (origAnnot$V5>=xRange[1]))  ,]
@@ -385,6 +395,10 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
       }
   
       if(!is.null(hitAnnot)){
+      # Casting the coordinates of the annotation files
+        hitAnnot$V4 <- as.numeric(hitAnnot$V4)
+        hitAnnot$V5 <- as.numeric(hitAnnot$V5)
+        
         hitAnnot <- hitAnnot[hitAnnot$V1==hitChr,]
         if(HITneg){
           hitAnnot <- hitAnnot[((hitAnnot$V4>=hitEndFlank) & (hitAnnot$V4<=hitStartFlank))  ,]

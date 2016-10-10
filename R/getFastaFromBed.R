@@ -4,7 +4,7 @@ getFastaFromBed <- function(bed, species=NULL, assembly = NULL, fastaFolder=NULL
   species.df <- hoardeR::species
   
 # Check the species
-  if(nrow(findSpecies(species))<1) error("Provided species could not be found in the 'species' table")
+  if(nrow(findSpecies(species))<1) stop("Provided species could not be found in the 'species' table")
   
 # If no fileName is given and the fasta should be exported, use the variable name of the bed object as fileName
   if(is.null(fileName)) fileName <- deparse(substitute(bed))

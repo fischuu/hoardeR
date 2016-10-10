@@ -17,7 +17,7 @@
 }
 
 \details{
-  This function output rows from the \code{species} object that contain a certain string. It used the \code{grepl} function to 
+  This function output rows from the \code{species} object that contain a certain string. It uses the \code{grepl} function to 
   identify the corresponding rows.
 }
 \value{
@@ -33,7 +33,7 @@
 }
 
 \examples{
-findSpecies("Cow")
+findSpecies("cattle")
 }
 
 \keyword{methods}

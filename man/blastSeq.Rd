@@ -10,7 +10,7 @@
 }
 \usage{
   blastSeq(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, 
-           xmlFolder=NULL,logFolder=NULL, keepInMemory=FALSE,
+           xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE,
            database="chromosome", verbose=TRUE, createLog=TRUE)
 }
 
@@ -58,7 +58,7 @@
 
 \examples{
 \dontrun{
-blastSeq("ACGTGCATCGACTAGCTACGACTACGACTATC", email="my.name@somewhere.com", createLog=FALSE)
+blastSeq("ACGTGCATCGACTAGCTACGACTACGACTATC", email="my.name@somewhere.com")
 }
 }
 

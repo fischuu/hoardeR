@@ -8,6 +8,10 @@ Version 0.9.1:
 * output of 'print.fa()' adjusted
 * Bugfix in 'getFastaFromBed()'
     - 'version' option wasn't used properly
+* Improvement in 'exportBed'
+    - If file=NULL (default) the variable name is used as file name
+* Improvement in 'exportFA'
+    - If file=NULL (default) the variable name is used as file name
 * Improvements in 'getAnnotation()'
     - Better guessing of right URL at Ensembl
 * Improvements in 'getFastaFromBed()'

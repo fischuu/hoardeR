@@ -9,7 +9,7 @@
   This function exports a standard fasta file.
 }
 \usage{
-  exportFA(fa, file)
+  exportFA(fa, file=NULL)
 }
 
 \arguments{
@@ -18,7 +18,7 @@
 }
 
 \details{
- This function exports a \code{fa} object to a standard fasta file. 
+ This function exports a \code{fa} object to a standard fasta file. If no filename is given, the variable name will be used instead.
 }
 \value{
  A fasta file.

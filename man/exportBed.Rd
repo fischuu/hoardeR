@@ -9,7 +9,7 @@
   This function exports a standard bed file.
 }
 \usage{
-  exportBed(x, file, header=FALSE)
+  exportBed(x, file=NULL, header=FALSE)
 }
 
 \arguments{
@@ -19,7 +19,7 @@
 }
 
 \details{
- This function exports a data.frame to a standard bed file. 
+ This function exports a data.frame to a standard bed file. If no file name is given, the variable name will be used instead.
 }
 \value{
  A bed file.

@@ -11,7 +11,7 @@
   from various sources. The current main focus is on setting up a connection to
   the NCBI Blast service. Also, the gene information for Ensembl Genes can
   be retrieved from NCBI.
-  Methods for visualizing the results are are also provided. The latest
+  Methods for visualizing the results are also provided. The latest
   developer version of the package can be downloaded from
   
   https://github.com/fischuu/hoardeR
@@ -22,7 +22,7 @@
     Package: \tab hoardeR\cr
     Type: \tab Package\cr
     Version: \tab 0.9.1\cr
-    Date: \tab 2016-10-04\cr
+    Date: \tab 2016-10-10\cr
     License: \tab GPL\cr
     LazyLoad: \tab yes\cr
   }

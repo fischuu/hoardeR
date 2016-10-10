@@ -6,26 +6,24 @@
 }
 
 \description{
-  This function downloads (if needed) the annotation file from a given species from Ensembl and loads it into the namespace.
+  This function downloads (if needed) the annotation file from a given species from NCBI and loads it into the namespace.
 }
 \usage{
-  getAnnotation(species=NULL, release=84, version=NULL, annotationFolder, 
-                type="gtf")
+  getAnnotation(species=NULL, assembly=NULL, annotationFolder=NULL, 
+                type="gff3", verbose)
 }
 
 \arguments{
   \item{species}{The scientific name of the species (\code{String}).}
-  \item{release}{The Ensembl release version.}
-  \item{version}{The annotation version.}
-  \item{annotationFolder}{The folder to where the file is stored.}
+  \item{assembly}{The NCBI assembly version.}
+  \item{annotationFolder}{The folder where the file will be stored.}
   \item{type}{The file extension/format of the annotation file.}
+  \item{verbose}{Logical, if function gives feedback.}
 }
 
-\details{ This function downloads for a given \code{species} the annotation file, as provided from Ensembl. The main parameters basically define
-the URL, where the file is located. The file is then downloaded into the folder, provided in \code{annotationFolder} and then imported to the namespace.
+\details{ This function downloads for a given \code{species} the annotation file, as provided from NCBI. The main parameters basically define the URL, where the file is located. The file is then downloaded into the folder, provided in \code{annotationFolder} and then imported to the namespace.
 
-If a file has been downloaded previously, it will be loaded directly from that folder. In case the user wants to use an annotation that is not
-located at Ensembl, the corresponding files can also be placed into the same folder and the function will load it from there.
+If a file has been downloaded previously, it will be loaded directly from that folder. In case the user wants to use an annotation that is not provided by NCBI, the corresponding files can also be placed into the same folder, following the naming scheme as suggested from the function and the function will load it from there.
 }
 
 \value{

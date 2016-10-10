@@ -18,7 +18,7 @@ getAnnotation <- function(species=NULL, assembly=NULL, annotationFolder=NULL, ty
   if(grepl("Windows", sessionInfo()$running)) os <- "windows"
   
   if(is.null(annotationFolder)){
-    if(verbose) cat("No directory with annotations files given! Use the working directory: \n", getwd(),"\n")
+    if(verbose) cat("No directory with annotation files given! Use the working directory: \n", getwd(),"\n")
     annotationFolder <- getwd()
   } else {
     if(substrRight(annotationFolder,1)=="/") annotationFolder <- removeRight(annotationFolder,1)
@@ -42,7 +42,7 @@ getAnnotation <- function(species=NULL, assembly=NULL, annotationFolder=NULL, ty
   }
   
   if(file.size(.file)<1){
-    if(verbose) cat("File could not be downloaded. If you want to use the assembly", speciesAssembly, "for", species,"please provide the file: ", .file,"\n")       
+    if(verbose) cat("File could not be downloaded. If you want to use the assembly", assembly, "for", species,"please provide the file: ", .file,"\n")       
   } else {
     if(verbose) cat("... found!\n") 
   }
@@ -56,7 +56,7 @@ getAnnotation <- function(species=NULL, assembly=NULL, annotationFolder=NULL, ty
   }
   
   if(file.size(.file.assemblyTable)<1){
-    if(verbose) cat("File could not be downloaded. If you want to use the assembly", speciesAssembly, "for", species,"please provide the file: ", .file.assemblyTable,"\n")       
+    if(verbose) cat("File could not be downloaded. If you want to use the assembly", assembly, "for", species,"please provide the file: ", .file.assemblyTable,"\n")       
   } else {
     if(verbose) cat("... found!\n") 
   }
@@ -90,8 +90,9 @@ getAnnotation <- function(species=NULL, assembly=NULL, annotationFolder=NULL, ty
                                                               "character",
                                                               "character"))
   } else if(type=="gff3"){
-    accessions <-  read.table(.file.assemblyTable, sep="\t", header=TRUE, comment.char = "", stringsAsFactor=FALSE)
+    accessions <-  read.table(.file.assemblyTable, sep="\t", header=TRUE, comment.char = "", stringsAsFactors=FALSE)
     temp <- importGFF3(.file, chromosomes=accessions[,2])
+    V1 <- NULL # For Cran check...
     for(i in 1:nrow(accessions)){
       temp[V1 == accessions$RefSeq.Accession.version[i], V1 := accessions$X.Chromosome[i]]  
     }

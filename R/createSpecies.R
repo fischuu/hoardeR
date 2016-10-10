@@ -13,7 +13,7 @@ getInfo <- function(x, entry){
 
 createSpecies <- function(baseDir="ftp://ftp.ncbi.nlm.nih.gov/genomes/", verbose=TRUE){
   
-  curl = getCurlHandle()
+  curl <- getCurlHandle()
   
   out <- data.frame(Organism.Name = character(),
                     Organism.Common.Name = character(),
