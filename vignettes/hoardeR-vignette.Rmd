@@ -40,6 +40,14 @@ and missing Bioconductor packages (e.g. the package `Biostrings`) with
 source("https://bioconductor.org/biocLite.R")
 biocLite("Biostrings")
 ```
+If during the first installation the Bioconductor are not installed, they can be installed
+all together by typingwith
+
+```{r eval=FALSE}
+source("https://bioconductor.org/biocLite.R")
+biocLite(c('Biostrings', 'GenomicRanges', 'bamsignals', 'IRanges', 'Rsamtools'))
+```
+
 
 The latest developer version, of `hoardeR` is located on GitHub, here
 
