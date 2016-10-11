@@ -45,7 +45,7 @@ all together by typingwith
 
 ```{r eval=FALSE}
 source("https://bioconductor.org/biocLite.R")
-biocLite(c('Biostrings', 'GenomicRanges', 'bamsignals', 'IRanges', 'Rsamtools'))
+biocLite(c('Biostrings', 'GenomicRanges', 'bamsignals', 'IRanges', 'Rsamtools', 'snpStats'))
 ```
 
 
