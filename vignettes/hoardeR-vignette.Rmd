@@ -26,7 +26,9 @@ command
 install.packages("hoardeR")
 ```
 
-There are no special system requirements for the installation. However, there are a few package dependencies that have to be fulfilled.
+There are no special system requirements for the installation when the package runs on
+a Linux computer. For Windows hoardeR expects to handle gzipped files with `zcat` and
+for that e.g. cygwin needs to be installed. There are a few package dependencies that have to be fulfilled.
 Normally these dependencies are installed automatically, too. If not, missing Cran packages need to be installed prior to the
 installation as above, with
 

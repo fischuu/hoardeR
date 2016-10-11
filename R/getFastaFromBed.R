@@ -47,6 +47,7 @@ getFastaFromBed <- function(bed, species=NULL, assembly = NULL, fastaFolder=NULL
     filePath <- paste(NCBI.URL,"Assembled_chromosomes/seq/", sep="")
     CHRfile <- getURL(filePath, ftp.use.epsv = TRUE, dirlistonly = TRUE)
     CHRfile <- strsplit(CHRfile,"\n")[[1]]
+    CHRfile <- gsub("\r","",CHRfile)
     CHRfile <- CHRfile[grepl(paste(species.df$Assembly.Name[species.df$Organism.Name==species][1], "_chr",bed$Chr[bedRun],".fa.gz",sep=""), CHRfile)]
     
     if(!assemblyWasNULL){
