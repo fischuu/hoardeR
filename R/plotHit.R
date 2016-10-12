@@ -81,6 +81,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
         filePath <- paste(NCBI.URL.orig,"Assembled_chromosomes/seq/", sep="")
         CHRfile <- getURL(filePath, ftp.use.epsv = TRUE, dirlistonly = TRUE)
         CHRfile <- strsplit(CHRfile,"\n")[[1]]
+        CHRfile <- gsub("\r","",CHRfile)
         CHRfile <- CHRfile[grepl(paste(origSpeciesAssembly, "_chr",hits$origChr[hitRun],".fa.gz",sep=""), CHRfile)]
         
         .file = file.path(fastaFolder, CHRfile)
@@ -100,6 +101,7 @@ plotHit <- function(hits, flanking=1, window=NULL, annot=TRUE, coverage=FALSE,
         filePath <- paste(NCBI.URL.hit,"Assembled_chromosomes/seq/", sep="")
         CHRfile <- getURL(filePath, ftp.use.epsv = TRUE, dirlistonly = TRUE)
         CHRfile <- strsplit(CHRfile,"\n")[[1]]
+        CHRfile <- gsub("\r","",CHRfile)
         CHRfile <- CHRfile[grepl(paste(hitSpeciesAssembly, "_chr",hits$hitChr[hitRun],".fa.gz",sep=""), CHRfile)]
         
         .file = file.path(fastaFolder, CHRfile)
