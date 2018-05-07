@@ -13,7 +13,8 @@ importFrom("seqinr", read.fasta, comp)
 importFrom("stats", loess, median, predict, quantile)
 importFrom("utils", download.file, read.csv, read.table, setTxtProgressBar, txtProgressBar, write.table, sessionInfo)
 
-export(importBed, importFA, blastSeq,exportBed, exportFA, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq, importXML,
+export(importBed, importFA, blastSeq,exportBed, exportFA, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq,
+       getSequenceFromNCBI, importXML,
        importBlastTab, intersectXMLAnnot,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
        plotHit, getFastaFromBed)
