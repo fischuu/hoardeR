@@ -8,14 +8,15 @@ importFrom("graphics", axis, lines, plot, polygon, rect, text)
 importFrom("grDevices", colorRampPalette, dev.off, png)
 importFrom("IRanges", IRanges)
 importFrom("RCurl", getURL, getCurlHandle)
-importFrom("Rsamtools", scanFa)
+importFrom("Rsamtools", scanFa, scanBam)
 importFrom("seqinr", read.fasta, comp)
 importFrom("stats", loess, median, predict, quantile)
 importFrom("utils", download.file, read.csv, read.table, setTxtProgressBar, txtProgressBar, write.table, sessionInfo)
 
-export(importBed, importFA, importFQ, blastSeq,exportBed, exportFA, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq,
+export(coverageDensity, importBed, importFA, importFQ, blastSeq,exportBed, exportFA, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq,
        getSequenceFromNCBI, importXML,
        importBlastTab, intersectXMLAnnot,
+       plotCoverage,
        subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
        plotHit, getFastaFromBed)
 
