@@ -20,4 +20,6 @@ export(importBed, importFA, importFQ, blastSeq,exportBed, exportFA, findSpecies,
        plotHit, getFastaFromBed)
 
 S3method(print,fa)
+S3method(print,fq)
 S3method(summary,fa)
+S3method(summary,fq)

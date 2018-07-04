@@ -9,6 +9,6 @@
     qual <- res[seq(4,length(res),4)]
     names(seq) <- res[seq(1,length(res)-1,4)]
     names(qual) <- res[seq(1,length(res)-1,4)]
-    class(seq) <- "fa"
-    seq
+    
+    structure(seq, qual=qual, class="fq")
 } 
