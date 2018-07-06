@@ -9,8 +9,7 @@ Author: Daniel Fischer [aut, cre], Anu Sironen [aut]
 Maintainer: Daniel Fischer <daniel.fischer@luke.fi>
 Depends: R (>= 3.2)
 biocViews:
-Imports: KernSmooth, httr (>= 0.2), XML (>= 3.98-1.1), stringr (>= 0.6.2), MASS (>= 7.3-31), R.utils (>= 1.32.4), data.table, seqinr, Biostrings, GenomicRanges, bamsignals, IRanges, Rsamtools, RCurl, GenomicTools (>= 0.2.1), S4Vectors
-Suggests: knitr, rmarkdown
+Imports: KernSmooth, httr (>= 0.2), XML (>= 3.98-1.1), stringr (>= 0.6.2), MASS (>= 7.3-31), R.utils (>= 1.32.4), data.table, seqinr, Biostrings, GenomicRanges, bamsignals, IRanges, Rsamtools, RCurl, GenomicTools (>= 0.2.1), S4Vectors, knitr, rmarkdown
 Description: Cross-species identification of novel gene candidates using the NCBI web service is provided. Further, sets of miRNA target genes can be identified by using the targetscan.org API.
 VignetteBuilder: knitr 
 License: GPL (>= 2)
