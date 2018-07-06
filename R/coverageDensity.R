@@ -29,10 +29,34 @@
       return(F)
     }
   }
-
-# And the main function
-  coverageDensity <- function(folder, chr=c(1:22,"X","Y","MT"), posneg=FALSE, verbose=TRUE, bw="SJ"){
   
+# SlideWindow
+  slideWindowSum <- function(x, from, to, step.size, window.size){
+    out <- c()
+    
+    tmpStart <- from
+    tmpEnd <- from+window.size
+    
+    index <- 1
+    
+    while(tmpEnd < to){
+      out[index] <- sum(x>=tmpStart & x<=tmpEnd)
+      
+      tmpStart <- tmpStart + step.size
+      tmpEnd <- tmpEnd + step.size
+      index <- index + 1
+    }
+    
+    out
+  }
+  
+# And the main function
+  coverageDensity <- function(folder, chr=c(1:22,"X","Y","MT"), chr.length=NULL, posneg=FALSE, verbose=TRUE, use.sqrt=FALSE, kernel.package="slideWindowSum", step.size=50000, window.size=100000){
+  
+  # Input checks
+    if(is.null(chr.length)) warning("No length information for chromosomes provided, density estimation might go wrong without it!")
+    kernel.package <- match.arg(kernel.package,c("slideWindowSum","stats","KernSmooth"))
+    
   # Get the filenames of the bams
     bamNames <- list.files(folder, pattern="*.bam$")
 
@@ -85,7 +109,27 @@
         # calculate the densities
           chr_neg_density[[i]] <- density(chr_neg, bw=bw)
           chr_pos_density[[i]] <- density(chr_pos, bw=bw)
-        
+      
+          # calculate the density
+          if(kernel.package=="stats"){
+            tmp_neg_density <- density(chr_neg, bw=bw)
+            tmp_pos_density <- density(chr_pos, bw=bw)
+            chr_neg_density[[i]] <-  list(x=tmp_neg_density$x,
+                                          y=tmp_neg_density$y)
+            chr_pos_density[[i]] <-  list(x=tmp_pos_density$x,
+                                          y=tmp_pos_density$y)
+          } else if(kernel.package=="KernSmooth"){
+            chr_neg_density[[i]] <- bkde(chr_neg, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]))            
+            chr_pos_density[[i]] <- bkde(chr_pos, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]))
+          
+          } else if(kernel.package=="slideWindowSum")
+          
+        # Transfor the values, if requested
+          if(use.sqrt){
+            chr_neg_density[[i]]$y <- sqrt(chr_neg_density[[i]]$y)
+            chr_pos_density[[i]]$y <- sqrt(chr_pos_density[[i]]$y)
+          } 
+          
         # display the negative strand with negative values
           chr_neg_density[[i]]$y <- chr_neg_density[[i]]$y * -1
         
@@ -113,7 +157,22 @@
           chr <- bam_df_list[[i]][which(bam_df_list[[i]]$rname == chrRun),'pos']
           
           # calculate the density
-          chr_density[[i]] <- density(chr, bw=bw)
+          if(kernel.package=="stats"){
+            tmp_density <- density(chr, bw=bw, n=5000, from=0, to=250000000)
+            chr_density[[i]] <-  list(x=tmp_density$x,
+                                      y=tmp_density$y)
+          } else if(kernel.package=="KernSmooth"){
+            chr_density[[i]] <- bkde(chr, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size)), bandwidth=floor(seqlengths(Hsapiens)[1:25]/bw.para) )            
+          } else if(kernel.package=="slideWindowSum"){
+            tmp_density <- slideWindowSum(chr, from=0, to=chr.length[chrIndex], step.size=50000, window.size = 100000)
+            chr_density[[i]] <- list(x=1:length(tmp_density),
+                                     y=tmp_density)
+          }
+
+          # Transfor the values, if requested
+          if(use.sqrt){
+            chr_density[[i]]$y <- sqrt(chr_density[[i]]$y)
+          } 
           
           # Output   
           message("Processed sample",bamNames[i],"in Chromosome",chrRun)
