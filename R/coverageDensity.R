@@ -39,6 +39,12 @@
     
     index <- 1
     
+    if(window.size > to){
+      window.size.old <- window.size
+      window.size <- to/100
+      step.size <- step.size*window.size/window.size.old
+    }
+    
     while(tmpEnd < to){
       out[index] <- sum(x>=tmpStart & x<=tmpEnd)
       
@@ -54,7 +60,11 @@
   coverageDensity <- function(folder, chr=c(1:22,"X","Y","MT"), chr.length=NULL, posneg=FALSE, verbose=TRUE, use.sqrt=FALSE, kernel.package="slideWindowSum", step.size=50000, window.size=100000){
   
   # Input checks
-    if(is.null(chr.length)) warning("No length information for chromosomes provided, density estimation might go wrong without it!")
+    chr.length.was.null <- FALSE
+    if(is.null(chr.length)){
+      warning("No length information for chromosomes provided, density estimation might go wrong without it!")
+      chr.length.was.null <- TRUE
+    }
     kernel.package <- match.arg(kernel.package,c("slideWindowSum","stats","KernSmooth"))
     
   # Get the filenames of the bams
@@ -106,6 +116,10 @@
                                       apply(as.data.frame(bam_df_list[[i]]$flag), 1, check_pos),
                                       'pos'
                                       ]
+        
+        # If Chromosome lengths are not provide, take just the maximum value
+          if(chr.length.was.null) chr.length[chrIndex] <- max(c(chr_pos, chr_neg))
+        
         # calculate the densities
           chr_neg_density[[i]] <- density(chr_neg, bw=bw)
           chr_pos_density[[i]] <- density(chr_pos, bw=bw)
@@ -122,7 +136,14 @@
             chr_neg_density[[i]] <- bkde(chr_neg, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]))            
             chr_pos_density[[i]] <- bkde(chr_pos, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]))
           
-          } else if(kernel.package=="slideWindowSum")
+          } else if(kernel.package=="slideWindowSum"){
+            tmp_neg_density <- slideWindowSum(chr_neg, from=0, to=chr.length[chrIndex], step.size=50000, window.size = 100000)
+            tmp_pos_density <- slideWindowSum(chr_pos, from=0, to=chr.length[chrIndex], step.size=50000, window.size = 100000)
+            chr_neg_density[[i]] <- list(x=1:length(tmp_neg_density),
+                                         y=tmp_neg_density)
+            chr_pos_density[[i]] <- list(x=1:length(tmp_pos_density),
+                                         y=tmp_pos_density)
+          }
           
         # Transfor the values, if requested
           if(use.sqrt){
@@ -169,6 +190,10 @@
                                      y=tmp_density)
           }
 
+          # If Chromosome lengths are not provide, take just the maximum value
+            if(chr.length.was.null) chr.length[chrIndex] <- max(c(chr_pos, chr_neg))
+          
+          
           # Transfor the values, if requested
           if(use.sqrt){
             chr_density[[i]]$y <- sqrt(chr_density[[i]]$y)
