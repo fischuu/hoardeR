@@ -2,6 +2,8 @@ LOG of the CHANGES in the package Test
 
 Version 0.9.3:
 * Added the function 'getSequenceFromNCBI()'
+* Added the function 'importFQ()'
+* Added the function 'coverageDensity()'
 
 Version 0.9.2:
 * Windows support for file handling improved
