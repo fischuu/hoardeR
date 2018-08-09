@@ -17,6 +17,8 @@ vignette: |
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
+This vignette is outdated and needs some updates!
+
 # Installation
 
 The installation of `hoardeR` is straight forward. It is located on Cran and can be installed from within R with the 
@@ -160,7 +162,7 @@ a header line in the bed file. Example commands to export the data frame `novelB
 In the console this bed file can then be used to extract the fasta files, using the `bedtools` program like this
 
 ```{bash eval=FALSE}
-bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa
+<!-- bedtools getfasta -fi <input FASTA> -bed novel.bed -fo novel.fa -->
 ```
 
 Here, `<input FASTA>` is a fasta file that contains the genome information of the species under investigation. If the output file `novel.fa` is empty or
@@ -201,13 +203,6 @@ fasta files are available, and if not it will download the corresponding files f
 A basic minimal example of the usage of the function:
 
 ```{r eval=FALSE}
-novelBed <- data.frame(Chr = c(11,18,3),
-                       Start = c(72554673, 62550672, 18148822),
-                       End = c(72555273, 62551296, 18149488),
-                       Gene = c("LOC1", "LOC2", "LOC3"))
-
-myFasta <- getFastaFromBed(novelBed, species = "Bos taurus", 
-                           fastaFolder = "/home/daniel/fasta/")
 
 ```
 
