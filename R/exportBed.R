@@ -1,5 +1,7 @@
 exportBed <- function(x, file=NULL, header=FALSE){
 
+  .Deprecated("GenomicTools.fileHandler::exportBed", package="GenomicTools", msg="I/O Functions will be collected from now on in a new package GenomicTools.fileHandler")
+  
   if(is.null(file)){
     file <- deparse(substitute(x))
     file <- paste(file,".bed",sep="")

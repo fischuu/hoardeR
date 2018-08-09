@@ -1,9 +1,8 @@
-import(httr, XML, stringr, MASS, R.utils, data.table)
+import(httr, XML, stringr, MASS, R.utils, data.table, GenomicTools)
 
 importFrom("bamsignals", bamCount)
 importFrom("Biostrings", nucleotideSubstitutionMatrix, pairwiseAlignment, subseq)
 importFrom("GenomicRanges", GRanges)
-importFrom("GenomicTools", importGFF3)
 importFrom("graphics", axis, lines, plot, polygon, rect, text)
 importFrom("grDevices", colorRampPalette, dev.off, png)
 importFrom("IRanges", IRanges)

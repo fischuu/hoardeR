@@ -4,6 +4,7 @@ Version 0.9.3:
 * Added the function 'getSequenceFromNCBI()'
 * Added the function 'importFQ()'
 * Added the function 'coverageDensity()'
+* import* function deprecated and placed into GenomicTools.fileHandler package
 
 Version 0.9.2:
 * Windows support for file handling improved

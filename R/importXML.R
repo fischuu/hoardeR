@@ -1,5 +1,8 @@
 
 importXML <- function(folder, seqNames=NULL, which=NULL, idTH = 0.8, verbose=TRUE){
+  
+  .Deprecated("GenomicTools.fileHandler::importXML", package="GenomicTools", msg="I/O Functions will be collected from now on in a new package GenomicTools.fileHandler")
+  
   # Get the filenames and statistics about how many XML files we have
     fileList <- list.files(folder)
     fileList <- fileList[substrRight(fileList,3)=="xml"]

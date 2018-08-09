@@ -1,5 +1,8 @@
 # This function reads in a fasta file and prepares the vector from it
   importFQ <- function(file){
+    
+    .Deprecated("GenomicTools.fileHandler::importFQ", package="GenomicTools", msg="I/O Functions will be collected from now on in a new package GenomicTools.fileHandler")
+    
     res <- readLines(file)
   # Check if the Fasta file is alternating, one line label, the next line sequence
     sumAlternating <- sum(grepl("@",res)==c(TRUE,FALSE,FALSE,FALSE))

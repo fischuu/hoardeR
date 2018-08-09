@@ -1,5 +1,7 @@
 summary.fa <- function(object, ...){
 
+  .Deprecated("GenomicTools.fileHandler::summary.fa", package="GenomicTools", msg="I/O Functions will be collected from now on in a new package GenomicTools.fileHandler")
+  
    nCharObj <- nchar(object)
    cat("Summary of fa object\n")
    cat("--------------------\n")
