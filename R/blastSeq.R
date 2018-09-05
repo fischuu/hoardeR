@@ -1,7 +1,7 @@
 # TODO:
 # Keep the timing values and return them also as a result
 
-blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE, database="chromosome", verbose=TRUE, createLog=TRUE){
+blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE, database="refseq_genomes", verbose=TRUE, createLog=TRUE){
 
 # Developer version variable
   useLast <- FALSE
@@ -10,7 +10,7 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
   firstRun <- TRUE
   
 # Polite system sleeps as requested from NCBI  
-  if(delay_req<3) stop("Sending more requests than once every 3 seconds is considered to be rude from NCBI!")  
+  if(delay_req<10) stop("Sending more requests than once every 10 seconds is considered to be rude from NCBI!")  
   if(delay_rid<60) stop("Polling RID results more often than once per minute is considered to be rude from NCBI!")  
   if(is.null(email)) stop("NCBI requires to provide an email address, please give one in the function call!")
 
@@ -111,11 +111,12 @@ blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xml
     active <- NULL
     timeAvg <- c("00:00:00")  
   }
+  
 # This is very optimistic, maybe I should take also a time break, in case one result doesn't get ready
   while(ready < totalSeq){
     if((curRunning < n_blast) & (sendThis <= totalSeq)){
       Sys.sleep(delay_req)
-      RID[sendThis] <- sendFA(seq[sendThis],email=email, database=database)
+      RID[sendThis] <- sendFA(seq[sendThis],email=email, database=database, logFolder=logFolder, verbose=verbose)
       curRunning <- curRunning + 1    
       active <- c(active,sendThis)
       seqInfo$seqRID[sendThis] <- RID[sendThis]
