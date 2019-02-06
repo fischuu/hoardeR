@@ -1,4 +1,4 @@
-import(httr, XML, stringr, MASS, R.utils, data.table, GenomicTools)
+import(httr, XML, stringr, MASS, R.utils, data.table, GenomicTools.fileHandler)
 
 importFrom("bamsignals", bamCount)
 importFrom("Biostrings", nucleotideSubstitutionMatrix, pairwiseAlignment, subseq)
