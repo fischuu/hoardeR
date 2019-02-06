@@ -57,7 +57,7 @@
   }
   
 # And the main function
-  coverageDensity <- function(folder, chr=c(1:22,"X","Y","MT"), chr.length=NULL, posneg=FALSE, verbose=TRUE, use.sqrt=FALSE, kernel.package="slideWindowSum", step.size=50000, window.size=100000){
+  coverageDensity <- function(folder, chr=c(1:22,"X","Y","MT"), chr.length=NULL, posneg=FALSE, verbose=TRUE, use.sqrt=FALSE, kernel.package="slideWindowSum", step.size=50000, window.size=100000, bw=100){
   
   # Input checks
     chr.length.was.null <- FALSE
@@ -183,7 +183,8 @@
             chr_density[[i]] <-  list(x=tmp_density$x,
                                       y=tmp_density$y)
           } else if(kernel.package=="KernSmooth"){
-            chr_density[[i]] <- bkde(chr, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size)), bandwidth=floor(seqlengths(Hsapiens)[1:25]/bw.para) )            
+            PLACEHOLDER <- rep(1000000000,25)
+            chr_density[[i]] <- bkde(chr, kernel = "normal", gridsize = (chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size))/step.size+1, range.x=c(0,chr.length[chrIndex]+(step.size-chr.length[chrIndex]%%step.size)), bandwidth=floor(PLACEHOLDER[1:25]/bw) )            
           } else if(kernel.package=="slideWindowSum"){
             tmp_density <- slideWindowSum(chr, from=0, to=chr.length[chrIndex], step.size=50000, window.size = 100000)
             chr_density[[i]] <- list(x=1:length(tmp_density),

@@ -21,8 +21,8 @@
   \tabular{ll}{
     Package: \tab hoardeR\cr
     Type: \tab Package\cr
-    Version: \tab 0.9.3\cr
-    Date: \tab 2018-08-09\cr
+    Version: \tab 0.9.4\cr
+    Date: \tab 2019-02-06\cr
     License: \tab GPL\cr
     LazyLoad: \tab yes\cr
   }

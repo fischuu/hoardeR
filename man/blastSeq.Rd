@@ -11,7 +11,7 @@
 \usage{
   blastSeq(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, 
            xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE,
-           database="chromosome", verbose=TRUE, createLog=TRUE)
+           database="refseq_genomes", verbose=TRUE, createLog=TRUE)
 }
 
 \arguments{

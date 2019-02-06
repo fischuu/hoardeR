@@ -2,7 +2,6 @@ LOG of the CHANGES in the package Test
 
 Version 0.9.3:
 * Added the function 'getSequenceFromNCBI()'
-* Added the function 'importFQ()'
 * Added the function 'coverageDensity()'
 * import* function deprecated and placed into GenomicTools.fileHandler package
 
