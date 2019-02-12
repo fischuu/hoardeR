@@ -539,7 +539,7 @@ groups for the files (which needs to be in the same, lexicographical order, `plo
 and then the color for each group. The figure would look then like this.
 
 ```{r, fig.retina = NULL, fig.cap="Similarity between Pig and Cow, with added coverage and annotation", echo=FALSE}
-knitr::include_graphics("./coverageExample.jpg")
+knitr::include_graphics("./coverageExample.png")
 ```
 
 
