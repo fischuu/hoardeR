@@ -1,7 +1,7 @@
 # TODO:
 # Keep the timing values and return them also as a result
 
-blastSeq <- function(seq, n_blast=20, delay_req=3, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE, database="refseq_genomes", verbose=TRUE, createLog=TRUE){
+blastSeq <- function(seq, n_blast=20, delay_req=10, delay_rid=60, email=NULL, xmlFolder=NULL, logFolder=NULL, keepInMemory=FALSE, database="refseq_genomes", verbose=TRUE, createLog=TRUE){
 
 # Developer version variable
   useLast <- FALSE
