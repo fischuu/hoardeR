@@ -13,6 +13,7 @@ importFrom("S4Vectors", DataFrame)
 importFrom("seqinr", read.fasta, comp)
 importFrom("stats", loess, median, predict, quantile, density)
 importFrom("utils", download.file, read.csv, read.table, setTxtProgressBar, txtProgressBar, write.table, sessionInfo)
+importFrom("GenomicTools.fileHandler", importXML)
 
 export(coverageDensity, blastSeq, findSpecies, getEnsgInfo, getGeneLocation, getGeneSeq,
        getSequenceFromNCBI, intersectXMLAnnot, plotCoverage, subDose, subPhased, subGprobs, targetScan, tableSpecies, species, getAnnotation,
