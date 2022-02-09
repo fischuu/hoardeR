@@ -17,6 +17,15 @@ extractTSinfo <- function(x){
 }
 
 targetScan <- function(mirna=NULL, species=NULL, release="7.1", maxOut=NULL){
+  if(length(mirna)>1){
+   out <- mapply(targetScan.internal, mirna=mirna, species=species, release=release, maxOut=maxOut, SIMPLIFY=FALSE) 
+  } else{
+    out <- targetScan.internal(mirna=mirna, species=species, release=release, maxOut=maxOut)    
+  }
+  out
+}
+
+targetScan.internal <- function(mirna, species, release, maxOut){
 
 # Starting values for later tests
   origMirna <- mirna

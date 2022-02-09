@@ -1,5 +1,8 @@
 LOG of the CHANGES in the package Test
 
+Version 0.9.4-4:
+* targetScan takes now vectors as input to mirna
+
 Version 0.9.4-2:
 * Fixed a file mismatch in vignette
 
